@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # ── PostgreSQL 16 Database ──────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: sih2026-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: sih2026
+      POSTGRES_PASSWORD: sih2026secret
+      POSTGRES_DB: distress_engine
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sih2026 -d distress_engine"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis 7 Job Store (APScheduler background worker) ───────
+  redis:
+    image: redis:7-alpine
+    container_name: sih2026-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── FastAPI Backend Application ──────────────────────────────
+  web:
+    build: .
+    container_name: sih2026-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://sih2026:sih2026secret@db:5432/distress_engine
+      - REDIS_URL=redis://redis:6379/0
+      - TWILIO_MOCK_MODE=true
+      - CHECKIN_WORKER_INTERVAL_MINUTES=60
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+
