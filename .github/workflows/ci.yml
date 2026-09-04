@@ -26,9 +26,11 @@ jobs:
           pip install pytest pytest-asyncio
 
       - name: Run Backend Tests
+        env:
+          PYTHONPATH: .
         run: |
           cd services/backend
-          pytest tests/ -v
+          python -m pytest tests/ -v
 
   test-orchestrator:
     name: Orchestrator Service CI

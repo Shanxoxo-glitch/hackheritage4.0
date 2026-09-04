@@ -103,13 +103,22 @@ def build_scheduler() -> AsyncIOScheduler:
     Falls back to in-memory store if Redis is unavailable (local dev without Docker).
     """
     try:
+        import redis
+        host = settings.REDIS_URL.split("//")[1].split(":")[0]
+        port = int(settings.REDIS_URL.split(":")[-1].split("/")[0])
+        db = int(settings.REDIS_URL.split("/")[-1])
+        
+        # Test ping to check if Redis server is reachable
+        r = redis.Redis(host=host, port=port, db=db, socket_timeout=1)
+        r.ping()
+
         jobstores = {
             "default": RedisJobStore(
                 jobs_key="sih2026_apscheduler_jobs",
                 run_times_key="sih2026_apscheduler_run_times",
-                host=settings.REDIS_URL.split("//")[1].split(":")[0],
-                port=int(settings.REDIS_URL.split(":")[-1].split("/")[0]),
-                db=int(settings.REDIS_URL.split("/")[-1])
+                host=host,
+                port=port,
+                db=db
             )
         }
         logger.info("[SCHEDULER] Using Redis job store for APScheduler.")
