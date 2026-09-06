@@ -1,18 +1,25 @@
 import base64
+import hashlib
 from cryptography.fernet import Fernet
 from app.config import settings
 
 def _get_fernet_instance() -> Fernet:
+    key_str = settings.FERNET_KEY
     try:
-        # Check if settings key is valid Fernet key (32 url-safe base64-encoded bytes)
-        return Fernet(settings.FERNET_KEY.encode('utf-8'))
-    except Exception:
-        # Fallback to deterministic key derived from settings.SECRET_KEY
+        key_bytes = key_str.encode('utf-8')
+        # Validate Fernet key format (must be 32 bytes base64 decoded)
+        decoded = base64.urlsafe_b64decode(key_bytes)
+        if len(decoded) != 32:
+            raise ValueError(f"Fernet key must decode to 32 bytes, got {len(decoded)}")
+        return Fernet(key_bytes)
+    except Exception as e:
+        if settings.ENV == "prod":
+            raise RuntimeError(f"CRITICAL: Invalid FERNET_KEY in production environment: {e}")
+        # Fallback for dev mode
         key_bytes = hashlib.sha256(settings.SECRET_KEY.encode('utf-8')).digest()
         base64_key = base64.urlsafe_b64encode(key_bytes)
         return Fernet(base64_key)
 
-import hashlib
 _fernet = _get_fernet_instance()
 
 def encrypt_pii(plain_text: str | None) -> str | None:

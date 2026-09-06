@@ -6,6 +6,7 @@ from app.models.interaction import Interaction
 from app.models.distress import DistressScore
 from app.models.alert import Alert
 from app.models.intervention import Intervention
+from app.models.dispatch_log import DispatchLog
 
 __all__ = [
     "Victim",
@@ -15,4 +16,5 @@ __all__ = [
     "DistressScore",
     "Alert",
     "Intervention",
+    "DispatchLog",
 ]

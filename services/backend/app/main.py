@@ -4,6 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import engine, Base
 from app.api.v1 import api_v1_router
+from app.routes.case import router as case_contract_router
+from app.routes.alerts import router as alerts_contract_router
+from app.routes.consent import router as consent_contract_router
+from app.api.v1.checkin import router as checkin_router
 from app.workers.checkin_worker import build_scheduler
 # Import models to ensure registered with Base
 import app.models  # noqa: F401
@@ -44,17 +48,26 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Configure CORS
+# Configure CORS with explicit allowed origins (F9 Fix)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include API v1 router
+# 1. Mount contract routes directly at root (/v1/...)
+app.include_router(case_contract_router)
+app.include_router(alerts_contract_router)
+app.include_router(consent_contract_router)
+
+# 2. Mount checkin status at root (/checkin/status/{id}) as required by verdict test
+app.include_router(checkin_router)
+
+# 3. Mount full API v1 routers (/api/v1/...)
 app.include_router(api_v1_router, prefix=settings.API_V1_STR)
+app.include_router(api_v1_router, prefix="/v1")  # Alias /v1 prefix for backwards compatibility
 
 @app.get("/")
 async def root():
