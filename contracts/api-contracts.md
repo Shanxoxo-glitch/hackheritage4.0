@@ -30,7 +30,7 @@ Request  `{"text": str(1..4000), "interaction_id"?: str, "language_hint"?: str, 
                 "probs": {"LOW": 0.02, "MODERATE": 0.10, "HIGH": 0.88},
                 "confidence": 0.88, "entropy": 0.21, "calibrated": true, "model_version": "distress_v3"},
   "threat":    {"threat_flag": true, "prob": 0.99, "raw_prob": 0.66, "confidence": 0.99, "entropy": 0.05,
-                "calibrated": true, "model_version": "threat_v7"},
+                "calibrated": true, "model_version": "threat_contrastive_v1"},
   "flags": ["threat_without_expressed_distress"], "latency_ms": 23
 }
 ```

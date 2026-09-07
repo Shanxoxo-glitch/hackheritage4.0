@@ -18,7 +18,9 @@ SCHEMA_VERSION = "1.0"          # contracts #1-3 in contracts/api-contracts.md
 
 MODELS_DIR = Path(os.environ.get("SCORING_MODELS_DIR", REPO_ROOT / "models"))
 SENTIMENT_MODEL_DIR = Path(os.environ.get("SCORING_SENTIMENT_MODEL", MODELS_DIR / "distress_v3"))
-THREAT_MODEL_DIR = Path(os.environ.get("SCORING_THREAT_MODEL", MODELS_DIR / "threat_v7"))
+_THREAT_CANDIDATES = [MODELS_DIR / "threat_contrastive_v1", MODELS_DIR / "threat_v7"]   # served, then fallback
+THREAT_MODEL_DIR = Path(os.environ.get("SCORING_THREAT_MODEL") or
+                        next((p for p in _THREAT_CANDIDATES if p.exists()), _THREAT_CANDIDATES[0]))
 VOICE_MODEL_PATH = Path(os.environ.get("SCORING_VOICE_MODEL", MODELS_DIR / "voice_stress_ravdess.joblib"))
 
 HF_REPO = os.environ.get("SCORING_HF_REPO", "Shota2811/ps26094-signals")

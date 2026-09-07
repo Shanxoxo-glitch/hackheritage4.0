@@ -5,7 +5,7 @@ Three raw perception signals as one deterministic, versioned service:
 | Signal | Model | Route (contract) | Held-out result |
 |---|---|---|---|
 | **sentiment** (distress level LOW / MODERATE / HIGH) | MuRIL `distress_v3` + temperature calibration | `POST /v1/signals/text` (#1) | macro-F1 **0.907** (54 hand-written EN/Hinglish), adversarial 34/37 |
-| **threat** (intimidation / coercion) | MuRIL `threat_v7` + temperature calibration | `POST /v1/signals/text` (#1), `POST /v1/signals/threat` (#3) | F1 **0.960**, ROC-AUC 0.997, 0 false positives; adversarial 50/51 |
+| **threat** (intimidation / coercion) | MuRIL `threat_contrastive_v1` (CE + SupCon) + temperature calibration; `threat_v7` fallback | `POST /v1/signals/text` (#1), `POST /v1/signals/threat` (#3) | F1 **0.974**, ROC-AUC 0.998, recall 0.974; adversarial 50/51 (V7 baseline: F1 0.960, recall 0.923) |
 | **voice** (stress from audio) | librosa 89-dim → LightGBM `voice_stress_ravdess` | `POST /v1/signals/voice` (#2) | speaker-independent 6-fold CV: acc **75.2 %**, AUC 0.82 |
 
 Field names are frozen in [`contracts/api-contracts.md`](../../contracts/api-contracts.md) (section "Scoring service
@@ -26,7 +26,7 @@ app/
   tree_eval.py       the numpy tree evaluator (bit-exact vs LightGBM, verified at train time)
 training/
   train_sentiment.py         HF Trainer, muril-base-cased, per-language F1 -> artifacts/signal_sentiment_f1.json
-  train_threat.py            same encoder; --objective ce (served V7) | contrastive (CE + SupCon on [CLS])
+  train_threat.py            same encoder; --objective ce (V7 baseline) | contrastive (CE + SupCon on [CLS], served)
   train_voice.py             RAVDESS -> LightGBM; by-actor split + GroupKFold CV; --extra-features-csv for Indian-accent adaptation
   calibrate.py               temperature scaling -> <model>/calibration.json
   evaluate_text.py           generic held-out / challenge evaluator (per language, per category, wrong list)
@@ -69,7 +69,8 @@ Env: `SCORING_MODELS_DIR` `/models` · `SCORING_DEVICE` cpu|mps|cuda · `SCORING
 Not in git (`models/.gitignore`). Layout of `SCORING_MODELS_DIR` = layout of the HF repo:
 
 ```
-threat_v7/                 config.json model.safetensors tokenizer.json tokenizer_config.json calibration.json
+threat_contrastive_v1/     config.json model.safetensors tokenizer.json tokenizer_config.json calibration.json metrics.json
+threat_v7/                 same (fallback baseline; SCORING_THREAT_MODEL overrides the choice)
 distress_v3/               same + metrics.json
 voice_stress_ravdess.joblib   numpy tree bundle (feature order inside)   voice_metrics_ravdess.json
 ```
@@ -90,7 +91,7 @@ python training/calibrate.py --task distress --model ../../models/distress_v3 --
 
 python training/train_threat.py                                      # CE, the served V7 recipe
 python training/train_threat.py --objective contrastive --output ../../models/threat_contrastive_v1
-python training/calibrate.py --task threat --model ../../models/threat_v7 --val training/data/threat_v7_val.csv --test training/data/threat_v7_test.csv
+python training/calibrate.py --task threat --model ../../models/threat_contrastive_v1 --val training/data/threat_v7_val.csv --test training/data/threat_v7_test.csv
 
 bash   training/download_ravdess.sh                                  # 208 MB, Zenodo, CC BY-NC-SA 4.0
 python training/build_voice_features.py --source ravdess             # ~3 min
@@ -107,10 +108,12 @@ seeds are fixed, calibration is a stored scalar, voice inference is a determinis
 ## Known limits (say them before the judges do)
 
 * Text corpora are synthetic / hand-written prototypes (no public Indian caste-violence distress corpus exists);
-  threat V7 misses soft witness intimidation without an explicit consequence ("they asked me to forget what I saw").
-  The Indian Kanoon corpus builder + contrastive objective are the planned fix (target ≥ 2,500 rows).
-* Both MuRIL models were under-confident before calibration (raw P ≈ 0.65 on correct answers); temperature scaling
-  (T ≈ 0.13–0.14, fitted on 73–78 validation rows) fixes ECE but makes the few wrong answers confident, so the
+  the CE baseline (V7) missed soft witness intimidation without an explicit consequence ("they asked me to forget
+  what I saw"); the served contrastive checkpoint recovers those (witness_intimidation 7/7) at the cost of one
+  ambiguous false positive ("please think carefully before getting involved"). Differences are 1–2 sentences on a
+  78-row test set — the Indian Kanoon corpus builder (target ≥ 2,500 rows) is what makes them real.
+* All MuRIL models were under-confident before calibration (raw P ≈ 0.61–0.65 on correct answers); temperature scaling
+  (T ≈ 0.11–0.14, fitted on 73–78 validation rows; threat ECE 0.37 → 0.01) fixes ECE but makes the few wrong answers confident, so the
   responses expose `raw_prob` and `entropy` — route on entropy, not on the second decimal.
 * Voice: 75 % speaker-independent accuracy on *acted English* speech (RAVDESS); sad (63 %) and happy (58 %) are the
   confusions. Never ship Western emotional-speech corpora alone — `train_voice.py --extra-features-csv` is the
