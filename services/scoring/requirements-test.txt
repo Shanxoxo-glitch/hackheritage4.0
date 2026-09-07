@@ -1,0 +1,6 @@
+# contract tests only: NO torch, NO model download (CI: .github/workflows/ci.yml test-scoring)
+fastapi>=0.110
+httpx
+pydantic>=2
+numpy
+pytest

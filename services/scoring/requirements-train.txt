@@ -1,0 +1,11 @@
+# training / evaluation env (Kaggle or local venv):  pip install -r services/scoring/requirements-train.txt
+-r requirements.txt
+pandas
+scikit-learn
+scipy
+datasets
+accelerate
+lightgbm
+mlflow>=2.10
+tqdm
+matplotlib

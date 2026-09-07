@@ -39,11 +39,35 @@ services:
       - DATABASE_URL=postgresql+asyncpg://sih_user:sih_password@postgres:5432/sih_db
       - REDIS_URL=redis://redis:6379/0
       - TWILIO_MOCK_MODE=true
+      - SCORING_URL=http://scoring:8100
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
+
+  scoring:
+    build:
+      context: ./services/scoring
+    container_name: sih-scoring
+    ports:
+      - "8100:8100"
+    environment:
+      - SCORING_MODELS_DIR=/models
+      - SCORING_DEVICE=cpu
+      - SCORING_WARM_ON_START=1
+      - SCORING_HF_REPO=Shota2811/ps26094-signals
+      - SCORING_HF_AUTO_DOWNLOAD=${SCORING_HF_AUTO_DOWNLOAD:-0}
+      - HF_TOKEN=${HF_TOKEN:-}
+    volumes:
+      - ./models:/models
+    mem_limit: 2500m
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8100/healthz || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 90s
 
 volumes:
   pgdata:

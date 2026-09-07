@@ -1,0 +1,5 @@
+# Model weights are NOT versioned in git. They live on HF Hub (Shota2811/ps26094-signals, private)
+# or are bind-mounted into the scoring container as /models (see docker-compose.yml).
+*
+!.gitignore
+!REGISTRY.md

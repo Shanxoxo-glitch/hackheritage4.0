@@ -1,0 +1,354 @@
+id,text,label,label_name,language,source,group
+118,I'm managing the case without any trouble.,0,LOW,english,templated,tpl_english_0_6
+427,Har court visit ke baad thak jaata hoon.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_21
+99,Kahin safe nahi lagta aur kuch kaam nahi aa raha.,2,HIGH,hinglish,templated,tpl_hinglish_2_7
+41,Kaam aur ghar dono theek hain.,0,LOW,hinglish,templated,tpl_hinglish_0_2
+174,"I can't face the hearing, I feel like collapsing.",2,HIGH,english,handwritten,hw_english_2_13
+8,"Notice aane ke baad se, tension rehti hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_4
+110,I finished my work early today and rested.,0,LOW,english,handwritten,hw_english_0_46
+385,"Ab aur nahi ho raha mujhse, main toot gaya hoon.",2,HIGH,hinglish,handwritten,hw_hinglish_2_1
+444,I feel supported by the counsellor and the lawyer.,0,LOW,english,handwritten,hw_english_0_48
+24,"Har din pehle se bura hai, main bikhar raha hoon.",2,HIGH,hinglish,handwritten,hw_hinglish_2_26
+68,"Compensation form bhar diya, ab wait hai.",0,LOW,hinglish,handwritten,hw_hinglish_0_13
+72,"Ghar pe safe feel karta hoon, routine normal hai.",0,LOW,hinglish,handwritten,hw_hinglish_0_24
+25,I've been more irritable than usual with my family.,1,MODERATE,english,handwritten,hw_english_1_14
+87,Aaj tak neend aur khana dono theek hai.,0,LOW,hinglish,templated,tpl_hinglish_0_3
+460,Lawyer ka phone aata hai toh nervous ho jaata hoon.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_4
+180,I don't know how much longer I can bear this.,2,HIGH,english,handwritten,hw_english_2_49
+368,I worry about my family's reaction to the hearing.,1,MODERATE,english,handwritten,hw_english_1_38
+467,Bilkul neend nahi aati.,2,HIGH,hinglish,templated,tpl_hinglish_2_0
+439,I'm so scared I've stopped sending my children to school.,2,HIGH,english,handwritten,hw_english_2_9
+275,"Delay ki wajah se, neend thodi kam ho gayi hai, par manage ho raha hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_2
+43,I keep thinking about the hearing and it's hard to relax.,1,MODERATE,english,handwritten,hw_english_1_0
+193,I can't sleep at all and I feel I can't go on.,2,HIGH,english,templated,tpl_english_2_0
+290,"Before the hearing, I've been sleeping a little less, but my routine is mostly okay.",1,MODERATE,english,templated,tpl_english_1_2
+17,"Sab theek hai, koi problem nahi.",0,LOW,hinglish,handwritten,hw_hinglish_0_0
+97,I'm not sure I'm ready for the cross-examination.,1,MODERATE,english,handwritten,hw_english_1_42
+158,Raat ko kabhi kabhi jaagta rehta hoon ki kya hoga.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_12
+363,Date postpone hone ke baad se mood low hai.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_17
+394,"Before the hearing, I feel nervous, but I'm coping.",1,MODERATE,english,templated,tpl_english_1_1
+231,Case ki wajah se kaam mein dhyan bhatak jaata hai.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_22
+57,Delay se thoda irritation hai par din pe asar nahi.,0,LOW,hinglish,handwritten,hw_hinglish_0_27
+323,Paperwork ka sochke sar dard hone lagta hai.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_25
+62,Kuen tak jaane mein bhi ab bahut darr lagta hai.,2,HIGH,hinglish,handwritten,hw_hinglish_2_18
+449,Is hafte case bina dikkat ke manage ho raha hai.,0,LOW,hinglish,templated,tpl_hinglish_0_6
+116,"Lawyer ne sab samjha diya, ab clear hai.",0,LOW,hinglish,handwritten,hw_hinglish_0_2
+242,"Likhte likhte haath kaanp rahe hain, itna darr hai.",2,HIGH,hinglish,handwritten,hw_hinglish_2_12
+178,I've been vomiting from anxiety before every court date.,2,HIGH,english,handwritten,hw_english_2_47
+400,"I wish this would all just end, I can't take it.",2,HIGH,english,handwritten,hw_english_2_10
+12,"Since the last call, work and home are both okay.",0,LOW,english,templated,tpl_english_0_2
+146,Main case ko lekar tension mein nahi hoon.,0,LOW,hinglish,handwritten,hw_hinglish_0_5
+45,"I'm fine, thank you for checking.",0,LOW,english,handwritten,hw_english_0_39
+3,"Hearing se pehle, chinta ho rahi hai, phir bhi din nikal jaata hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_0
+103,I've been feeling nervous and it's affecting my appetite a little.,1,MODERATE,english,handwritten,hw_english_1_50
+345,I feel like giving up and I can't go to work.,2,HIGH,english,templated,tpl_english_2_9
+337,Update from my side: I'm managing the case without any trouble.,0,LOW,english,templated,tpl_english_0_6
+420,Lagta hai doob raha hoon aur koi bachane nahi aayega.,2,HIGH,hinglish,handwritten,hw_hinglish_2_29
+454,"Hearing se pehle, nervous lag raha hai, par routine theek hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_1
+150,"There's nothing to report, things are quiet.",0,LOW,english,handwritten,hw_english_0_29
+113,I feel anxious but I know I have support.,1,MODERATE,english,handwritten,hw_english_1_41
+447,Roz raat incident ke bure sapne aate hain.,2,HIGH,hinglish,handwritten,hw_hinglish_2_17
+137,"Delay ki wajah se, nervous lag raha hai, phir bhi din nikal jaata hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_1
+278,Bilkul neend nahi aati aur kisi ka saamna nahi kar sakta.,2,HIGH,hinglish,templated,tpl_hinglish_2_0
+263,Update from my side: nothing has changed.,0,LOW,english,templated,tpl_english_0_4
+165,"Since the notice came, I'm a bit anxious.",1,MODERATE,english,templated,tpl_english_1_6
+153,I'm okay. Just checking in as scheduled.,0,LOW,english,handwritten,hw_english_0_26
+419,"With the date coming up, I've been worried, though I can get through the day.",1,MODERATE,english,templated,tpl_english_1_0
+54,I'm having panic attacks and I can't take care of my children.,2,HIGH,english,templated,tpl_english_2_4
+245,I've been sleeping a bit less since the notice came.,1,MODERATE,english,handwritten,hw_english_1_2
+60,"I'm handling it, but I feel drained after each court visit.",1,MODERATE,english,handwritten,hw_english_1_23
+69,Roz khet jaa raha hoon pehle jaisa.,0,LOW,hinglish,handwritten,hw_hinglish_0_17
+392,I don't feel safe anywhere and I can't face anyone.,2,HIGH,english,templated,tpl_english_2_7
+430,The uncertainty is getting on my nerves.,1,MODERATE,english,handwritten,hw_english_1_44
+194,"I'm having a breakdown, I need help right now.",2,HIGH,english,handwritten,hw_english_2_51
+176,"This month, I've been sleeping a little less, but I'm coping.",1,MODERATE,english,templated,tpl_english_1_2
+207,I keep replaying the incident in my head at night.,1,MODERATE,english,handwritten,hw_english_1_49
+124,Case ko lekar abhi koi pressure nahi hai.,0,LOW,hinglish,handwritten,hw_hinglish_0_31
+302,"Date paas aa rahi hai toh, focus karna mushkil hai, par manage ho raha hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_3
+266,Work and home are both okay.,0,LOW,english,templated,tpl_english_0_2
+46,Pichli baat ke baad se kuch badla nahi hai.,0,LOW,hinglish,templated,tpl_hinglish_0_4
+65,"Please help me, I don't know what to do anymore.",2,HIGH,english,handwritten,hw_english_2_54
+431,Sab theek hai.,0,LOW,hinglish,templated,tpl_hinglish_0_0
+94,"Hearing se pehle, mood low rehta hai, phir bhi din nikal jaata hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_5
+76,Thoda stress hai par routine chal raha hai.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_30
+66,"This week, my routine is the same as usual.",0,LOW,english,templated,tpl_english_0_7
+428,Is hafte neend aur khana dono theek hai.,0,LOW,hinglish,templated,tpl_hinglish_0_3
+13,I can't stop shaking and nothing helps.,2,HIGH,english,templated,tpl_english_2_8
+147,I worry that I'll forget details when I testify.,1,MODERATE,english,handwritten,hw_english_1_20
+440,Sab hopeless lagta hai aur kuch kaam nahi aa raha.,2,HIGH,hinglish,templated,tpl_hinglish_2_3
+15,The paperwork is tedious but I'm handling it.,0,LOW,english,handwritten,hw_english_0_30
+220,"Hearing kaise jayegi, iski chinta hai.",1,MODERATE,hinglish,handwritten,hw_hinglish_1_5
+18,I can't stop shaking and I don't know what to do.,2,HIGH,english,templated,tpl_english_2_8
+171,I'm coping but I'd like to talk to the counsellor soon.,1,MODERATE,english,handwritten,hw_english_1_51
+443,"Kaam normal chal raha hai, ghar pe bhi sab theek.",0,LOW,hinglish,handwritten,hw_hinglish_0_3
+406,My lawyer explained the process and it makes sense to me.,0,LOW,english,handwritten,hw_english_0_1
+456,I can't stop shaking and I can't face anyone.,2,HIGH,english,templated,tpl_english_2_8
+372,I'm having panic attacks and I can't go to work.,2,HIGH,english,templated,tpl_english_2_4
+455,"Since the last call, I'm doing fine.",0,LOW,english,templated,tpl_english_0_1
+432,Lagta hai toot raha hoon aur kuch kaam nahi aa raha.,2,HIGH,hinglish,templated,tpl_hinglish_2_6
+470,Sab hopeless lagta hai aur bachon ka dhyan nahi rakh pa raha.,2,HIGH,hinglish,templated,tpl_hinglish_2_3
+369,Sab hopeless lagta hai aur kisi ka saamna nahi kar sakta.,2,HIGH,hinglish,templated,tpl_hinglish_2_3
+271,I feel there is no point in anything anymore.,2,HIGH,english,handwritten,hw_english_2_43
+254,"Before the hearing, I'm a bit anxious.",1,MODERATE,english,templated,tpl_english_1_6
+288,Routine pehle jaisa hi hai.,0,LOW,hinglish,templated,tpl_hinglish_0_7
+203,"Since the notice came, I've been worried, though I can get through the day.",1,MODERATE,english,templated,tpl_english_1_0
+224,Update from my side: my routine is the same as usual.,0,LOW,english,templated,tpl_english_0_7
+283,I feel like I'm breaking down and I feel I can't go on.,2,HIGH,english,templated,tpl_english_2_6
+186,Bachon ki padhai pe dhyan de raha hoon is hafte.,0,LOW,hinglish,handwritten,hw_hinglish_0_28
+131,I feel nervous whenever the lawyer calls.,1,MODERATE,english,handwritten,hw_english_1_4
+40,I just wanted to confirm the date of the next hearing.,0,LOW,english,handwritten,hw_english_0_18
+374,Update from my side: things are normal.,0,LOW,english,templated,tpl_english_0_0
+173,"Aaj ka din accha tha, shaam ko doston se mila.",0,LOW,hinglish,handwritten,hw_hinglish_0_12
+67,Is hafte sab theek hai.,0,LOW,hinglish,templated,tpl_hinglish_0_0
+273,I'm in constant dread from morning until night.,2,HIGH,english,handwritten,hw_english_2_39
+119,"Last court visit ke baad, chinta ho rahi hai, par routine theek hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_0
+478,"This month, I'm a bit anxious, though I can get through the day.",1,MODERATE,english,templated,tpl_english_1_6
+250,"Because of the delay, I feel uneasy.",1,MODERATE,english,templated,tpl_english_1_7
+216,"Nothing new has happened this week, everything is normal.",0,LOW,english,handwritten,hw_english_0_6
+265,Bas update de raha hoon: sab theek hai.,0,LOW,hinglish,templated,tpl_hinglish_0_0
+223,My heart races every time I hear a vehicle outside.,2,HIGH,english,handwritten,hw_english_2_4
+373,Case slow chal raha hai par mujhe koi jaldi nahi.,0,LOW,hinglish,handwritten,hw_hinglish_0_9
+448,I have a copy of the FIR and all my receipts in one folder.,0,LOW,english,handwritten,hw_english_0_21
+129,Panic attack jaise hote hain.,2,HIGH,hinglish,templated,tpl_hinglish_2_4
+44,I can't remember the last time I felt okay.,2,HIGH,english,handwritten,hw_english_2_40
+459,Aaj tak kaam aur ghar dono theek hain.,0,LOW,hinglish,templated,tpl_hinglish_0_2
+296,Darr itna hai ki saans theek se nahi aati.,2,HIGH,hinglish,handwritten,hw_hinglish_2_23
+211,I'm sleeping and eating well.,0,LOW,english,templated,tpl_english_0_3
+402,"Bilkul thak gaya hoon, ab kuch sambhal nahi raha.",2,HIGH,hinglish,handwritten,hw_hinglish_2_24
+378,I can't sleep at all and I can't face anyone.,2,HIGH,english,templated,tpl_english_2_0
+64,"I felt shaky after the last hearing, but I'm slowly settling.",1,MODERATE,english,handwritten,hw_english_1_47
+219,Ghar walon pe zyada chidh raha hoon aajkal.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_13
+14,"This week, I'm managing the case without any trouble.",0,LOW,english,templated,tpl_english_0_6
+208,"This month, it's been hard to focus, but I'm coping.",1,MODERATE,english,templated,tpl_english_1_3
+335,"Since the notice came, I feel nervous, but my routine is mostly okay.",1,MODERATE,english,templated,tpl_english_1_1
+201,Pichli baat ke baad se kaam aur ghar dono theek hain.,0,LOW,hinglish,templated,tpl_hinglish_0_2
+177,I haven't slept in three nights because of the fear.,2,HIGH,english,handwritten,hw_english_2_15
+379,"Is mahine, focus karna mushkil hai, par routine theek hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_3
+261,I feel worthless and I don't want to see anyone.,2,HIGH,english,handwritten,hw_english_2_22
+132,Bas update de raha hoon: main theek hoon.,0,LOW,hinglish,templated,tpl_hinglish_0_1
+215,"Notice aane ke baad se, chinta ho rahi hai, par kaam pe jaa raha hoon.",1,MODERATE,hinglish,templated,tpl_hinglish_1_0
+213,I feel restless most evenings.,1,MODERATE,english,handwritten,hw_english_1_21
+445,"Since the notice came, I've been feeling low.",1,MODERATE,english,templated,tpl_english_1_5
+411,"I don't feel safe anywhere, not even at home.",2,HIGH,english,handwritten,hw_english_2_25
+233,"This week, I'm sleeping and eating well.",0,LOW,english,templated,tpl_english_0_3
+167,Things are normal.,0,LOW,english,templated,tpl_english_0_0
+80,"Main theek hoon, bas check-in kar raha tha.",0,LOW,hinglish,handwritten,hw_hinglish_0_20
+315,"As of today, I'm sleeping and eating well.",0,LOW,english,templated,tpl_english_0_3
+226,"Before the hearing, it's been hard to focus, but I'm managing.",1,MODERATE,english,templated,tpl_english_1_3
+377,The weather has been nice and I've been keeping busy.,0,LOW,english,handwritten,hw_english_0_40
+360,"I can't concentrate on anything, my mind is in pieces.",2,HIGH,english,handwritten,hw_english_2_50
+55,Bas update de raha hoon: case bina dikkat ke manage ho raha hai.,0,LOW,hinglish,templated,tpl_hinglish_0_6
+2,I'm having panic attacks.,2,HIGH,english,templated,tpl_english_2_4
+159,Sab chhod dene ka man karta hai aur kuch kaam nahi aa raha.,2,HIGH,hinglish,templated,tpl_hinglish_2_9
+423,Kuch badla nahi hai.,0,LOW,hinglish,templated,tpl_hinglish_0_4
+331,"Is mahine, tension rehti hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_4
+136,"Hearing ka saamna nahi kar sakta, lagta hai gir jaunga.",2,HIGH,hinglish,handwritten,hw_hinglish_2_13
+117,"Cross-examination ke liye ready hoon ya nahi, pata nahi.",1,MODERATE,hinglish,handwritten,hw_hinglish_1_31
+166,"Date paas aa rahi hai toh, thodi ghabrahat hai, par sambhal raha hoon.",1,MODERATE,hinglish,templated,tpl_hinglish_1_6
+140,Things have settled down and I feel at peace.,0,LOW,english,handwritten,hw_english_0_45
+135,"I'm exhausted, I can't cope with any of this anymore.",2,HIGH,english,handwritten,hw_english_2_24
+311,"Hearing se pehle, nervous lag raha hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_1
+462,Is hafte kaam pe dhyan lagana mushkil raha.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_6
+433,Main theek hoon.,0,LOW,hinglish,templated,tpl_hinglish_0_1
+134,"My brother is coming with me to the court, so I feel comfortable.",0,LOW,english,handwritten,hw_english_0_23
+476,I feel a knot in my stomach when I think about the hearing.,1,MODERATE,english,handwritten,hw_english_1_16
+50,"Pichle mahine ghabrahat thi, ab kaafi behtar hoon.",0,LOW,hinglish,handwritten,hw_hinglish_0_8
+352,I understand the process may take time and I'm patient.,0,LOW,english,handwritten,hw_english_0_47
+320,The compensation form was submitted and I'm just waiting now.,0,LOW,english,handwritten,hw_english_0_12
+361,"Kahin bhi safe nahi lagta, ghar mein bhi nahi.",2,HIGH,hinglish,handwritten,hw_hinglish_2_25
+289,Rona band nahi hota.,2,HIGH,hinglish,templated,tpl_hinglish_2_2
+28,Aaj tak case bina dikkat ke manage ho raha hai.,0,LOW,hinglish,templated,tpl_hinglish_0_6
+318,I'm having panic attacks almost every day.,2,HIGH,english,handwritten,hw_english_2_6
+333,"Court ki dates ki wajah se kaam chhoota, paison ki chinta hai.",1,MODERATE,hinglish,handwritten,hw_hinglish_1_33
+52,"Since the notice came, I'm a bit anxious, but I'm coping.",1,MODERATE,english,templated,tpl_english_1_6
+48,Statement dene ko lekar confident hoon.,0,LOW,hinglish,handwritten,hw_hinglish_0_21
+339,"Notice aane ke baad se, thodi ghabrahat hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_6
+179,I'm not sleeping as well as I used to.,1,MODERATE,english,handwritten,hw_english_1_19
+342,I feel like giving up and I feel I can't go on.,2,HIGH,english,templated,tpl_english_2_9
+409,Life is going on as usual.,0,LOW,english,handwritten,hw_english_0_49
+267,"Last court visit ke baad, neend thodi kam ho gayi hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_2
+128,Aaj tak kuch badla nahi hai.,0,LOW,hinglish,templated,tpl_hinglish_0_4
+210,"Since the last call, I'm managing the case without any trouble.",0,LOW,english,templated,tpl_english_0_6
+4,Just checking in: I'm doing fine.,0,LOW,english,templated,tpl_english_0_1
+202,"Since the notice came, I've been sleeping a little less, but I'm still going to work.",1,MODERATE,english,templated,tpl_english_1_2
+310,My sleep is disturbed a couple of nights a week.,1,MODERATE,english,handwritten,hw_english_1_43
+105,I'm so overwhelmed I can't even get out of bed.,2,HIGH,english,handwritten,hw_english_2_29
+353,My mind is at ease after talking to the lawyer.,0,LOW,english,handwritten,hw_english_0_32
+145,I feel like I'm breaking down and I can't take care of my children.,2,HIGH,english,templated,tpl_english_2_6
+287,"This month, I've been sleeping a little less, but my routine is mostly okay.",1,MODERATE,english,templated,tpl_english_1_2
+205,"The delay is annoying, but it doesn't affect my day.",0,LOW,english,handwritten,hw_english_0_36
+143,"Since the notice came, I feel uneasy, but my routine is mostly okay.",1,MODERATE,english,templated,tpl_english_1_7
+426,"As of today, work and home are both okay.",0,LOW,english,templated,tpl_english_0_2
+314,"Ghar wale saath hain, main theek hoon.",0,LOW,hinglish,handwritten,hw_hinglish_0_10
+417,Kahin safe nahi lagta aur lagta hai ab aur nahi.,2,HIGH,hinglish,templated,tpl_hinglish_2_7
+452,I can't stop shaking.,2,HIGH,english,templated,tpl_english_2_8
+230,"Hearing se pehle, mood low rehta hai, par manage ho raha hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_5
+401,Pichli baat ke baad se case ko lekar main shaant hoon.,0,LOW,hinglish,templated,tpl_hinglish_0_5
+343,I feel uneasy about seeing the other party in court.,1,MODERATE,english,handwritten,hw_english_1_10
+96,I don't feel safe anywhere and I can't go to work.,2,HIGH,english,templated,tpl_english_2_7
+185,"Date paas aa rahi hai toh, chinta ho rahi hai, par sambhal raha hoon.",1,MODERATE,hinglish,templated,tpl_hinglish_1_0
+138,I feel calm about the next hearing.,0,LOW,english,handwritten,hw_english_0_5
+189,Case bina dikkat ke manage ho raha hai.,0,LOW,hinglish,templated,tpl_hinglish_0_6
+316,"Sehat theek hai, mood bhi normal.",0,LOW,hinglish,handwritten,hw_hinglish_0_30
+251,It's been hard to concentrate at work this week.,1,MODERATE,english,handwritten,hw_english_1_6
+51,"Date paas aa rahi hai toh, thodi ghabrahat hai, phir bhi din nikal jaata hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_6
+53,I can't eat or sleep and I can't go to work.,2,HIGH,english,templated,tpl_english_2_5
+187,"Because of the delay, I've been feeling low, though I can get through the day.",1,MODERATE,english,templated,tpl_english_1_5
+149,Teen raat se neend nahi aayi darr ke maare.,2,HIGH,hinglish,handwritten,hw_hinglish_2_15
+276,"As of today, nothing has changed.",0,LOW,english,templated,tpl_english_0_4
+313,I feel like giving up.,2,HIGH,english,templated,tpl_english_2_9
+362,Just checking in: my routine is the same as usual.,0,LOW,english,templated,tpl_english_0_7
+354,"Har waqt rona aata hai, control nahi hota.",2,HIGH,hinglish,handwritten,hw_hinglish_2_32
+307,"It's stressful, but I'm trying to stay positive.",1,MODERATE,english,handwritten,hw_english_1_17
+303,Bas update de raha hoon: case ko lekar main shaant hoon.,0,LOW,hinglish,templated,tpl_hinglish_0_5
+403,I'm worried about the cost of travelling to court again.,1,MODERATE,english,handwritten,hw_english_1_15
+256,Ummeed bilkul khatam ho gayi hai.,2,HIGH,hinglish,handwritten,hw_hinglish_2_27
+436,"Before the hearing, I feel uneasy, but I'm still going to work.",1,MODERATE,english,templated,tpl_english_1_7
+214,"Kai din se theek se khaya nahi, rona band nahi hota.",2,HIGH,hinglish,handwritten,hw_hinglish_2_3
+300,Pichli baat ke baad se neend aur khana dono theek hai.,0,LOW,hinglish,templated,tpl_hinglish_0_3
+306,"Is mahine, neend thodi kam ho gayi hai, phir bhi din nikal jaata hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_2
+415,I'm a little anxious about giving my statement next week.,1,MODERATE,english,handwritten,hw_english_1_1
+27,"Before the hearing, I feel nervous, but my routine is mostly okay.",1,MODERATE,english,templated,tpl_english_1_1
+236,Is hafte kaam aur ghar dono theek hain.,0,LOW,hinglish,templated,tpl_hinglish_0_2
+348,I get tense every time I have to go to the police station.,1,MODERATE,english,handwritten,hw_english_1_8
+416,Bas update de raha hoon: kuch badla nahi hai.,0,LOW,hinglish,templated,tpl_hinglish_0_4
+225,I understand the next steps and I'm not worried.,0,LOW,english,handwritten,hw_english_0_10
+359,"Notice aane ke baad se, mood low rehta hai, par sambhal raha hoon.",1,MODERATE,hinglish,templated,tpl_hinglish_1_5
+442,"Wait karte karte thak gaya hoon, anxiety hoti hai.",1,MODERATE,hinglish,handwritten,hw_hinglish_1_24
+29,Update from my side: I'm doing fine.,0,LOW,english,templated,tpl_english_0_1
+30,"The hearing is on the 14th, and I have my documents ready.",0,LOW,english,handwritten,hw_english_0_0
+301,I'm at my breaking point and I have no one to turn to.,2,HIGH,english,handwritten,hw_english_2_44
+125,I got the notice and I know what to do next.,0,LOW,english,handwritten,hw_english_0_31
+324,"The waiting makes me anxious, especially before each date.",1,MODERATE,english,handwritten,hw_english_1_52
+157,I'm focused on my children's school work this week.,0,LOW,english,handwritten,hw_english_0_37
+294,"Some days I feel like giving up on the case, but then I carry on.",1,MODERATE,english,handwritten,hw_english_1_46
+351,"Neend theek aa rahi hai, khana bhi theek.",0,LOW,hinglish,handwritten,hw_hinglish_0_6
+312,I don't feel any pressure about the case at present.,0,LOW,english,handwritten,hw_english_0_44
+123,"Is mahine, focus karna mushkil hai, phir bhi din nikal jaata hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_3
+291,I've been thinking that my family would be better off without me.,2,HIGH,english,handwritten,hw_english_2_53
+148,Is hafte kuch badla nahi hai.,0,LOW,hinglish,templated,tpl_hinglish_0_4
+133,I feel like I can't go on with this anymore.,2,HIGH,english,handwritten,hw_english_2_1
+247,Sab control mein hai mere taraf se.,0,LOW,hinglish,handwritten,hw_hinglish_0_14
+309,Pichli baat ke baad se sab theek hai.,0,LOW,hinglish,templated,tpl_hinglish_0_0
+5,"Date paas aa rahi hai toh, tension rehti hai, par sambhal raha hoon.",1,MODERATE,hinglish,templated,tpl_hinglish_1_4
+71,Is hafte routine pehle jaisa hi hai.,0,LOW,hinglish,templated,tpl_hinglish_0_7
+168,"Khana chhod diya, har waqt jee machalta hai.",2,HIGH,hinglish,handwritten,hw_hinglish_2_20
+370,The counsellor called to check in and I told her I'm doing alright.,0,LOW,english,handwritten,hw_english_0_8
+221,Hafte mein do-teen raat neend kharab hoti hai.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_32
+279,"As of today, my routine is the same as usual.",0,LOW,english,templated,tpl_english_0_7
+81,I feel like giving up and nothing helps.,2,HIGH,english,templated,tpl_english_2_9
+92,I'm scared to sleep because of the nightmares.,2,HIGH,english,handwritten,hw_english_2_42
+274,Concentrating on anything has been harder this month.,1,MODERATE,english,handwritten,hw_english_1_39
+463,"This month, it's been hard to focus.",1,MODERATE,english,templated,tpl_english_1_3
+386,I've lost all hope that things will ever get better.,2,HIGH,english,handwritten,hw_english_2_27
+326,Sab chhod dene ka man karta hai aur lagta hai ab aur nahi.,2,HIGH,hinglish,templated,tpl_hinglish_2_9
+175,Agle step se thoda darr lagta hai par jaunga.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_23
+295,I keep having nightmares about the incident every night.,2,HIGH,english,handwritten,hw_english_2_17
+391,Bilkul neend nahi aati aur samajh nahi aata kya karun.,2,HIGH,hinglish,templated,tpl_hinglish_2_0
+355,Is hafte main theek hoon.,0,LOW,hinglish,templated,tpl_hinglish_0_1
+405,"Date paas aa rahi hai toh, neend thodi kam ho gayi hai, par routine theek hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_2
+376,Bhookh thodi kam ho gayi hai aajkal.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_11
+142,Rona band nahi hota aur samajh nahi aata kya karun.,2,HIGH,hinglish,templated,tpl_hinglish_2_2
+39,Rona band nahi hota aur kuch kaam nahi aa raha.,2,HIGH,hinglish,templated,tpl_hinglish_2_2
+357,I don't feel safe anywhere and I feel I can't go on.,2,HIGH,english,templated,tpl_english_2_7
+115,Lagta hai toot raha hoon.,2,HIGH,hinglish,templated,tpl_hinglish_2_6
+102,"Hearing se pehle, thodi ghabrahat hai, phir bhi din nikal jaata hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_6
+16,"The case is on my mind a lot, but I'm still going to work.",1,MODERATE,english,handwritten,hw_english_1_3
+169,I feel like I'm losing my mind.,2,HIGH,english,handwritten,hw_english_2_19
+19,I feel safe at home and my routine is normal.,0,LOW,english,handwritten,hw_english_0_33
+107,Bilkul neend nahi aati aur kuch kaam nahi aa raha.,2,HIGH,hinglish,templated,tpl_hinglish_2_0
+469,"I feel like giving up on everything, including myself.",2,HIGH,english,handwritten,hw_english_2_34
+209,I feel so much fear that I've stopped going to work entirely.,2,HIGH,english,handwritten,hw_english_2_45
+120,The officer was polite and explained everything clearly.,0,LOW,english,handwritten,hw_english_0_24
+59,Sab chhod dene ka man karta hai aur kisi ka saamna nahi kar sakta.,2,HIGH,hinglish,templated,tpl_hinglish_2_9
+384,Pichli baat ke baad se case bina dikkat ke manage ho raha hai.,0,LOW,hinglish,templated,tpl_hinglish_0_6
+249,"Honestly, the case is weighing on me more than I expected.",1,MODERATE,english,handwritten,hw_english_1_33
+282,"Since the notice came, I've been worried, but I'm coping.",1,MODERATE,english,templated,tpl_english_1_0
+151,Neend aur khana dono theek hai.,0,LOW,hinglish,templated,tpl_hinglish_0_3
+248,Lagta hai toot raha hoon aur lagta hai ab aur nahi.,2,HIGH,hinglish,templated,tpl_hinglish_2_6
+350,I'm crying all the time and I can't control it.,2,HIGH,english,handwritten,hw_english_2_35
+349,"Since the last call, things are normal.",0,LOW,english,templated,tpl_english_0_0
+106,"I'm shaking as I write this, I'm so afraid.",2,HIGH,english,handwritten,hw_english_2_12
+56,"Na taakat hai, na bhookh, na jeene ki ichha.",2,HIGH,hinglish,handwritten,hw_hinglish_2_31
+23,Case ke baare mein zyada sochta nahi ab.,0,LOW,hinglish,handwritten,hw_hinglish_0_15
+70,The pressure is crushing me and I feel I might break.,2,HIGH,english,handwritten,hw_english_2_38
+356,"I've stopped eating, I feel sick all the time.",2,HIGH,english,handwritten,hw_english_2_20
+304,I think about the incident sometimes and it makes me sad.,1,MODERATE,english,handwritten,hw_english_1_37
+182,Itna darr hai ki bachon ko school bhejna band kar diya.,2,HIGH,hinglish,handwritten,hw_hinglish_2_9
+240,Statement dene ko lekar thoda anxious hoon.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_1
+397,Stress hai par positive rehne ki koshish kar raha hoon.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_16
+414,"Because of the delay, I feel nervous, but I'm coping.",1,MODERATE,english,templated,tpl_english_1_1
+305,"As of today, I'm doing fine.",0,LOW,english,templated,tpl_english_0_1
+112,"Delay ki wajah se, mood low rehta hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_5
+286,My routine is the same as usual.,0,LOW,english,templated,tpl_english_0_7
+389,I can't stop crying and I don't know what to do.,2,HIGH,english,templated,tpl_english_2_2
+172,"After the last court visit, I've been feeling low, but I'm coping.",1,MODERATE,english,templated,tpl_english_1_5
+86,Pichli baat ke baad se main theek hoon.,0,LOW,hinglish,templated,tpl_hinglish_0_1
+101,"Before the hearing, I've been feeling low, but my routine is mostly okay.",1,MODERATE,english,templated,tpl_english_1_5
+407,I'm having panic attacks and I can't face anyone.,2,HIGH,english,templated,tpl_english_2_4
+217,"Since the notice came, I feel uneasy, but I'm still going to work.",1,MODERATE,english,templated,tpl_english_1_7
+457,"Because of the delay, it's been hard to focus, but my routine is mostly okay.",1,MODERATE,english,templated,tpl_english_1_3
+408,Panic attack jaise hote hain aur kisi ka saamna nahi kar sakta.,2,HIGH,hinglish,templated,tpl_hinglish_2_4
+268,I can't eat or sleep and I don't know what to do.,2,HIGH,english,templated,tpl_english_2_5
+61,Kahin safe nahi lagta.,2,HIGH,hinglish,templated,tpl_hinglish_2_7
+156,I've been feeling low since the last hearing was postponed.,1,MODERATE,english,handwritten,hw_english_1_18
+422,"I was nervous last month, but now I feel much better.",0,LOW,english,handwritten,hw_english_0_13
+114,I can't sleep at all and I don't know what to do.,2,HIGH,english,templated,tpl_english_2_0
+35,"Last court visit ke baad, nervous lag raha hai, par sambhal raha hoon.",1,MODERATE,hinglish,templated,tpl_hinglish_1_1
+237,Sab hopeless lagta hai.,2,HIGH,hinglish,templated,tpl_hinglish_2_3
+334,I have no complaints about how the case is going.,0,LOW,english,handwritten,hw_english_0_41
+257,"I'm managing, but the stress is getting to me some days.",1,MODERATE,english,handwritten,hw_english_1_7
+473,I'm not stressed about the case right now.,0,LOW,english,handwritten,hw_english_0_20
+341,"Kaam pe rona aa gaya, ghar aana pada.",2,HIGH,hinglish,handwritten,hw_hinglish_2_21
+418,I have started sleeping properly again.,0,LOW,english,handwritten,hw_english_0_52
+79,Pichli baat ke baad se routine pehle jaisa hi hai.,0,LOW,hinglish,templated,tpl_hinglish_0_7
+395,"Please meri madad karo, ab kuch samajh nahi aa raha.",2,HIGH,hinglish,handwritten,hw_hinglish_2_34
+255,I can't stop crying.,2,HIGH,english,templated,tpl_english_2_2
+269,I'm somewhat stressed but I'm still able to manage my routine.,1,MODERATE,english,handwritten,hw_english_1_35
+329,I was able to concentrate on my work all week.,0,LOW,english,handwritten,hw_english_0_51
+258,"Date paas aa rahi hai toh, tension rehti hai, par kaam pe jaa raha hoon.",1,MODERATE,hinglish,templated,tpl_hinglish_1_4
+192,Update from my side: work and home are both okay.,0,LOW,english,templated,tpl_english_0_2
+464,The delay is frustrating and it's starting to bother me.,1,MODERATE,english,handwritten,hw_english_1_9
+243,Notice aane ke baad se neend thodi kam ho gayi hai.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_2
+277,Is hafte case ko lekar main shaant hoon.,0,LOW,hinglish,templated,tpl_hinglish_0_5
+73,I can't stop shaking and my chest hurts from the anxiety.,2,HIGH,english,handwritten,hw_english_2_28
+465,"Since the notice came, I'm a bit anxious, but my routine is mostly okay.",1,MODERATE,english,templated,tpl_english_1_6
+441,"I can't work, I can't think, I can't do anything.",2,HIGH,english,handwritten,hw_english_2_7
+364,"Notice aane ke baad se, nervous lag raha hai, par manage ho raha hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_1
+451,"As of today, things are normal.",0,LOW,english,templated,tpl_english_0_0
+197,"After the last court visit, I've been worried, though I can get through the day.",1,MODERATE,english,templated,tpl_english_1_0
+7,Sochta hoon ki mere bina ghar walon ko behtar hoga.,2,HIGH,hinglish,handwritten,hw_hinglish_2_33
+366,Bas next date confirm karni thi.,0,LOW,hinglish,handwritten,hw_hinglish_0_7
+206,I feel like nobody can help me and I'm all alone.,2,HIGH,english,handwritten,hw_english_2_16
+34,I can't sleep at all and I can't go to work.,2,HIGH,english,templated,tpl_english_2_0
+477,"Since the last call, nothing has changed.",0,LOW,english,templated,tpl_english_0_4
+31,"Is mahine, tension rehti hai, phir bhi din nikal jaata hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_4
+259,I've been worried about what people in the village are saying.,1,MODERATE,english,handwritten,hw_english_1_32
+121,Work is keeping me occupied and I feel alright.,0,LOW,english,handwritten,hw_english_0_17
+244,"Things are fine at home, and work is going as usual.",0,LOW,english,handwritten,hw_english_0_2
+170,I can't stop crying and I can't go to work.,2,HIGH,english,templated,tpl_english_2_2
+218,Aaj tak case ko lekar main shaant hoon.,0,LOW,hinglish,templated,tpl_hinglish_0_5
+108,I've been going to the fields every day like before.,0,LOW,english,handwritten,hw_english_0_22
+382,I feel like I'm breaking down and nothing helps.,2,HIGH,english,templated,tpl_english_2_6
+466,"Sab settle ho gaya hai, shanti hai.",0,LOW,hinglish,handwritten,hw_hinglish_0_32
+280,"Before the hearing, I feel nervous, but I'm managing.",1,MODERATE,english,templated,tpl_english_1_1
+37,"This week, nothing has changed.",0,LOW,english,templated,tpl_english_0_4
+325,"Last court visit ke baad, mood low rehta hai, par sambhal raha hoon.",1,MODERATE,hinglish,templated,tpl_hinglish_1_5
+235,Nothing has changed.,0,LOW,english,templated,tpl_english_0_4
+371,Aaj tak routine pehle jaisa hi hai.,0,LOW,hinglish,templated,tpl_hinglish_0_7
+390,"Koi meri madad nahi kar sakta, main bilkul akela hoon.",2,HIGH,hinglish,handwritten,hw_hinglish_2_16
+93,Ghar se bahar nikalne mein bahut darr lagta hai.,2,HIGH,hinglish,handwritten,hw_hinglish_2_2
+160,I get a headache when I think about the paperwork.,1,MODERATE,english,handwritten,hw_english_1_28
+347,"Zyadatar theek hoon, par kuch din mushkil hote hain.",1,MODERATE,hinglish,handwritten,hw_hinglish_1_26
+98,I feel trapped and completely helpless.,2,HIGH,english,handwritten,hw_english_2_48
+429,Panic attack jaise hote hain aur lagta hai ab aur nahi.,2,HIGH,hinglish,templated,tpl_hinglish_2_4
+104,Sab chhod dene ka man karta hai aur samajh nahi aata kya karun.,2,HIGH,hinglish,templated,tpl_hinglish_2_9
+139,"I feel a bit scared about the next step, but I'll go.",1,MODERATE,english,handwritten,hw_english_1_26
+479,I can't eat or sleep.,2,HIGH,english,templated,tpl_english_2_5
+36,I'm tired of waiting and it's making me anxious.,1,MODERATE,english,handwritten,hw_english_1_27
+33,"Hearing se pehle, focus karna mushkil hai, par manage ho raha hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_3
+42,I feel completely hopeless about everything.,2,HIGH,english,handwritten,hw_english_2_5
+228,Kaam pe regular jaa raha hoon.,0,LOW,hinglish,handwritten,hw_hinglish_0_26
+270,"Since the last call, I'm sleeping and eating well.",0,LOW,english,templated,tpl_english_0_3
+468,Aaj tak sab theek hai.,0,LOW,hinglish,templated,tpl_hinglish_0_0
+212,"Aaj thana gaya tha, kaagaz jama ho gaye, koi dikkat nahi hui.",0,LOW,hinglish,handwritten,hw_hinglish_0_4

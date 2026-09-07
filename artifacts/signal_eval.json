@@ -1,0 +1,241 @@
+{
+  "generated_at_utc": "2026-09-07T08:38:41+00:00",
+  "schema_version": "1.0",
+  "signals": {
+    "sentiment": {
+      "model": "distress_v3",
+      "calibrated": true,
+      "temperature": 0.12722905894077133,
+      "test": {
+        "n": 54,
+        "accuracy": 0.9074074074074074,
+        "precision": 0.9106481481481481,
+        "recall": 0.9074074074074074,
+        "f1": 0.9071780759087261,
+        "confusion_matrix": [
+          [
+            17,
+            1,
+            0
+          ],
+          [
+            2,
+            15,
+            1
+          ],
+          [
+            1,
+            0,
+            17
+          ]
+        ],
+        "mean_confidence": 0.9391125584090197,
+        "per_class": {
+          "LOW": {
+            "precision": 0.85,
+            "recall": 0.9444444444444444,
+            "f1": 0.8947368421052632,
+            "n": 18
+          },
+          "MODERATE": {
+            "precision": 0.9375,
+            "recall": 0.8333333333333334,
+            "f1": 0.8823529411764706,
+            "n": 18
+          },
+          "HIGH": {
+            "precision": 0.9444444444444444,
+            "recall": 0.9444444444444444,
+            "f1": 0.9444444444444444,
+            "n": 18
+          }
+        },
+        "per_language": {
+          "english": {
+            "n": 31,
+            "accuracy": 0.9354838709677419,
+            "f1": 0.9245548654244308
+          },
+          "hinglish": {
+            "n": 23,
+            "accuracy": 0.8695652173913043,
+            "f1": 0.8641025641025641
+          }
+        }
+      },
+      "challenge": {
+        "n": 37,
+        "accuracy": 0.918918918918919,
+        "precision": 0.9299145299145298,
+        "recall": 0.9137529137529138,
+        "f1": 0.9172161172161172,
+        "confusion_matrix": [
+          [
+            12,
+            0,
+            1
+          ],
+          [
+            1,
+            9,
+            1
+          ],
+          [
+            0,
+            0,
+            13
+          ]
+        ],
+        "mean_confidence": 0.9344200161663262,
+        "per_class": {
+          "LOW": {
+            "precision": 0.9230769230769231,
+            "recall": 0.9230769230769231,
+            "f1": 0.9230769230769231,
+            "n": 13
+          },
+          "MODERATE": {
+            "precision": 1.0,
+            "recall": 0.8181818181818182,
+            "f1": 0.9,
+            "n": 11
+          },
+          "HIGH": {
+            "precision": 0.8666666666666667,
+            "recall": 1.0,
+            "f1": 0.9285714285714286,
+            "n": 13
+          }
+        },
+        "per_language": {
+          "english": {
+            "n": 21,
+            "accuracy": 0.9523809523809523,
+            "f1": 0.9500891265597148
+          },
+          "hinglish": {
+            "n": 16,
+            "accuracy": 0.875,
+            "f1": 0.8783068783068783
+          }
+        }
+      }
+    },
+    "threat": {
+      "model": "threat_v7",
+      "calibrated": true,
+      "temperature": 0.1399880013036234,
+      "test": {
+        "n": 78,
+        "accuracy": 0.9615384615384616,
+        "precision": 1.0,
+        "recall": 0.9230769230769231,
+        "f1": 0.96,
+        "confusion_matrix": [
+          [
+            39,
+            0
+          ],
+          [
+            3,
+            36
+          ]
+        ],
+        "mean_confidence": 0.9863013594578474,
+        "roc_auc": 0.9967126890203813,
+        "per_language": {
+          "english": {
+            "n": 46,
+            "accuracy": 0.9347826086956522,
+            "f1": 0.9333333333333333
+          },
+          "hinglish": {
+            "n": 32,
+            "accuracy": 1.0,
+            "f1": 1.0
+          }
+        }
+      },
+      "challenge": {
+        "n": 51,
+        "accuracy": 0.9803921568627451,
+        "precision": 0.9615384615384616,
+        "recall": 1.0,
+        "f1": 0.9803921568627451,
+        "confusion_matrix": [
+          [
+            25,
+            1
+          ],
+          [
+            0,
+            25
+          ]
+        ],
+        "mean_confidence": 0.9885338650030249,
+        "roc_auc": 0.9876923076923078,
+        "per_language": {
+          "english": {
+            "n": 44,
+            "accuracy": 0.9772727272727273,
+            "f1": 0.9777777777777777
+          },
+          "hinglish": {
+            "n": 7,
+            "accuracy": 1.0,
+            "f1": 1.0
+          }
+        }
+      }
+    },
+    "voice": {
+      "model": "voice_stress_ravdess",
+      "fixed_split_test": {
+        "n": 132,
+        "actors": [
+          22,
+          23,
+          24
+        ],
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "roc_auc": 1.0,
+        "note": "final model was re-fit on all 24 actors, so this split is in-sample; cv_by_actor below is the honest speaker-independent number"
+      },
+      "cv_by_actor": {
+        "accuracy": 0.7518939393939394,
+        "balanced_accuracy": 0.7479166666666667,
+        "precision": 0.7625418060200669,
+        "recall": 0.7916666666666666,
+        "f1": 0.7768313458262351,
+        "roc_auc": 0.8236762152777779,
+        "bal_acc_fold_std": 0.04037046328140855,
+        "n_folds": 6,
+        "n_clips": 1056,
+        "n_actors": 24,
+        "per_emotion": {
+          "angry": 0.9010416666666666,
+          "calm": 0.7760416666666666,
+          "fearful": 0.84375,
+          "happy": 0.578125,
+          "neutral": 0.8125,
+          "sad": 0.6302083333333334
+        },
+        "confusion": [
+          [
+            338,
+            142
+          ],
+          [
+            120,
+            456
+          ]
+        ]
+      },
+      "trained_on": "ravdess_all_24_actors"
+    }
+  }
+}

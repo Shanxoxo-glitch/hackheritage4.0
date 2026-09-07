@@ -1,0 +1,52 @@
+text,label,category,language
+He said he would hurt me if I went to the police.,1,clear_direct_threats,english
+They threatened to attack my brother if I testified.,1,clear_direct_threats,english
+He told me that I would be beaten if I continued the case.,1,clear_direct_threats,english
+She said my family would suffer if I spoke to the authorities.,1,clear_direct_threats,english
+They told me to withdraw the complaint or face serious consequences.,1,clear_direct_threats,english
+He said I should think carefully before taking this matter any further.,1,indirect_implied_threats,english
+They told me that people who cooperate with the police often regret it.,1,indirect_implied_threats,english
+He reminded me that he knows where my family lives.,1,indirect_implied_threats,english
+She said things could become very difficult for me if I testified.,1,indirect_implied_threats,english
+They made it clear that continuing the case would have consequences.,1,indirect_implied_threats,english
+He said my parents would have problems if I gave evidence.,1,family_social_pressure,english
+They warned me that my children could be dragged into this.,1,family_social_pressure,english
+He told me to stay quiet unless I wanted trouble for my family.,1,family_social_pressure,english
+They said my relatives would pay the price if I continued.,1,family_social_pressure,english
+He said I would lose my job if I gave a statement.,1,financial_employment_coercion,english
+They told me my business would suffer if I continued with the complaint.,1,financial_employment_coercion,english
+He warned that I would have financial problems if I testified.,1,financial_employment_coercion,english
+They said they could make sure I never found work again.,1,financial_employment_coercion,english
+"I am terrified about what might happen, but nobody has contacted me.",0,fear_without_an_actual_threat,english
+The case makes me anxious and I keep imagining the worst.,0,fear_without_an_actual_threat,english
+I am scared that someone might retaliate against me.,0,fear_without_an_actual_threat,english
+I cannot stop worrying about my safety even though nobody has threatened me.,0,fear_without_an_actual_threat,english
+I feel nervous whenever I think about the hearing.,0,fear_without_an_actual_threat,english
+"I heard that another witness received threats, and now I am worried.",0,mention_of_threats_to_other_people,english
+"There have been threats in the neighbourhood, but nobody has threatened me.",0,mention_of_threats_to_other_people,english
+Someone told me about threats against another family involved in a case.,0,mention_of_threats_to_other_people,english
+I read about threats against witnesses and became frightened.,0,mention_of_threats_to_other_people,english
+"Nobody has threatened me, but I am still worried about the case.",0,explicit_denial_of_being_threatened,english
+No one has contacted me or made any threats.,0,explicit_denial_of_being_threatened,english
+I have not received any threatening message.,0,explicit_denial_of_being_threatened,english
+"There was no threat, I am simply afraid of what could happen.",0,explicit_denial_of_being_threatened,english
+Nobody told me to withdraw the complaint.,0,explicit_denial_of_being_threatened,english
+He told me to be careful about what I say.,1,ambiguous_context_dependent,english
+They advised me not to get involved in the matter.,0,ambiguous_context_dependent,english
+He said it would be better for everyone if I stayed quiet.,1,ambiguous_context_dependent,english
+Someone suggested that I should forget about the complaint.,0,ambiguous_context_dependent,english
+They warned me about the possible consequences of continuing.,1,ambiguous_context_dependent,english
+"I was warned about the risks, but nobody threatened me.",0,ambiguous_context_dependent,english
+I am extremely angry about how the case is being handled.,0,anger_distress_without_threat,english
+The whole process is making me frustrated and exhausted.,0,anger_distress_without_threat,english
+I feel hopeless because the case is taking so long.,0,anger_distress_without_threat,english
+I have been crying a lot because of the stress.,0,anger_distress_without_threat,english
+"Sometimes I imagine confronting them, but I have not threatened anyone.",0,anger_distress_without_threat,english
+Police ko bataya toh mere family ko nuksaan hoga.,1,hinglish,hinglish
+Case continue kiya toh mere job ka problem ho jayega.,1,hinglish,english
+Unhone bola chup raho warna problem ho sakti hai.,1,hinglish,hinglish
+Mujhe case ko lekar bahut darr lag raha hai.,0,hinglish,hinglish
+Mujhe retaliation ka darr hai lekin kisi ne dhamki nahi di.,0,hinglish,hinglish
+"Mere area mein threats ke baare mein suna hai, isliye main scared hoon.",0,hinglish,hinglish
+Unhone bola complaint wapas le lo warna consequences honge.,1,hinglish,hinglish
+"Kisi ne mujhe threaten nahi kiya, bas future ko lekar tension hai.",0,hinglish,hinglish

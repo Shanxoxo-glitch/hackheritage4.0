@@ -1,0 +1,230 @@
+[
+  {
+    "features": "all",
+    "n_features": 89,
+    "norm": "per_speaker_z",
+    "params": "default",
+    "accuracy": 0.7869318181818182,
+    "balanced_accuracy": 0.7833333333333333,
+    "bal_acc_fold_std": 0.03181207478068433,
+    "f1": 0.8081841432225064,
+    "roc_auc": 0.869943576388889,
+    "per_emotion": {
+      "angry": 0.9375,
+      "calm": 0.84375,
+      "fearful": 0.8854166666666666,
+      "happy": 0.5677083333333334,
+      "neutral": 0.8958333333333334,
+      "sad": 0.6458333333333334
+    }
+  },
+  {
+    "features": "all",
+    "n_features": 89,
+    "norm": "per_speaker_z",
+    "params": "regularized",
+    "accuracy": 0.7727272727272727,
+    "balanced_accuracy": 0.7706597222222222,
+    "bal_acc_fold_std": 0.03761275807263071,
+    "f1": 0.7920277296360485,
+    "roc_auc": 0.8629231770833333,
+    "per_emotion": {
+      "angry": 0.9010416666666666,
+      "calm": 0.84375,
+      "fearful": 0.84375,
+      "happy": 0.59375,
+      "neutral": 0.8645833333333334,
+      "sad": 0.6354166666666666
+    }
+  },
+  {
+    "features": "all",
+    "n_features": 89,
+    "norm": "none",
+    "params": "default",
+    "accuracy": 0.7585227272727273,
+    "balanced_accuracy": 0.7532986111111111,
+    "bal_acc_fold_std": 0.027516676516194927,
+    "f1": 0.7855340622371741,
+    "roc_auc": 0.8256257233796296,
+    "per_emotion": {
+      "angry": 0.90625,
+      "calm": 0.7760416666666666,
+      "fearful": 0.8697916666666666,
+      "happy": 0.6041666666666666,
+      "neutral": 0.71875,
+      "sad": 0.65625
+    }
+  },
+  {
+    "features": "speaker_robust",
+    "n_features": 63,
+    "norm": "none",
+    "params": "default",
+    "accuracy": 0.7424242424242424,
+    "balanced_accuracy": 0.7385416666666667,
+    "bal_acc_fold_std": 0.02459892396397017,
+    "f1": 0.7679180887372014,
+    "roc_auc": 0.8072374131944444,
+    "per_emotion": {
+      "angry": 0.8802083333333334,
+      "calm": 0.796875,
+      "fearful": 0.8333333333333334,
+      "happy": 0.5729166666666666,
+      "neutral": 0.7395833333333334,
+      "sad": 0.6302083333333334
+    }
+  },
+  {
+    "features": "speaker_robust",
+    "n_features": 63,
+    "norm": "per_speaker_z",
+    "params": "default",
+    "accuracy": 0.7395833333333334,
+    "balanced_accuracy": 0.7376736111111111,
+    "bal_acc_fold_std": 0.05080520861691277,
+    "f1": 0.7606614447345518,
+    "roc_auc": 0.8063548900462962,
+    "per_emotion": {
+      "angry": 0.9427083333333334,
+      "calm": 0.7760416666666666,
+      "fearful": 0.7708333333333334,
+      "happy": 0.6041666666666666,
+      "neutral": 0.8229166666666666,
+      "sad": 0.5625
+    }
+  },
+  {
+    "features": "all",
+    "n_features": 89,
+    "norm": "none",
+    "params": "regularized",
+    "accuracy": 0.740530303030303,
+    "balanced_accuracy": 0.7357638888888889,
+    "bal_acc_fold_std": 0.03646164006168202,
+    "f1": 0.7681895093062606,
+    "roc_auc": 0.8183195891203705,
+    "per_emotion": {
+      "angry": 0.8958333333333334,
+      "calm": 0.7604166666666666,
+      "fearful": 0.8333333333333334,
+      "happy": 0.5885416666666666,
+      "neutral": 0.71875,
+      "sad": 0.6354166666666666
+    }
+  },
+  {
+    "features": "dynamics_only",
+    "n_features": 43,
+    "norm": "per_speaker_z",
+    "params": "default",
+    "accuracy": 0.7329545454545454,
+    "balanced_accuracy": 0.7300347222222222,
+    "bal_acc_fold_std": 0.05068047039135989,
+    "f1": 0.756896551724138,
+    "roc_auc": 0.8073929398148147,
+    "per_emotion": {
+      "angry": 0.9166666666666666,
+      "calm": 0.765625,
+      "fearful": 0.7916666666666666,
+      "happy": 0.59375,
+      "neutral": 0.7708333333333334,
+      "sad": 0.578125
+    }
+  },
+  {
+    "features": "dynamics_only",
+    "n_features": 43,
+    "norm": "per_speaker_z",
+    "params": "regularized",
+    "accuracy": 0.7301136363636364,
+    "balanced_accuracy": 0.7284722222222222,
+    "bal_acc_fold_std": 0.05327344003891852,
+    "f1": 0.7510917030567685,
+    "roc_auc": 0.8026475694444444,
+    "per_emotion": {
+      "angry": 0.90625,
+      "calm": 0.7604166666666666,
+      "fearful": 0.7604166666666666,
+      "happy": 0.6041666666666666,
+      "neutral": 0.8229166666666666,
+      "sad": 0.5729166666666666
+    }
+  },
+  {
+    "features": "speaker_robust",
+    "n_features": 63,
+    "norm": "per_speaker_z",
+    "params": "regularized",
+    "accuracy": 0.7263257575757576,
+    "balanced_accuracy": 0.7243055555555555,
+    "bal_acc_fold_std": 0.04164785454954729,
+    "f1": 0.7484769364664926,
+    "roc_auc": 0.7981517650462964,
+    "per_emotion": {
+      "angry": 0.9583333333333334,
+      "calm": 0.765625,
+      "fearful": 0.734375,
+      "happy": 0.5989583333333334,
+      "neutral": 0.78125,
+      "sad": 0.546875
+    }
+  },
+  {
+    "features": "dynamics_only",
+    "n_features": 43,
+    "norm": "none",
+    "params": "regularized",
+    "accuracy": 0.7263257575757576,
+    "balanced_accuracy": 0.7236111111111111,
+    "bal_acc_fold_std": 0.03637225287662269,
+    "f1": 0.7502160760587727,
+    "roc_auc": 0.7923068576388889,
+    "per_emotion": {
+      "angry": 0.8697916666666666,
+      "calm": 0.7760416666666666,
+      "fearful": 0.828125,
+      "happy": 0.5833333333333334,
+      "neutral": 0.75,
+      "sad": 0.5625
+    }
+  },
+  {
+    "features": "dynamics_only",
+    "n_features": 43,
+    "norm": "none",
+    "params": "default",
+    "accuracy": 0.7263257575757576,
+    "balanced_accuracy": 0.7222222222222223,
+    "bal_acc_fold_std": 0.04910463758239915,
+    "f1": 0.7536231884057971,
+    "roc_auc": 0.803761574074074,
+    "per_emotion": {
+      "angry": 0.8958333333333334,
+      "calm": 0.765625,
+      "fearful": 0.8072916666666666,
+      "happy": 0.5625,
+      "neutral": 0.7291666666666666,
+      "sad": 0.5989583333333334
+    }
+  },
+  {
+    "features": "speaker_robust",
+    "n_features": 63,
+    "norm": "none",
+    "params": "regularized",
+    "accuracy": 0.7178030303030303,
+    "balanced_accuracy": 0.7147569444444444,
+    "bal_acc_fold_std": 0.04915157146254483,
+    "f1": 0.743103448275862,
+    "roc_auc": 0.7956995081018519,
+    "per_emotion": {
+      "angry": 0.8697916666666666,
+      "calm": 0.7760416666666666,
+      "fearful": 0.7864583333333334,
+      "happy": 0.578125,
+      "neutral": 0.6979166666666666,
+      "sad": 0.5885416666666666
+    }
+  }
+]
