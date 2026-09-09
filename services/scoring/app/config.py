@@ -9,8 +9,10 @@ Model weights are NOT in git. At runtime they come from one of:
 import os
 from pathlib import Path
 
-SERVICE_ROOT = Path(__file__).resolve().parents[1]      # services/scoring
-REPO_ROOT = SERVICE_ROOT.parents[1]                      # monorepo root
+SERVICE_ROOT = Path(__file__).resolve().parents[1]      # services/scoring in the repo, /app in the container
+# monorepo root when running from a checkout; in the container /app has no such ancestor, so fall back
+# to SERVICE_ROOT (models come from SCORING_MODELS_DIR=/models there anyway).
+REPO_ROOT = SERVICE_ROOT.parents[1] if len(SERVICE_ROOT.parents) > 1 else SERVICE_ROOT
 
 SERVICE_NAME = "scoring"
 SERVICE_VERSION = "0.1.0"

@@ -157,7 +157,7 @@ def main():
     json.dump(meta, open(MODELS_DIR / f"voice_metrics_{args.source}.json", "w"), indent=2)
 
     enabled = not args.no_mlflow
-    with mlflow_run("voice", f"train_voice_{args.source}",
+    with mlflow_run("voice", f"train_voice_{args.source}", artifact_path=out,
                     params={**PARAMS, "source": args.source, "n_features": len(feats), "trained_on": trained_on,
                             "adaptation_rows": 0 if extra is None else len(extra)},
                     tags={"signal": "voice", "stage": "train", "synthetic": str(args.source == "synthetic")},

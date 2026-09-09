@@ -176,7 +176,7 @@ def main():
     json.dump(metrics, open(os.path.join(args.output, "metrics.json"), "w"), indent=2)
 
     run_name = args.run_name or f"train_threat_{args.objective}_{os.path.basename(args.output)}"
-    with mlflow_run("threat", run_name, params={**metrics["config"], "objective": args.objective, "model": args.model,
+    with mlflow_run("threat", run_name, artifact_path=args.output, params={**metrics["config"], "objective": args.objective, "model": args.model,
                                                 "train_size": len(train_df)},
                     tags={"signal": "threat", "stage": "train"}, enabled=not args.no_mlflow):
         for h in metrics["history"]:

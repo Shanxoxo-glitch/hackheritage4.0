@@ -157,7 +157,7 @@ def main():
                "per_language": lang_f1, "per_class": {k: report[k] for k in LABELS}},
               open(art / "signal_sentiment_f1.json", "w"), indent=2)
 
-    with mlflow_run("sentiment", args.run_name,
+    with mlflow_run("sentiment", args.run_name, artifact_path=args.output,
                     params={**metrics["config"], "model": args.model, "train_size": len(train_df)},
                     tags={"signal": "sentiment", "stage": "train"}, enabled=not args.no_mlflow):
         for h in history:

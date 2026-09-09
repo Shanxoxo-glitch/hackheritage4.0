@@ -36,7 +36,18 @@ Request  `{"text": str(1..4000), "interaction_id"?: str, "language_hint"?: str, 
 ```
 
 ### Contract #2 — `POST /v1/signals/voice`
-Request  `{"audio_base64": str (WAV/FLAC/OGG), "audio_url"?: str, "interaction_id"?: str, "request_id"?: str}`
+Three accepted encodings of the same clip (WAV / FLAC / OGG, mono or stereo, any sample rate, 0.2–120 s, ≤ 25 MB):
+
+| Content-Type | Body | interaction_id / request_id |
+| :--- | :--- | :--- |
+| `application/json` | `{"audio_base64": str, "audio_url"?: str}` | JSON fields |
+| `multipart/form-data` | file part named `file` (or `audio`) | form fields |
+| `audio/*`, `application/octet-stream` | raw audio bytes | query params |
+
+All three return the identical body below. `audio_url` is fetched server-side only when
+`SCORING_ALLOW_AUDIO_URL=1` (off by default: SSRF); otherwise send `audio_base64` or a file part.
+Errors: `400` undecodable / too short / too long / no audio, `413` over 25 MB, `422` malformed body
+(the response never echoes the audio bytes back).
 ```json
 {
   "schema_version": "1.0", "request_id": "…", "interaction_id": "…",
@@ -50,6 +61,14 @@ Request  `{"audio_base64": str (WAV/FLAC/OGG), "audio_url"?: str, "interaction_i
 ### Contract #3 — `POST /v1/signals/threat`
 Request  `{"text": str(1..4000), "interaction_id"?: str, "language_hint"?: str, "request_id"?: str}`
 Response `{"schema_version", "request_id", "interaction_id", "threat": <same object as #1>, "flags", "latency_ms"}`
+
+### Backend gateway (`services/backend`, `POST /api/v1/perception/score`)
+The backend calls contracts #1–2 through `app/services/scoring_client.py` and stores the result on the
+`distress_scores` row (`sentiment_score`, `voice_stress_score`, `threat_flag`, `composite_score`, `confidence`).
+The response adds three non-breaking provenance fields: `signal_source`
+(`scoring_service` | `partial` | `heuristic_fallback`), `model_versions`, `degraded_signals`.
+A scoring outage never fails the case — the gateway degrades to its keyword heuristic and says so.
+`GET /api/v1/perception/health` reports whether the scoring service is reachable and which models it loaded.
 
 ### Degradation (all three routes)
 `HTTP 503 {"error": "model_unavailable", "signal": "sentiment" | "threat" | "voice", "detail": "…"}` — the
