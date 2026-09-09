@@ -39,6 +39,13 @@ class Settings(BaseSettings):
     # Background worker interval (in minutes)
     CHECKIN_WORKER_INTERVAL_MINUTES: int = int(os.getenv("CHECKIN_WORKER_INTERVAL_MINUTES", "60"))
 
+    # Groq API key fallback for local AI responses when VM is offline
+    GROQ_API_KEY: str | None = os.getenv("GROQ_API_KEY", "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")
+
+    # Azure VM Orchestrator settings
+    ORCHESTRATOR_URL: str = os.getenv("ORCHESTRATOR_URL", "http://localhost:8500")
+    ORCHESTRATOR_API_KEY: str = os.getenv("ORCHESTRATOR_API_KEY", "")
+
     # CORS Origins (Explicit list for allow_credentials=True compatibility)
     ALLOWED_ORIGINS: list[str] = [
         "http://localhost:3000",
