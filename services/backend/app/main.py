@@ -49,10 +49,11 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Configure CORS with explicit allowed origins
+# Configure CORS with explicit allowed origins and regex matching for all dev ports
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ALLOWED_ORIGINS,
+    allow_origin_regex=r"https?://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

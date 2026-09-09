@@ -20,6 +20,10 @@ class InteractionStreamPayload(BaseModel):
 
 ORCHESTRATOR_VM_URL = getattr(settings, "ORCHESTRATOR_URL", "http://localhost:8500")
 
+@router.options("/stream")
+async def stream_options():
+    return {}
+
 @router.post("/stream")
 async def stream_interaction_to_vm(payload: InteractionStreamPayload):
     """
