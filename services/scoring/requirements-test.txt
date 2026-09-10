@@ -1,0 +1,8 @@
+# contract tests only: NO torch, NO model download (CI: .github/workflows/ci.yml test-scoring)
+fastapi>=0.110
+httpx
+pydantic>=2
+numpy
+soundfile          # real WAV decode in the contract tests
+python-multipart   # multipart upload route
+pytest

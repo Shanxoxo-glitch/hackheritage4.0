@@ -1,0 +1,765 @@
+{
+  "generated_at_utc": "2026-09-09T18:56:52+00:00",
+  "schema_version": "1.0",
+  "note": "Synthetic/hand-written prototype corpora for text; acted speech (RAVDESS) for voice. Held-out numbers on that data, not production validation.",
+  "signals": {
+    "sentiment": {
+      "model": "distress_v3",
+      "task": "3-class distress level",
+      "labels": [
+        "LOW",
+        "MODERATE",
+        "HIGH"
+      ],
+      "calibration": {
+        "calibrated": true,
+        "temperature": 0.12722905894077133,
+        "val_ece_before": 0.4759,
+        "val_ece_after": 0.0403,
+        "val_nll_before": 0.8076,
+        "val_nll_after": 0.217,
+        "test_ece_before": 0.451,
+        "test_ece_after": 0.0837,
+        "test_nll_before": 0.8333,
+        "test_nll_after": 0.4399,
+        "fitted_on": "distress_v3_val.csv",
+        "n_val": 73,
+        "note": "Temperature scaling on the validation set. A calibrated score is still a model score, not a real-world probability of danger."
+      },
+      "test": {
+        "n": 54,
+        "accuracy": 0.9074074074074074,
+        "balanced_accuracy": 0.9074074074074074,
+        "macro_precision": 0.9106481481481481,
+        "macro_recall": 0.9074074074074074,
+        "macro_f1": 0.9071780759087261,
+        "confusion_matrix": [
+          [
+            17,
+            1,
+            0
+          ],
+          [
+            2,
+            15,
+            1
+          ],
+          [
+            1,
+            0,
+            17
+          ]
+        ],
+        "confusion_matrix_labels": [
+          "LOW",
+          "MODERATE",
+          "HIGH"
+        ],
+        "mean_confidence": 0.9391125584090197,
+        "mean_confidence_correct": 0.9364200502025838,
+        "mean_confidence_wrong": 0.9654991388320923,
+        "per_class": {
+          "LOW": {
+            "precision": 0.85,
+            "recall": 0.9444444444444444,
+            "f1": 0.8947368421052632,
+            "support": 18
+          },
+          "MODERATE": {
+            "precision": 0.9375,
+            "recall": 0.8333333333333334,
+            "f1": 0.8823529411764706,
+            "support": 18
+          },
+          "HIGH": {
+            "precision": 0.9444444444444444,
+            "recall": 0.9444444444444444,
+            "f1": 0.9444444444444444,
+            "support": 18
+          }
+        },
+        "per_language": {
+          "english": {
+            "n": 31,
+            "accuracy": 0.9354838709677419,
+            "precision": 0.9465811965811967,
+            "recall": 0.9166666666666666,
+            "f1": 0.9245548654244308
+          },
+          "hinglish": {
+            "n": 23,
+            "accuracy": 0.8695652173913043,
+            "precision": 0.8714285714285714,
+            "recall": 0.8634920634920635,
+            "f1": 0.8641025641025641
+          }
+        },
+        "errors": [
+          {
+            "text": "Andar se bilkul khaali aur sunn ho gaya hoon.",
+            "expected": "HIGH",
+            "predicted": "LOW",
+            "confidence": 0.9873,
+            "language": "hinglish"
+          },
+          {
+            "text": "I'm coping, but I'd feel better if the case moved faster.",
+            "expected": "MODERATE",
+            "predicted": "LOW",
+            "confidence": 0.977,
+            "language": "english"
+          },
+          {
+            "text": "Case dimaag mein rehta hai, par kaam pe jaa raha hoon.",
+            "expected": "MODERATE",
+            "predicted": "LOW",
+            "confidence": 0.9848,
+            "language": "hinglish"
+          },
+          {
+            "text": "I haven't been myself lately because of this case.",
+            "expected": "MODERATE",
+            "predicted": "HIGH",
+            "confidence": 0.9368,
+            "language": "english"
+          },
+          {
+            "text": "Paperwork boring hai par manage ho raha hai.",
+            "expected": "LOW",
+            "predicted": "MODERATE",
+            "confidence": 0.9417,
+            "language": "hinglish"
+          }
+        ]
+      },
+      "challenge": {
+        "n": 37,
+        "accuracy": 0.918918918918919,
+        "balanced_accuracy": 0.9137529137529138,
+        "macro_precision": 0.9299145299145298,
+        "macro_recall": 0.9137529137529138,
+        "macro_f1": 0.9172161172161172,
+        "confusion_matrix": [
+          [
+            12,
+            0,
+            1
+          ],
+          [
+            1,
+            9,
+            1
+          ],
+          [
+            0,
+            0,
+            13
+          ]
+        ],
+        "confusion_matrix_labels": [
+          "LOW",
+          "MODERATE",
+          "HIGH"
+        ],
+        "mean_confidence": 0.9344200161663262,
+        "mean_confidence_correct": 0.9363414671491174,
+        "mean_confidence_wrong": 0.912643571694692,
+        "per_class": {
+          "LOW": {
+            "precision": 0.9230769230769231,
+            "recall": 0.9230769230769231,
+            "f1": 0.9230769230769231,
+            "support": 13
+          },
+          "MODERATE": {
+            "precision": 1.0,
+            "recall": 0.8181818181818182,
+            "f1": 0.9,
+            "support": 11
+          },
+          "HIGH": {
+            "precision": 0.8666666666666667,
+            "recall": 1.0,
+            "f1": 0.9285714285714286,
+            "support": 13
+          }
+        },
+        "per_language": {
+          "english": {
+            "n": 21,
+            "accuracy": 0.9523809523809523,
+            "precision": 0.9629629629629629,
+            "recall": 0.9444444444444445,
+            "f1": 0.9500891265597148
+          },
+          "hinglish": {
+            "n": 16,
+            "accuracy": 0.875,
+            "precision": 0.9166666666666666,
+            "recall": 0.8666666666666667,
+            "f1": 0.8783068783068783
+          }
+        },
+        "per_category": {
+          "high_explicit": {
+            "n": 4,
+            "correct": 4,
+            "accuracy": 1.0
+          },
+          "high_hinglish": {
+            "n": 2,
+            "correct": 2,
+            "accuracy": 1.0
+          },
+          "high_no_emotion_words": {
+            "n": 4,
+            "correct": 4,
+            "accuracy": 1.0
+          },
+          "low_hinglish": {
+            "n": 2,
+            "correct": 2,
+            "accuracy": 1.0
+          },
+          "mixed_long": {
+            "n": 2,
+            "correct": 2,
+            "accuracy": 1.0
+          },
+          "moderate_functional": {
+            "n": 3,
+            "correct": 2,
+            "accuracy": 0.6666666666666666
+          },
+          "moderate_hinglish": {
+            "n": 2,
+            "correct": 2,
+            "accuracy": 1.0
+          },
+          "moderate_strong_vocab": {
+            "n": 4,
+            "correct": 3,
+            "accuracy": 0.75
+          },
+          "negation": {
+            "n": 4,
+            "correct": 4,
+            "accuracy": 1.0
+          },
+          "neutral_factual": {
+            "n": 3,
+            "correct": 3,
+            "accuracy": 1.0
+          },
+          "recovery": {
+            "n": 3,
+            "correct": 2,
+            "accuracy": 0.6666666666666666
+          },
+          "short": {
+            "n": 4,
+            "correct": 4,
+            "accuracy": 1.0
+          }
+        },
+        "hard_negatives": {
+          "n": 4,
+          "accuracy": 1.0,
+          "false_positive_rate": 0.0,
+          "categories": [
+            "negation"
+          ],
+          "note": "threat-like vocabulary that is NOT a threat (negation, fear, advice, third-party reports)"
+        },
+        "errors": [
+          {
+            "text": "Pehle bahut darr lagta tha, ab main theek hoon aur kaam pe jaa raha hoon.",
+            "expected": "LOW",
+            "predicted": "HIGH",
+            "confidence": 0.9006,
+            "category": "recovery",
+            "language": "hinglish"
+          },
+          {
+            "text": "Thoda darr lagta hai par sambhal lunga.",
+            "expected": "MODERATE",
+            "predicted": "HIGH",
+            "confidence": 0.8542,
+            "category": "moderate_strong_vocab",
+            "language": "hinglish"
+          },
+          {
+            "text": "Some nights are hard, but most days are fine.",
+            "expected": "MODERATE",
+            "predicted": "LOW",
+            "confidence": 0.9831,
+            "category": "moderate_functional",
+            "language": "english"
+          }
+        ]
+      }
+    },
+    "threat": {
+      "model": "threat_contrastive_v1",
+      "task": "binary threat / intimidation",
+      "labels": [
+        "NOT_THREAT",
+        "THREAT"
+      ],
+      "calibration": {
+        "calibrated": true,
+        "temperature": 0.10860058885434853,
+        "val_ece_before": 0.3595,
+        "val_ece_after": 0.0124,
+        "val_nll_before": 0.5037,
+        "val_nll_after": 0.0997,
+        "test_ece_before": 0.3684,
+        "test_ece_after": 0.0125,
+        "test_nll_before": 0.5012,
+        "test_nll_after": 0.0886,
+        "fitted_on": "threat_v7_val.csv",
+        "n_val": 78,
+        "note": "Temperature scaling on the validation set. A calibrated score is still a model score, not a real-world probability of danger."
+      },
+      "test": {
+        "n": 78,
+        "accuracy": 0.9743589743589743,
+        "balanced_accuracy": 0.9743589743589743,
+        "precision": 0.9743589743589743,
+        "recall": 0.9743589743589743,
+        "f1": 0.9743589743589743,
+        "confusion_matrix": [
+          [
+            38,
+            1
+          ],
+          [
+            1,
+            38
+          ]
+        ],
+        "confusion_matrix_labels": [
+          "NOT_THREAT",
+          "THREAT"
+        ],
+        "mean_confidence": 0.9740273860784677,
+        "mean_confidence_correct": 0.9770773335507041,
+        "mean_confidence_wrong": 0.8581293821334839,
+        "roc_auc": 0.9980276134122288,
+        "per_class": {
+          "NOT_THREAT": {
+            "precision": 0.9743589743589743,
+            "recall": 0.9743589743589743,
+            "f1": 0.9743589743589743,
+            "support": 39
+          },
+          "THREAT": {
+            "precision": 0.9743589743589743,
+            "recall": 0.9743589743589743,
+            "f1": 0.9743589743589743,
+            "support": 39
+          }
+        },
+        "per_language": {
+          "english": {
+            "n": 46,
+            "accuracy": 0.9565217391304348,
+            "precision": 0.9583333333333334,
+            "recall": 0.9583333333333334,
+            "f1": 0.9583333333333334
+          },
+          "hinglish": {
+            "n": 32,
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          }
+        },
+        "per_category": {
+          "ambiguous_non_threat": {
+            "n": 1,
+            "correct": 0,
+            "accuracy": 0.0
+          },
+          "anger": {
+            "n": 4,
+            "correct": 4,
+            "accuracy": 1.0
+          },
+          "case_withdrawal": {
+            "n": 5,
+            "correct": 5,
+            "accuracy": 1.0
+          },
+          "family_threat": {
+            "n": 5,
+            "correct": 5,
+            "accuracy": 1.0
+          },
+          "fear": {
+            "n": 3,
+            "correct": 3,
+            "accuracy": 1.0
+          },
+          "fear_without_threat": {
+            "n": 1,
+            "correct": 1,
+            "accuracy": 1.0
+          },
+          "financial_coercion": {
+            "n": 5,
+            "correct": 4,
+            "accuracy": 0.8
+          },
+          "forced_silence": {
+            "n": 4,
+            "correct": 4,
+            "accuracy": 1.0
+          },
+          "general_distress": {
+            "n": 2,
+            "correct": 2,
+            "accuracy": 1.0
+          },
+          "hard_negative": {
+            "n": 7,
+            "correct": 7,
+            "accuracy": 1.0
+          },
+          "hinglish_indirect": {
+            "n": 1,
+            "correct": 1,
+            "accuracy": 1.0
+          },
+          "hinglish_negation": {
+            "n": 4,
+            "correct": 4,
+            "accuracy": 1.0
+          },
+          "hinglish_threat": {
+            "n": 1,
+            "correct": 1,
+            "accuracy": 1.0
+          },
+          "hopelessness": {
+            "n": 4,
+            "correct": 4,
+            "accuracy": 1.0
+          },
+          "indirect_threat": {
+            "n": 1,
+            "correct": 1,
+            "accuracy": 1.0
+          },
+          "legal_stress": {
+            "n": 2,
+            "correct": 2,
+            "accuracy": 1.0
+          },
+          "negation": {
+            "n": 2,
+            "correct": 2,
+            "accuracy": 1.0
+          },
+          "non_threat_advice": {
+            "n": 1,
+            "correct": 1,
+            "accuracy": 1.0
+          },
+          "other_person_threat": {
+            "n": 1,
+            "correct": 1,
+            "accuracy": 1.0
+          },
+          "physical_threat": {
+            "n": 3,
+            "correct": 3,
+            "accuracy": 1.0
+          },
+          "sadness": {
+            "n": 7,
+            "correct": 7,
+            "accuracy": 1.0
+          },
+          "targeted_threat": {
+            "n": 7,
+            "correct": 7,
+            "accuracy": 1.0
+          },
+          "witness_intimidation": {
+            "n": 7,
+            "correct": 7,
+            "accuracy": 1.0
+          }
+        },
+        "hard_negatives": {
+          "n": 22,
+          "accuracy": 0.9545454545454546,
+          "false_positive_rate": 0.045454545454545456,
+          "categories": [
+            "ambiguous_non_threat",
+            "fear",
+            "fear_without_threat",
+            "hard_negative",
+            "hinglish_negation",
+            "legal_stress",
+            "negation",
+            "non_threat_advice",
+            "other_person_threat"
+          ],
+          "note": "threat-like vocabulary that is NOT a threat (negation, fear, advice, third-party reports)"
+        },
+        "errors": [
+          {
+            "text": "Please think carefully before getting involved.",
+            "expected": "NOT_THREAT",
+            "predicted": "THREAT",
+            "confidence": 0.7429,
+            "category": "ambiguous_non_threat",
+            "language": "english"
+          },
+          {
+            "text": "Someone told me that my income was at risk.",
+            "expected": "THREAT",
+            "predicted": "NOT_THREAT",
+            "confidence": 0.9734,
+            "category": "financial_coercion",
+            "language": "english"
+          }
+        ]
+      },
+      "challenge": {
+        "n": 51,
+        "accuracy": 0.9803921568627451,
+        "balanced_accuracy": 0.9807692307692308,
+        "precision": 0.9615384615384616,
+        "recall": 1.0,
+        "f1": 0.9803921568627451,
+        "confusion_matrix": [
+          [
+            25,
+            1
+          ],
+          [
+            0,
+            25
+          ]
+        ],
+        "confusion_matrix_labels": [
+          "NOT_THREAT",
+          "THREAT"
+        ],
+        "mean_confidence": 0.9862155341634563,
+        "mean_confidence_correct": 0.986179621219635,
+        "mean_confidence_wrong": 0.9880111813545227,
+        "roc_auc": 0.9953846153846154,
+        "per_class": {
+          "NOT_THREAT": {
+            "precision": 1.0,
+            "recall": 0.9615384615384616,
+            "f1": 0.9803921568627451,
+            "support": 26
+          },
+          "THREAT": {
+            "precision": 0.9615384615384616,
+            "recall": 1.0,
+            "f1": 0.9803921568627451,
+            "support": 25
+          }
+        },
+        "per_language": {
+          "english": {
+            "n": 44,
+            "accuracy": 0.9772727272727273,
+            "precision": 0.9565217391304348,
+            "recall": 1.0,
+            "f1": 0.9777777777777777
+          },
+          "hinglish": {
+            "n": 7,
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          }
+        },
+        "per_category": {
+          "ambiguous_context_dependent": {
+            "n": 6,
+            "correct": 5,
+            "accuracy": 0.8333333333333334
+          },
+          "anger_distress_without_threat": {
+            "n": 5,
+            "correct": 5,
+            "accuracy": 1.0
+          },
+          "clear_direct_threats": {
+            "n": 5,
+            "correct": 5,
+            "accuracy": 1.0
+          },
+          "explicit_denial_of_being_threatened": {
+            "n": 5,
+            "correct": 5,
+            "accuracy": 1.0
+          },
+          "family_social_pressure": {
+            "n": 4,
+            "correct": 4,
+            "accuracy": 1.0
+          },
+          "fear_without_an_actual_threat": {
+            "n": 5,
+            "correct": 5,
+            "accuracy": 1.0
+          },
+          "financial_employment_coercion": {
+            "n": 4,
+            "correct": 4,
+            "accuracy": 1.0
+          },
+          "hinglish": {
+            "n": 8,
+            "correct": 8,
+            "accuracy": 1.0
+          },
+          "indirect_implied_threats": {
+            "n": 5,
+            "correct": 5,
+            "accuracy": 1.0
+          },
+          "mention_of_threats_to_other_people": {
+            "n": 4,
+            "correct": 4,
+            "accuracy": 1.0
+          }
+        },
+        "hard_negatives": {
+          "n": 20,
+          "accuracy": 0.95,
+          "false_positive_rate": 0.058823529411764705,
+          "categories": [
+            "ambiguous_context_dependent",
+            "explicit_denial_of_being_threatened",
+            "fear_without_an_actual_threat",
+            "mention_of_threats_to_other_people"
+          ],
+          "note": "threat-like vocabulary that is NOT a threat (negation, fear, advice, third-party reports)"
+        },
+        "errors": [
+          {
+            "text": "They advised me not to get involved in the matter.",
+            "expected": "NOT_THREAT",
+            "predicted": "THREAT",
+            "confidence": 0.988,
+            "category": "ambiguous_context_dependent",
+            "language": "english"
+          }
+        ]
+      }
+    },
+    "voice": {
+      "model": "voice_stress_ravdess",
+      "task": "binary acoustic stress",
+      "labels": [
+        "NOT_STRESSED",
+        "STRESSED"
+      ],
+      "fixed_split_test": {
+        "n": 132,
+        "actors": [
+          22,
+          23,
+          24
+        ],
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "roc_auc": 1.0,
+        "confusion_matrix": [
+          [
+            60,
+            0
+          ],
+          [
+            0,
+            72
+          ]
+        ],
+        "confusion_matrix_labels": [
+          "NOT_STRESSED",
+          "STRESSED"
+        ],
+        "per_emotion": {
+          "angry": {
+            "n": 24,
+            "accuracy": 1.0
+          },
+          "calm": {
+            "n": 24,
+            "accuracy": 1.0
+          },
+          "fearful": {
+            "n": 24,
+            "accuracy": 1.0
+          },
+          "happy": {
+            "n": 24,
+            "accuracy": 1.0
+          },
+          "neutral": {
+            "n": 12,
+            "accuracy": 1.0
+          },
+          "sad": {
+            "n": 24,
+            "accuracy": 1.0
+          }
+        },
+        "note": "the served model was re-fit on all 24 actors, so this split is in-sample; speaker_independent_cv below is the honest number"
+      },
+      "speaker_independent_cv": {
+        "accuracy": 0.7518939393939394,
+        "balanced_accuracy": 0.7479166666666667,
+        "precision": 0.7625418060200669,
+        "recall": 0.7916666666666666,
+        "f1": 0.7768313458262351,
+        "roc_auc": 0.8236762152777779,
+        "bal_acc_fold_std": 0.04037046328140855,
+        "n_folds": 6,
+        "n_clips": 1056,
+        "n_actors": 24,
+        "per_emotion": {
+          "angry": 0.9010416666666666,
+          "calm": 0.7760416666666666,
+          "fearful": 0.84375,
+          "happy": 0.578125,
+          "neutral": 0.8125,
+          "sad": 0.6302083333333334
+        },
+        "confusion": [
+          [
+            338,
+            142
+          ],
+          [
+            120,
+            456
+          ]
+        ],
+        "protocol": "GroupKFold by actor, every actor held out exactly once"
+      },
+      "trained_on": "ravdess_all_24_actors",
+      "n_features": 89,
+      "calibration": {
+        "calibrated": false,
+        "note": "LightGBM probabilities are used as-is; no temperature fitted for the voice signal"
+      },
+      "caveat": "RAVDESS is ACTED English speech. Prototype acoustic stress signal, not validated real-world victim stress detection; Indian-accent adaptation is the known domain gap."
+    }
+  }
+}

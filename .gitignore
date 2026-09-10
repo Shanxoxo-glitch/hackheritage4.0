@@ -8,3 +8,14 @@ venv/
 node_modules/
 dist/
 .DS_Store
+
+# --- scoring service (Sohon) ---
+venv311/
+mlruns/
+mlflow.db
+*.safetensors
+*.joblib
+*.pkl
+*.wav
+*.zip
+services/scoring/training/data/raw/

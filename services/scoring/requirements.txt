@@ -1,0 +1,14 @@
+# serving deps (torch is installed from the CPU wheel index in the Dockerfile first)
+fastapi>=0.110
+uvicorn[standard]
+pydantic>=2
+python-multipart   # multipart/form-data upload on /v1/signals/voice
+numpy
+torch
+transformers>=4.40
+safetensors
+librosa>=0.10
+soundfile
+joblib
+huggingface_hub
+httpx

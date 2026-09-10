@@ -1,0 +1,79 @@
+text,label,category,language,source
+Someone suggested that I forget about the complaint.,0,non_threat_advice,english,synthetic_v6
+I feel angry and exhausted by the process.,0,anger,english,synthetic
+Complaint ki toh job chali jayegi.,1,financial_coercion,hinglish,synthetic
+Apne family ke baare mein socho aur complaint wapas le lo.,1,family_threat,hinglish,synthetic
+Main is process se bahut upset hoon.,0,anger,hinglish,synthetic
+This situation has been emotionally exhausting.,0,general_distress,english,synthetic
+Case ki wajah se mentally frustrated hoon.,0,anger,hinglish,synthetic
+Mujhe darr hai ki mere family ko kuch ho sakta hai.,0,hard_negative,hinglish,synthetic
+I feel mentally tired whenever I think about everything.,0,general_distress,english,synthetic
+No one has asked me to drop the case.,0,case_negation,english,synthetic_v6
+Agar court gaya toh mere liye situation kharab ho jayegi.,1,physical_threat,hinglish,synthetic
+Everything feels too difficult at the moment.,0,hopelessness,english,synthetic
+I feel irritated by how difficult the process has become.,0,anger,english,synthetic
+Mujhe bola gaya ki case ko aage mat badhao.,1,hinglish_indirect,hinglish,synthetic_v6
+They threatened consequences for my family if I refused to withdraw.,1,family_threat,english,synthetic
+I am worried about saying something incorrectly in court.,0,legal_stress,english,synthetic
+Court procedure ko lekar stress hai.,0,legal_stress,hinglish,synthetic
+I have not been threatened by anyone.,0,negation,english,synthetic_v6
+He warned me that I would be sorry for taking the case further.,1,physical_threat,english,synthetic
+They warned me not to pursue the case any further.,1,case_withdrawal,english,synthetic
+I am frustrated with how slowly the case is moving.,0,anger,english,synthetic
+I am worried that I will make a mistake in court.,0,legal_stress,english,synthetic
+I am afraid of being threatened even though nothing has happened.,0,hard_negative,english,synthetic
+Nobody told me to stop cooperating with the investigation.,0,case_negation,english,synthetic_v6
+They warned me against speaking to the authorities.,1,physical_threat,english,synthetic
+They asked me to stop taking the case forward.,1,case_withdrawal,english,synthetic
+Hearing ke baare mein soch kar nervous ho jata hoon.,0,fear,hinglish,synthetic
+Case continue kiya toh income ka problem hoga.,1,financial_coercion,hinglish,synthetic
+Case slow chalne ki wajah se irritate hoon.,0,anger,hinglish,synthetic
+Statement diya toh main safe nahi rahunga.,1,physical_threat,hinglish,synthetic
+I was told to abandon the complaint.,1,case_withdrawal,english,synthetic
+I feel nervous about speaking during the hearing.,0,fear,english,synthetic
+Mujhe aage kya hoga iska darr lag raha hai.,0,fear,hinglish,synthetic
+They said I should forget the complaint if I wanted peace.,1,targeted_threat,english,synthetic_v6
+Case ki wajah se daily life affect ho rahi hai.,0,general_distress,hinglish,synthetic
+Police ko bataya toh mere parents ko trouble ho sakta hai.,1,family_threat,hinglish,synthetic
+Complaint ki toh dekh lena kya hota hai.,1,physical_threat,hinglish,synthetic
+They told me that testifying would be a bad idea.,1,witness_intimidation,english,synthetic
+They asked me not to tell the authorities.,1,forced_silence,english,synthetic
+I do not know what I am supposed to do next.,0,hopelessness,english,synthetic
+I was told that I should not cooperate with investigators.,1,witness_intimidation,english,synthetic
+He told me not to tell the court what happened.,1,witness_intimidation,english,synthetic
+They pressured me to change what I had said.,1,case_withdrawal,english,synthetic
+Mere family ko kisi ne threaten nahi kiya.,0,hinglish_negation,hinglish,synthetic_v6
+Case continue kiya toh family ko problem hogi.,1,hinglish_threat,hinglish,synthetic_v6
+I was told that my financial situation would suffer if I cooperated.,1,financial_coercion,english,synthetic
+I have continued the case without receiving any threats.,0,case_negation,english,synthetic_v6
+Someone tried to stop me from giving evidence.,1,witness_intimidation,english,synthetic
+I feel drained by the situation.,0,sadness,english,synthetic
+Someone demanded that I withdraw my complaint.,1,case_withdrawal,english,synthetic
+Case chhodo warna bahut bura hoga.,1,hinglish_threat,hinglish,synthetic_v6
+He said I should never mention the incident again.,1,forced_silence,english,synthetic
+They warned me that there would be consequences if I testified.,1,indirect_threat,english,synthetic_v6
+I was warned that continuing the matter could put me at risk.,1,physical_threat,english,synthetic
+They said I would have to face the consequences if I testified.,1,physical_threat,english,synthetic
+I keep worrying about the case throughout the day.,0,general_distress,english,synthetic
+He pressured me to stay quiet to protect my job.,1,financial_coercion,english,synthetic
+I cannot see a clear way forward.,0,hopelessness,english,synthetic
+Legal process bahut overwhelming hai.,0,legal_stress,hinglish,synthetic
+They made it clear that I would be in trouble if I continued.,1,physical_threat,english,synthetic
+They told me to end the matter before it became worse.,1,case_withdrawal,english,synthetic
+I was warned that my family would not be left out of the situation.,1,family_threat,english,synthetic
+No threatening message was sent to me.,0,negation,english,synthetic_v6
+Mujhe legal process samajh nahi aa raha.,0,legal_stress,hinglish,synthetic
+Unhone bola chup raho warna problem ho sakti hai.,1,hinglish_indirect,hinglish,synthetic_v6
+Legal case ka experience nahi hai isliye tension ho rahi hai.,0,legal_stress,hinglish,synthetic
+Someone told me that my brother could be targeted.,1,family_threat,english,synthetic
+No one has threatened me.,0,negation,english,synthetic_v6
+He told me to stay quiet if I wanted things to remain peaceful.,1,forced_silence,english,synthetic
+Complaint ka response nahi milne se frustration hai.,0,anger,hinglish,synthetic
+I am finding it difficult to focus on normal things.,0,general_distress,english,synthetic
+Someone told me to close the matter and stay quiet.,1,case_withdrawal,english,synthetic
+Someone told me to stay quiet about the investigation.,1,forced_silence,english,synthetic
+"Mujhe darr hai ki woh mujhe hurt kar sakte hain, lekin kisi ne dhamki nahi di.",0,hard_negative,hinglish,synthetic
+Someone told me not to speak to the police.,1,forced_silence,english,synthetic
+I was warned not to talk about the complaint.,1,forced_silence,english,synthetic
+Uncertainty ki wajah se anxiety ho rahi hai.,0,fear,hinglish,synthetic
+Mujhe hearing ka process confusing lag raha hai.,0,legal_stress,hinglish,synthetic

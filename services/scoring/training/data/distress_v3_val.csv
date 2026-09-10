@@ -1,0 +1,74 @@
+id,text,label,label_name,language,source,group
+396,I burst into tears at work and had to go home.,2,HIGH,english,handwritten,hw_english_2_21
+281,Har waqt darr lagta hai aur kisi ka saamna nahi kar sakta.,2,HIGH,hinglish,templated,tpl_hinglish_2_1
+181,"Hearing ke baare mein sochta rehta hoon, relax nahi ho pa raha.",1,MODERATE,hinglish,handwritten,hw_hinglish_1_0
+238,I feel numb and empty all the time.,2,HIGH,english,handwritten,hw_english_2_14
+461,I've started avoiding conversations about the case because they stress me out.,1,MODERATE,english,handwritten,hw_english_1_40
+472,Har waqt darr lagta hai aur kuch kaam nahi aa raha.,2,HIGH,hinglish,templated,tpl_hinglish_2_1
+284,The pressure of the case is starting to affect my mood.,1,MODERATE,english,handwritten,hw_english_1_22
+344,I keep thinking something awful will happen at the hearing.,2,HIGH,english,handwritten,hw_english_2_46
+111,"I need some reassurance, I've been feeling shaky about all this.",1,MODERATE,english,handwritten,hw_english_1_36
+198,Kaanpna band nahi hota aur kisi ka saamna nahi kar sakta.,2,HIGH,hinglish,templated,tpl_hinglish_2_8
+308,"Before the hearing, I feel tense, but I'm still going to work.",1,MODERATE,english,templated,tpl_english_1_4
+241,Pehle jaisi neend nahi aa rahi.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_18
+299,"I'm okay most of the time, but some days are hard.",1,MODERATE,english,handwritten,hw_english_1_30
+78,Kaanpna band nahi hota aur lagta hai ab aur nahi.,2,HIGH,hinglish,templated,tpl_hinglish_2_8
+412,Nothing is bothering me at the moment.,0,LOW,english,handwritten,hw_english_0_34
+298,My mind keeps drifting to the case during work.,1,MODERATE,english,handwritten,hw_english_1_25
+204,I feel completely hopeless and nothing helps.,2,HIGH,english,templated,tpl_english_2_3
+130,Na kha pa raha hoon na so pa raha hoon aur samajh nahi aata kya karun.,2,HIGH,hinglish,templated,tpl_hinglish_2_5
+252,"I'm more stressed than last month, but I'm still functioning.",1,MODERATE,english,handwritten,hw_english_1_53
+398,My health is good and my mood is normal.,0,LOW,english,handwritten,hw_english_0_43
+393,Just checking in: I feel calm about the case.,0,LOW,english,templated,tpl_english_0_5
+475,"Officer ne achhe se samjhaya, koi issue nahi.",0,LOW,hinglish,handwritten,hw_hinglish_0_16
+474,I feel like my life is falling apart.,2,HIGH,english,handwritten,hw_english_2_8
+47,Har waqt darr lagta hai aur kaam pe nahi jaa pa raha.,2,HIGH,hinglish,templated,tpl_hinglish_2_1
+264,"This week, I feel calm about the case.",0,LOW,english,templated,tpl_english_0_5
+161,I've been skipping meals because I'm preoccupied with the case.,1,MODERATE,english,handwritten,hw_english_1_24
+199,"Because of the delay, I feel tense, though I can get through the day.",1,MODERATE,english,templated,tpl_english_1_4
+22,Kaanpna band nahi hota aur kuch kaam nahi aa raha.,2,HIGH,hinglish,templated,tpl_hinglish_2_8
+90,I'm afraid something terrible is going to happen to my family.,2,HIGH,english,handwritten,hw_english_2_31
+89,"After the last court visit, I feel tense, but I'm still going to work.",1,MODERATE,english,templated,tpl_english_1_4
+109,I feel completely hopeless and I feel I can't go on.,2,HIGH,english,templated,tpl_english_2_3
+32,My family has been supportive and I feel steady.,0,LOW,english,handwritten,hw_english_0_11
+232,Har waqt darr lagta hai.,2,HIGH,hinglish,templated,tpl_hinglish_2_1
+380,My hands tremble so badly I can't hold a cup.,2,HIGH,english,handwritten,hw_english_2_36
+141,I'm eating and sleeping normally.,0,LOW,english,handwritten,hw_english_0_16
+253,Bahar gaadi ki awaaz aate hi dil zor se dhadakne lagta hai.,2,HIGH,hinglish,handwritten,hw_hinglish_2_4
+184,"Last court visit ke baad, bechaini rehti hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_7
+154,I slept well and had a normal day.,0,LOW,english,handwritten,hw_english_0_7
+293,Darr hai ki gawahi dete waqt details bhool jaunga.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_19
+421,Roz panic attack jaisa ho raha hai.,2,HIGH,hinglish,handwritten,hw_hinglish_2_6
+191,"Kuch naya nahi hua is hafte, sab normal.",0,LOW,hinglish,handwritten,hw_hinglish_0_19
+222,"Is mahine, bechaini rehti hai, par manage ho raha hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_7
+152,I'm terrified to leave the house.,2,HIGH,english,handwritten,hw_english_2_2
+424,"Lawyer aur counsellor ka support hai, theek lag raha hai.",0,LOW,hinglish,handwritten,hw_hinglish_0_33
+381,"Since the last call, I feel calm about the case.",0,LOW,english,templated,tpl_english_0_5
+196,"As of today, I feel calm about the case.",0,LOW,english,templated,tpl_english_0_5
+84,Na kha pa raha hoon na so pa raha hoon aur kaam pe nahi jaa pa raha.,2,HIGH,hinglish,templated,tpl_hinglish_2_5
+425,"Last court visit ke baad, bechaini rehti hai, phir bhi din nikal jaata hai.",1,MODERATE,hinglish,templated,tpl_hinglish_1_7
+387,"I have no energy, no appetite, and no will to continue.",2,HIGH,english,handwritten,hw_english_2_32
+83,Thane jaane se pehle tension ho jaati hai.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_8
+10,I feel completely hopeless and I can't take care of my children.,2,HIGH,english,templated,tpl_english_2_3
+328,I'm worried about how the hearing will go.,1,MODERATE,english,handwritten,hw_english_1_5
+91,I feel completely hopeless and I can't go to work.,2,HIGH,english,templated,tpl_english_2_3
+127,I feel on edge before every phone call about the case.,1,MODERATE,english,handwritten,hw_english_1_34
+272,"Delay ki wajah se, bechaini rehti hai, par sambhal raha hoon.",1,MODERATE,hinglish,templated,tpl_hinglish_1_7
+332,"This month, I feel tense, but I'm coping.",1,MODERATE,english,templated,tpl_english_1_4
+262,"Sab andhera lagta hai, koi raasta nahi dikhta.",2,HIGH,hinglish,handwritten,hw_hinglish_2_11
+126,Last hearing ke baad se relaxed hoon.,0,LOW,hinglish,handwritten,hw_hinglish_0_29
+388,I feel calm about the case.,0,LOW,english,templated,tpl_english_0_5
+292,"Because of the delay, I feel tense, but I'm coping.",1,MODERATE,english,templated,tpl_english_1_4
+82,I attended the hearing and it went as planned.,0,LOW,english,handwritten,hw_english_0_15
+1,"Bhai mere saath court aayega, toh comfortable hoon.",0,LOW,hinglish,handwritten,hw_hinglish_0_18
+26,Na kha pa raha hoon na so pa raha hoon.,2,HIGH,hinglish,templated,tpl_hinglish_2_5
+383,Kaanpna band nahi hota aur bachon ka dhyan nahi rakh pa raha.,2,HIGH,hinglish,templated,tpl_hinglish_2_8
+200,"Bas sab khatam ho jaye, ab bardasht nahi hota.",2,HIGH,hinglish,handwritten,hw_hinglish_2_10
+163,I'm terrified all the time and I feel I can't go on.,2,HIGH,english,templated,tpl_english_2_1
+95,"Honestly, I don't think about the case much these days.",0,LOW,english,handwritten,hw_english_0_25
+330,Sab kuch hopeless lag raha hai.,2,HIGH,hinglish,handwritten,hw_hinglish_2_5
+434,Lagta hai zindagi bikhar rahi hai.,2,HIGH,hinglish,handwritten,hw_hinglish_2_8
+358,"Today was a good day, I met my friends in the evening.",0,LOW,english,handwritten,hw_english_0_27
+246,I'm terrified all the time.,2,HIGH,english,templated,tpl_english_2_1
+285,Raat ko incident baar baar yaad aata hai.,1,MODERATE,hinglish,handwritten,hw_hinglish_1_34
+155,I'm terrified all the time and I can't go to work.,2,HIGH,english,templated,tpl_english_2_1
