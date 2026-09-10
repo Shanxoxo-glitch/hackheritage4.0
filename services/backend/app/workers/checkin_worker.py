@@ -122,8 +122,8 @@ def build_scheduler() -> AsyncIOScheduler:
             )
         }
         logger.info("[SCHEDULER] Using Redis job store for APScheduler.")
-    except Exception as e:
-        logger.warning(f"[SCHEDULER] Redis unavailable ({e}). Falling back to in-memory job store.")
+    except Exception:
+        logger.info("[SCHEDULER] Redis not connected. Operating in standalone in-memory job store mode.")
         jobstores = {}
 
     scheduler = AsyncIOScheduler(jobstores=jobstores)

@@ -71,17 +71,17 @@ async def stream_interaction_to_vm(payload: InteractionStreamPayload):
     and streams the generated AI response back into the PWA UI.
     Falls back gracefully to intelligent local AI assistant when VM tunnel is offline.
     """
-    # Correct VM endpoint discovered from /openapi.json
-    vm_endpoint = f"{ORCHESTRATOR_VM_URL}/v1/interactions"
-    # Normalize channel to lowercase (VM schema requires: pwa | sms | ivr | email)
+    orch_url = getattr(settings, "ORCHESTRATOR_URL", "http://localhost:8500")
+    orch_key = getattr(settings, "ORCHESTRATOR_API_KEY", "vk_dev")
+    vm_endpoint = f"{orch_url}/v1/interactions"
     channel = payload.channel.lower() if payload.channel else "pwa"
 
     async def event_generator():
         vm_success = False
         try:
             headers = {"Content-Type": "application/json"}
-            if ORCHESTRATOR_API_KEY:
-                headers["X-API-Key"] = ORCHESTRATOR_API_KEY
+            if orch_key:
+                headers["X-API-Key"] = orch_key
 
             async with httpx.AsyncClient(timeout=30.0) as client:
                 res = await client.post(
@@ -111,7 +111,10 @@ async def stream_interaction_to_vm(payload: InteractionStreamPayload):
                         "source": "vm_orchestrator"   # ← tells you this came from VM
                     }
                     yield f"data: {json.dumps({'final': final_payload})}\n\n"
-        except Exception:
+                else:
+                    print(f"[Interactions Stream] VM returned status {res.status_code}: {res.text}")
+        except Exception as e:
+            print(f"[Interactions Stream] VM request error: {e}")
             vm_success = False
 
         if not vm_success:
