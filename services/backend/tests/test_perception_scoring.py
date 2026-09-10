@@ -21,34 +21,36 @@ from app.services.scoring_client import ScoringUnavailable
 client = TestClient(fastapi_app)
 
 
-@pytest.fixture(autouse=True, scope="module")
-def setup_test_db():
-    async def _create():
-        async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
-    asyncio.run(_create())
-
-
 from datetime import datetime, timezone
 from app.database import AsyncSessionLocal
 from app.models.victim import Victim
 from app.models.case import CaseFile
 from app.models.interaction import Interaction
 
-def _interaction_id():
-    async def _insert():
+TEST_INTERACTION_ID = None
+
+@pytest.fixture(autouse=True, scope="module")
+def setup_test_db():
+    global TEST_INTERACTION_ID
+    async def _create():
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
         async with AsyncSessionLocal() as db:
             victim = Victim(name_encrypted="enc_test", contact_encrypted="enc_test")
             db.add(victim)
             await db.flush()
-            case = CaseFile(victim_id=victim.id, fir_number=f"FIR-{str(uuid.uuid4())[:8]}", registered_on=datetime.now(timezone.utc).date())
+            case = CaseFile(victim_id=victim.id, fir_number="FIR-TEST-001", registered_on=datetime.now(timezone.utc).date())
             db.add(case)
             await db.flush()
             interaction = Interaction(case_id=case.id, channel="PWA")
             db.add(interaction)
             await db.commit()
             return interaction.id
-    return asyncio.run(_insert())
+
+    TEST_INTERACTION_ID = asyncio.run(_create())
+
+def _interaction_id():
+    return TEST_INTERACTION_ID or str(uuid.uuid4())
 
 
 TEXT_RESPONSE = {
