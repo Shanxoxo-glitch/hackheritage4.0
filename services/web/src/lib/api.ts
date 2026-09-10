@@ -1,5 +1,5 @@
 // shared/api.ts — the API client matching the PS26094 stack guide
-const BASE = (typeof import.meta !== "undefined" && import.meta.env?.VITE_API_URL) || "";
+export const BASE = (typeof import.meta !== "undefined" && import.meta.env?.VITE_API_URL) || "http://localhost:8400";
 
 let victimKey: string | null = null;
 let counsellorKey: string | null = null;

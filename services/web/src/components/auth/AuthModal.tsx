@@ -19,6 +19,7 @@ import {
   Check,
 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
+import { BASE } from "../../lib/api";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -46,9 +47,10 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
   const [referralId, setReferralId] = useState("");
   const [generatedVictimRef, setGeneratedVictimRef] = useState("");
   const [licenseFileName, setLicenseFileName] = useState<string | null>(null);
-  const [avatarFileName, setAvatarFileName] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [copiedRef, setCopiedRef] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Load Spline runtime on left side canvas
   useEffect(() => {
@@ -107,12 +109,42 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
     setTimeout(() => setCopiedRef(false), 2000);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    setErrorMessage(null);
+    setIsLoading(true);
 
-    // Save auth session info locally
+    const backendRole = role === "counsellor" ? "counselor" : role;
+    const endpoint = mode === "signin" ? "/api/v1/auth/login" : "/api/v1/auth/signup";
+
+    const payload =
+      mode === "signin"
+        ? { email, password }
+        : {
+            email,
+            password,
+            role: backendRole,
+            name: name || (role === "victim" ? "Victim User" : "Authorized User"),
+            contact: phone || "+919876543210",
+          };
+
     try {
+      const res = await fetch(`${BASE}${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({ detail: "Authentication failed" }));
+        throw new Error(errData.detail || "Authentication failed");
+      }
+
+      const data = await res.json();
+      setIsSubmitted(true);
+
+      // Save token and auth session info
+      localStorage.setItem("sahayak_access_token", data.access_token);
       localStorage.setItem("sahayak_auth_role", role);
       localStorage.setItem(
         "sahayak_auth_user",
@@ -120,25 +152,27 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
           name: name || (role === "victim" ? "Anonymous Traveler" : "Authorized User"),
           email,
           role,
-          referralId: role === "victim" ? generatedVictimRef : referralId,
+          user_id: data.user_id,
         })
       );
-    } catch {
-      // ignore
-    }
 
-    setTimeout(() => {
-      onClose();
-      setIsSubmitted(false);
-      // Route appropriately
-      if (role === "counsellor") {
-        navigate({ to: "/counsellor" });
-      } else if (role === "admin") {
-        navigate({ to: "/admin" });
-      } else {
-        navigate({ to: "/checkin" });
-      }
-    }, 1500);
+      setTimeout(() => {
+        onClose();
+        setIsSubmitted(false);
+        setIsLoading(false);
+        // Route appropriately
+        if (role === "counsellor") {
+          navigate({ to: "/counsellor" });
+        } else if (role === "admin") {
+          navigate({ to: "/admin" });
+        } else {
+          navigate({ to: "/checkin" });
+        }
+      }, 1000);
+    } catch (err: any) {
+      setIsLoading(false);
+      setErrorMessage(err.message || "Invalid credentials. Please try again.");
+    }
   };
 
   return (
@@ -321,6 +355,11 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
             {/* STEP 2: Role Specific Form Fields */}
             {(mode === "signin" || step === 2) && (
               <form onSubmit={handleSubmit} className="space-y-4 animate-in fade-in duration-300">
+                {errorMessage && (
+                  <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-medium animate-in fade-in">
+                    ⚠️ {errorMessage}
+                  </div>
+                )}
                 {/* Role Switcher Pill if in sign-in */}
                 <div className="flex items-center justify-between pb-1">
                   <span className="text-xs text-foreground/50 uppercase tracking-wider font-medium">
