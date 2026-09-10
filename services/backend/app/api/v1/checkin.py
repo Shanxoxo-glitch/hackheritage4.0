@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
@@ -26,7 +26,7 @@ async def submit_checkin(payload: CheckInRequest, db: AsyncSession = Depends(get
 
     # Evaluate updated state
     state = await CheckInSchedulerService.evaluate_case_checkin_state(db, payload.case_id)
-    next_due = datetime.utcnow() + timedelta(hours=24)
+    next_due = datetime.now(timezone.utc) + timedelta(hours=24)
 
     return CheckInResponse(
         status="CHECKIN_SUCCESSFUL",

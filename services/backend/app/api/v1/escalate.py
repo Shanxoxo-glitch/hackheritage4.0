@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc
@@ -24,7 +24,7 @@ async def create_risk_alert(payload: AlertCreate, db: AsyncSession = Depends(get
 
 
     prev_hash = latest_alert.current_hash if latest_alert else GENESIS_HASH
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     curr_hash = compute_alert_hash(
         score_id=payload.score_id,
         risk_level=payload.risk_level,
@@ -65,10 +65,13 @@ async def get_counsellor_triage_queue(db: AsyncSession = Depends(get_db)):
     res = await db.execute(stmt)
     rows = res.all()
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     queue = []
     for alert, score, interaction, case_file, victim in rows:
-        hours_since = (now - interaction.occurred_at).total_seconds() / 3600.0
+        occ_at = interaction.occurred_at
+        if occ_at.tzinfo is None:
+            occ_at = occ_at.replace(tzinfo=timezone.utc)
+        hours_since = (now - occ_at).total_seconds() / 3600.0
         priority_score = score.composite_score * score.confidence * (1.0 + (hours_since / 24.0))
 
         queue.append(TriageQueueItem(

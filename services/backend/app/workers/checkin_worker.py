@@ -10,7 +10,7 @@ without any API call needed to trigger it.
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.jobstores.redis import RedisJobStore
 from sqlalchemy import select
@@ -31,7 +31,7 @@ async def run_checkin_sweep():
     and dispatches the appropriate action (SMS / voice call / alert creation).
     Called automatically by APScheduler every CHECKIN_WORKER_INTERVAL_MINUTES.
     """
-    logger.info(f"[WORKER] Check-in sweep started at {datetime.utcnow().isoformat()}")
+    logger.info(f"[WORKER] Check-in sweep started at {datetime.now(timezone.utc).isoformat()}")
 
     async with AsyncSessionLocal() as db:
         # Fetch all open case files
@@ -93,7 +93,7 @@ async def run_checkin_sweep():
             except Exception as e:
                 logger.error(f"[WORKER] Error evaluating case {case.id}: {e}")
 
-    logger.info(f"[WORKER] Sweep complete at {datetime.utcnow().isoformat()}")
+    logger.info(f"[WORKER] Sweep complete at {datetime.now(timezone.utc).isoformat()}")
 
 
 def build_scheduler() -> AsyncIOScheduler:

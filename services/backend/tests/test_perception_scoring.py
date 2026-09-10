@@ -29,8 +29,26 @@ def setup_test_db():
     asyncio.run(_create())
 
 
+from datetime import datetime, timezone
+from app.database import AsyncSessionLocal
+from app.models.victim import Victim
+from app.models.case import CaseFile
+from app.models.interaction import Interaction
+
 def _interaction_id():
-    return str(uuid.uuid4())
+    async def _insert():
+        async with AsyncSessionLocal() as db:
+            victim = Victim(name_encrypted="enc_test", contact_encrypted="enc_test")
+            db.add(victim)
+            await db.flush()
+            case = CaseFile(victim_id=victim.id, fir_number=f"FIR-{str(uuid.uuid4())[:8]}", registered_on=datetime.now(timezone.utc).date())
+            db.add(case)
+            await db.flush()
+            interaction = Interaction(case_id=case.id, channel="PWA")
+            db.add(interaction)
+            await db.commit()
+            return interaction.id
+    return asyncio.run(_insert())
 
 
 TEXT_RESPONSE = {
