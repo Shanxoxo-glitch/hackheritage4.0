@@ -1,4 +1,4 @@
-﻿"""
+"""
 app/core/security.py
 JWT creation/decoding, password hashing, and FastAPI dependency
 guards for role-based access control.
@@ -17,14 +17,16 @@ from app.config import settings
 from app.database import get_db
 from app.models.user import User
 
-# Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+import bcrypt
 
+# Password hashing using direct bcrypt library (bypasses passlib Python 3.14 bug)
 def hash_password(plain: str) -> str:
-    return pwd_context.hash(plain)
+    pwd_bytes = plain.encode('utf-8')[:72]
+    return bcrypt.hashpw(pwd_bytes, bcrypt.gensalt()).decode('utf-8')
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    pwd_bytes = plain.encode('utf-8')[:72]
+    return bcrypt.checkpw(pwd_bytes, hashed.encode('utf-8'))
 
 # JWT helpers
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
