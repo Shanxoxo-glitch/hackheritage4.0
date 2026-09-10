@@ -1,0 +1,170 @@
+text,label,category,language,source
+Do not go to the police if you know what is good for you.,1,targeted_threat,english,synthetic_v6
+I am worried that someone may become angry with me.,0,fear_without_threat,english,synthetic_v6
+He said my family would suffer if I continued the case.,1,targeted_threat,english,synthetic_v6
+I keep imagining that something bad could happen.,0,fear_without_threat,english,synthetic_v6
+Police ko bataya toh tumhe problem hogi.,1,targeted_threat,hinglish,synthetic_v6
+You should consider whether this case is worth continuing.,0,ambiguous_non_threat,english,synthetic_v6
+Someone advised me to speak with a lawyer first.,0,ambiguous_non_threat,english,synthetic_v6
+Someone told me it might be better to stay out of the matter.,0,non_threat_advice,english,synthetic_v6
+Unhone bola chup raho warna problem ho sakti hai.,1,hinglish_indirect,hinglish,synthetic_v6
+They told me to withdraw the complaint unless I wanted trouble.,1,indirect_threat,english,synthetic_v6
+Nobody told me to withdraw the complaint.,0,case_negation,english,synthetic_v6
+Case continue kiya toh tumhari job ka problem ho jayega.,1,targeted_threat,hinglish,synthetic_v6
+They made it clear that I should keep silent.,1,targeted_threat,english,synthetic_v6
+They advised me not to get involved in the matter.,0,non_threat_advice,english,synthetic_v6
+They told me that my family would not be safe if I continued.,1,indirect_threat,english,synthetic_v6
+Case ko lekar mujhe bahut darr lag raha hai.,0,hinglish_fear,hinglish,synthetic_v6
+I have continued the case without receiving any threats.,0,case_negation,english,synthetic_v6
+Gawahi di toh family ko problem ho jayegi.,1,hinglish_indirect,hinglish,synthetic_v6
+Gawahi di toh tumhare liye accha nahi hoga.,1,hinglish_threat,hinglish,synthetic_v6
+Unhone bola complaint wapas le lo warna dekh lena.,1,hinglish_indirect,hinglish,synthetic_v6
+No one has contacted me about the case in a threatening way.,0,case_negation,english,synthetic_v6
+No one has asked me to drop the case.,0,case_negation,english,synthetic_v6
+I feel unsafe even though nobody has contacted me.,0,fear_without_threat,english,synthetic_v6
+I was not threatened because of my complaint.,0,case_negation,english,synthetic_v6
+There is no actual threat against me.,0,negation,english,synthetic_v6
+Nobody has threatened my family.,0,negation,english,synthetic_v6
+Agar case continue kiya toh tumhe regret hoga.,1,hinglish_threat,hinglish,synthetic_v6
+Mere family ko kisi ne threaten nahi kiya.,0,hinglish_negation,hinglish,synthetic_v6
+Case continue kiya toh family ko problem hogi.,1,hinglish_threat,hinglish,synthetic_v6
+He told me to stay quiet or there would be consequences.,1,indirect_threat,english,synthetic_v6
+The newspaper reported threats against other witnesses.,0,other_person_threat,english,synthetic_v6
+They said I should stop talking about the case if I knew what was good for me.,1,indirect_threat,english,synthetic_v6
+Case ko yahin khatam karo warna mushkil hogi.,1,targeted_threat,hinglish,synthetic_v6
+"Unhone bola zyada bolna mat, warna situation kharab ho sakti hai.",1,hinglish_indirect,hinglish,synthetic_v6
+He suggested that I reconsider my decision unless I wanted problems.,1,indirect_threat,english,synthetic_v6
+Stay quiet or there will be consequences.,1,targeted_threat,english,synthetic_v6
+Nobody made any threat against me.,0,negation,english,synthetic_v6
+Mujhe nahi pata aage kya hoga aur isliye tension hai.,0,hinglish_fear,hinglish,synthetic_v6
+They said I should forget the complaint if I wanted peace.,1,targeted_threat,english,synthetic_v6
+Mere against statement diya toh accha nahi hoga.,1,targeted_threat,hinglish,synthetic_v6
+Mujhe safety ko lekar concern hai.,0,hinglish_fear,hinglish,synthetic_v6
+Agar statement diya toh tumhe regret hoga.,1,hinglish_indirect,hinglish,synthetic_v6
+I worry that there could be retaliation.,0,fear_without_threat,english,synthetic_v6
+Gawahi di toh tumhare family ko dekh lenge.,1,targeted_threat,hinglish,synthetic_v6
+Withdraw the complaint or you will regret it.,1,targeted_threat,english,synthetic_v6
+Kisi ne complaint wapas lene ko nahi bola.,0,hinglish_negation,hinglish,synthetic_v6
+He said I should keep quiet if I wanted things to remain peaceful.,1,indirect_threat,english,synthetic_v6
+Someone told me another family received threats.,0,other_person_threat,english,synthetic_v6
+He said I would regret speaking to the authorities.,1,targeted_threat,english,synthetic_v6
+No one has pressured me to change my statement.,0,case_negation,english,synthetic_v6
+Mujhe case ke wajah se koi dhamki nahi mili.,0,hinglish_negation,hinglish,synthetic_v6
+Unhone kaha case chhodo warna problem hogi.,1,targeted_threat,hinglish,synthetic_v6
+Mujhe koi threaten nahi kar raha hai.,0,hinglish_negation,hinglish,synthetic_v6
+No one has told me that I would be harmed.,0,negation,english,synthetic_v6
+He said my job could disappear if I helped the investigation.,1,indirect_threat,english,synthetic_v6
+He said people who speak in court can face consequences.,1,targeted_threat,english,synthetic_v6
+I have not been threatened by anyone.,0,negation,english,synthetic_v6
+I am scared about what might happen next.,0,fear_without_threat,english,synthetic_v6
+Mere khilaaf statement mat dena.,1,hinglish_threat,hinglish,synthetic_v6
+Complaint ki toh tumhari job chali jayegi.,1,targeted_threat,hinglish,synthetic_v6
+I read about a witness being threatened.,0,other_person_threat,english,synthetic_v6
+Someone else involved in the case was threatened.,0,other_person_threat,english,synthetic_v6
+No one has made a threat against my family.,0,negation,english,synthetic_v6
+Do not take this matter to court.,1,targeted_threat,hinglish,synthetic_v6
+The possibility of retaliation makes me anxious.,0,fear_without_threat,english,synthetic_v6
+They warned me that there would be consequences if I testified.,1,indirect_threat,english,synthetic_v6
+They told me that cooperating with police would create serious problems.,1,targeted_threat,english,synthetic_v6
+Kisi ne mujhe dhamki nahi di.,0,hinglish_negation,hinglish,synthetic_v6
+I have received no threats about the case.,0,negation,english,synthetic_v6
+Kisi ne mujhe harm karne ki baat nahi boli.,0,hinglish_negation,hinglish,synthetic_v6
+Unhone kaha matter ko yahin khatam karo.,1,hinglish_indirect,hinglish,synthetic_v6
+Nobody threatened me.,0,negation,english,synthetic_v6
+"He initially gave advice, but later threatened me if I continued.",1,targeted_threat,english,synthetic_v6
+He threatened to harm my brother if I gave evidence.,1,targeted_threat,english,synthetic_v6
+They made it clear that I should not speak in court.,1,indirect_threat,english,synthetic_v6
+There have been threats against other people involved in similar cases.,0,other_person_threat,english,synthetic_v6
+They threatened to destroy my business if I testified.,1,targeted_threat,english,synthetic_v6
+The case makes me fear for my safety.,0,fear_without_threat,english,synthetic_v6
+I heard about threats in the neighbourhood.,0,other_person_threat,english,synthetic_v6
+They told me I would be attacked if I went to the police.,1,targeted_threat,english,synthetic_v6
+I am afraid that someone might hurt me.,0,fear_without_threat,english,synthetic_v6
+Nobody has tried to force me to withdraw the complaint.,0,case_negation,english,synthetic_v6
+"I was not threatened when I first complained, but they later threatened my family.",1,targeted_threat,english,synthetic_v6
+Chup raho aur matter khatam karo.,1,hinglish_threat,hinglish,synthetic_v6
+Court mein mere against kuch mat bolna.,1,hinglish_threat,hinglish,synthetic_v6
+Complaint ki toh tumhare liye mushkil ho jayegi.,1,hinglish_threat,hinglish,synthetic_v6
+Another victim told me that they had received threats.,0,other_person_threat,english,synthetic_v6
+Case continue karne ko lekar main anxious hoon.,0,hinglish_fear,hinglish,synthetic_v6
+Mujhe future ko lekar tension ho rahi hai.,0,hinglish_fear,hinglish,synthetic_v6
+Mujhe bola gaya ki case ko aage mat badhao.,1,hinglish_indirect,hinglish,synthetic_v6
+I was told to be careful because the situation is complicated.,0,ambiguous_non_threat,english,synthetic_v6
+Keep your mouth shut about the incident.,1,targeted_threat,english,synthetic_v6
+My friend advised me to avoid the case.,0,non_threat_advice,english,synthetic_v6
+He made it clear that I should not appear in court.,1,targeted_threat,english,synthetic_v6
+He reminded me that he knew where my parents lived.,1,indirect_threat,english,synthetic_v6
+Complaint wapas le lo warna problem hogi.,1,hinglish_threat,hinglish,synthetic_v6
+I am frightened by the situation but nobody has threatened me.,0,fear_without_threat,english,synthetic_v6
+Matter ko aage le gaye toh consequences honge.,1,targeted_threat,hinglish,synthetic_v6
+"They first advised me to stop, then made it clear there would be consequences.",1,targeted_threat,english,synthetic_v6
+They told me to think about what could happen to my family.,1,targeted_threat,english,synthetic_v6
+They said things would become difficult if I continued.,1,indirect_threat,english,synthetic_v6
+I was asked to wait before making a decision.,0,ambiguous_non_threat,english,synthetic_v6
+Kisi ne mujhe chup rehne ke liye force nahi kiya.,0,hinglish_negation,hinglish,synthetic_v6
+Stop the case or your family will suffer.,1,targeted_threat,english,synthetic_v6
+I was given advice to step away from the dispute.,0,non_threat_advice,english,synthetic_v6
+Nobody contacted me to threaten me.,0,negation,english,synthetic_v6
+"Nobody threatened me at first, but later they warned me to withdraw the case.",1,targeted_threat,english,synthetic_v6
+I have not received any threats.,0,negation,english,synthetic_v6
+Court mein sach mat bolna.,1,targeted_threat,hinglish,synthetic_v6
+They recommended that I speak to a lawyer first.,0,non_threat_advice,english,synthetic_v6
+I heard that another witness was threatened.,0,other_person_threat,english,synthetic_v6
+Case chhodo warna bahut bura hoga.,1,hinglish_threat,hinglish,synthetic_v6
+Police ke paas gaye toh dekh lenge.,1,hinglish_threat,hinglish,synthetic_v6
+I am nervous about continuing the case.,0,fear_without_threat,english,synthetic_v6
+Someone suggested that I stay away from the dispute.,0,non_threat_advice,english,synthetic_v6
+There has been no threat against me.,0,negation,english,synthetic_v6
+"I know another family was intimidated, but nobody threatened me.",0,other_person_threat,english,synthetic_v6
+Chup raho warna problem hogi.,1,hinglish_threat,hinglish,synthetic_v6
+Case aage badhaya toh tumhe regret hoga.,1,targeted_threat,hinglish,synthetic_v6
+Case continue kiya toh job ka problem ho jayega.,1,hinglish_indirect,hinglish,synthetic_v6
+"Kisi ne mujhe dhamki nahi di, bas mujhe darr lag raha hai.",0,hinglish_fear,hinglish,synthetic_v6
+Family ko involve mat karo warna problem hogi.,1,hinglish_threat,hinglish,synthetic_v6
+Police ko inform kiya toh tumhe nuksaan ho sakta hai.,1,targeted_threat,hinglish,synthetic_v6
+Complaint wapas lo warna dekh lena.,1,targeted_threat,english,synthetic_v6
+Case ki wajah se main bahut nervous hoon.,0,hinglish_fear,hinglish,synthetic_v6
+No threatening message was sent to me.,0,negation,english,synthetic_v6
+Please think carefully before getting involved.,0,ambiguous_non_threat,english,synthetic_v6
+Unhone clear bola ki police ke paas nahi jaana hai.,1,hinglish_indirect,hinglish,synthetic_v6
+Nobody has warned me that I would be harmed.,0,negation,english,synthetic_v6
+He said I would regret going to the police.,1,indirect_threat,english,synthetic_v6
+Case band karo warna bahut bura hoga.,1,targeted_threat,hinglish,synthetic_v6
+Nobody threatened me about continuing the case.,0,case_negation,english,synthetic_v6
+Police ko bataya toh dekh lena.,1,hinglish_threat,hinglish,synthetic_v6
+Court mein bola toh consequences honge.,1,targeted_threat,hinglish,synthetic_v6
+He warned me not to give evidence against them.,1,targeted_threat,english,synthetic_v6
+Do not testify against us.,1,targeted_threat,english,synthetic_v6
+Gawahi mat dena warna tumhare liye accha nahi hoga.,1,targeted_threat,hinglish,synthetic_v6
+He told me that cooperating with the police would be a mistake.,1,indirect_threat,english,synthetic_v6
+Someone recommended that I think carefully before continuing.,0,non_threat_advice,english,synthetic_v6
+Police ko bataya toh tumhare liye problem hogi.,1,hinglish_indirect,hinglish,synthetic_v6
+I was advised to wait before continuing.,0,non_threat_advice,english,synthetic_v6
+They said I should avoid unnecessary conflict.,0,ambiguous_non_threat,english,synthetic_v6
+They warned me that my family could suffer if I testified.,1,indirect_threat,english,synthetic_v6
+Someone suggested that I forget about the complaint.,0,non_threat_advice,english,synthetic_v6
+Retaliation ka sochkar mujhe anxiety hoti hai.,0,hinglish_fear,hinglish,synthetic_v6
+I have not received any threats about testifying.,0,case_negation,english,synthetic_v6
+He made it clear that continuing would cause problems for me.,1,indirect_threat,english,synthetic_v6
+Maybe it is better to stay away from the dispute.,0,ambiguous_non_threat,english,synthetic_v6
+They said my family might face trouble if I testified.,1,targeted_threat,english,synthetic_v6
+There were threats against another person involved in the case.,0,other_person_threat,english,synthetic_v6
+Unhone bola police ke paas gaya toh dekh lenge.,1,targeted_threat,hinglish,synthetic_v6
+No one has threatened me.,0,negation,english,synthetic_v6
+They suggested that I avoid unnecessary conflict.,0,non_threat_advice,english,synthetic_v6
+Police ke paas mat jaana warna problem hogi.,1,targeted_threat,hinglish,synthetic_v6
+He warned me that continuing the complaint would not end well.,1,targeted_threat,english,synthetic_v6
+Chup raho warna family ko problem hogi.,1,targeted_threat,hinglish,synthetic_v6
+Mere against kisi ne threat nahi diya.,0,hinglish_negation,hinglish,synthetic_v6
+Mujhe koi threatening message nahi mila.,0,hinglish_negation,hinglish,synthetic_v6
+They said they would hurt me if I reported the incident.,1,targeted_threat,english,synthetic_v6
+Mujhe lagta hai kuch bura ho sakta hai.,0,hinglish_fear,hinglish,synthetic_v6
+Court mein kuch bola toh consequences honge.,1,hinglish_threat,hinglish,synthetic_v6
+They told me to stop the complaint or they would hurt me.,1,targeted_threat,english,synthetic_v6
+Someone suggested that I reconsider my involvement.,0,ambiguous_non_threat,english,synthetic_v6
+Nobody told me to stop cooperating with the investigation.,0,case_negation,english,synthetic_v6
+Case aage badhaya toh accha nahi hoga.,1,hinglish_threat,hinglish,synthetic_v6
+Unhone kaha case aage le gaye toh accha nahi hoga.,1,hinglish_indirect,hinglish,synthetic_v6
+No one has tried to intimidate me.,0,negation,english,synthetic_v6
+Mere area mein threats ke baare mein suna hai isliye main scared hoon.,0,hinglish_fear,hinglish,synthetic_v6
+Kisi ne police ke paas jaane se mujhe nahi roka.,0,hinglish_negation,hinglish,synthetic_v6

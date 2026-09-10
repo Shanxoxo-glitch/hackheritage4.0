@@ -1,0 +1,841 @@
+text,label,category,language,source
+"Last court visit ke baad, neend thodi kam ho gayi hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Roz raat incident ke bure sapne aate hain.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Statement dene ko lekar nervous hoon.,0,legal_stress_without_threat,hinglish,synthetic
+Na kha pa raha hoon na so pa raha hoon aur samajh nahi aata kya karun.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I feel lost because everything is so complicated.,0,sadness_without_threat,english,synthetic
+Police ke paas gaya toh mere liye achha nahi hoga.,1,direct_threat,hinglish,synthetic
+Kuen tak jaane mein bhi ab bahut darr lagta hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+"Mujhe darr hai ki woh mujhe hurt kar sakte hain, lekin kisi ne dhamki nahi di.",0,hard_negative,hinglish,synthetic
+Nobody told me to stop cooperating with the investigation.,0,negation,english,synthetic_v6
+Rona band nahi hota aur kuch kaam nahi aa raha.,0,sadness_without_threat,hinglish,distress_v3_negatives
+There have been threats against other people involved in similar cases.,0,third_party_statement,english,synthetic_v6
+They asked me to forget what I had seen.,1,witness_intimidation,english,synthetic
+They told me that cooperating with police would create serious problems.,1,direct_threat,english,synthetic_v6
+Nobody threatened me about continuing the case.,0,negation,english,synthetic_v6
+"Hearing se pehle, mood low rehta hai, par manage ho raha hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+I am struggling to keep up with my normal routine.,0,sadness_without_threat,english,synthetic
+They told me to withdraw the complaint.,1,case_withdrawal_coercion,english,synthetic
+Court procedure ko lekar stress hai.,0,legal_stress_without_threat,hinglish,synthetic
+Someone told me that I should keep my mouth shut.,1,forced_silence,english,synthetic
+Keep your mouth shut about the incident.,1,direct_threat,english,synthetic_v6
+Har waqt darr lagta hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I have been having a difficult time emotionally.,0,sadness_without_threat,english,synthetic
+I am nervous about giving my statement.,0,legal_stress_without_threat,english,synthetic
+Case ki wajah se bahut nervous feel kar raha hoon.,0,fear_without_threat,hinglish,synthetic
+My body hurts from the stress and I can't function.,0,sadness_without_threat,english,distress_v3_negatives
+I feel nervous whenever I think about the hearing.,0,fear_without_threat,english,synthetic
+The possibility of retaliation is making me extremely anxious.,0,hard_negative,english,synthetic
+He warned me that I would regret continuing the case.,1,direct_threat,english,synthetic
+He warned me that my employment would be affected.,1,financial_coercion,english,synthetic
+Mere area mein threats ke baare mein suna hai isliye main scared hoon.,0,fear_without_threat,hinglish,synthetic_v6
+I feel a knot in my stomach when I think about the hearing.,0,sadness_without_threat,english,distress_v3_negatives
+He told me to withdraw everything I had reported.,1,case_withdrawal_coercion,english,synthetic
+Darr hai ki parivaar ke saath kuch bahut bura ho jayega.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Lag raha hai kuch bhi theek nahi hoga.,0,sadness_without_threat,hinglish,synthetic
+"Har din pehle se bura hai, main bikhar raha hoon.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Chup raho aur matter khatam karo.,1,direct_threat,hinglish,synthetic_v6
+He said I would regret going to the police.,1,indirect_threat,english,synthetic_v6
+He warned me to keep quiet about the incident.,1,forced_silence,english,synthetic
+I do not feel like talking to anyone.,0,sadness_without_threat,english,synthetic
+Case ki wajah se daily life affect ho rahi hai.,0,sadness_without_threat,hinglish,synthetic
+"Since the notice came, I've been worried, though I can get through the day.",0,sadness_without_threat,english,distress_v3_negatives
+"Since the notice came, I've been sleeping a little less, but I'm still going to work.",0,sadness_without_threat,english,distress_v3_negatives
+I do not know what to expect during the hearing.,0,legal_stress_without_threat,english,synthetic
+Police ko kuch mat bolna.,1,forced_silence,hinglish,synthetic
+"This month, I've been sleeping a little less, but I'm coping.",0,sadness_without_threat,english,distress_v3_negatives
+No one has tried to intimidate me.,0,negation,english,synthetic_v6
+They told me my job would not be safe if I continued.,1,financial_coercion,english,synthetic
+Someone told me not to risk my employment over the case.,1,financial_coercion,english,synthetic
+"Since the notice came, I'm a bit anxious.",0,sadness_without_threat,english,distress_v3_negatives
+I keep thinking about the hearing and it's hard to relax.,0,sadness_without_threat,english,distress_v3_negatives
+I read about a witness being threatened.,0,third_party_statement,english,synthetic_v6
+I'm at my breaking point and I have no one to turn to.,0,sadness_without_threat,english,distress_v3_negatives
+I feel there is no point in anything anymore.,0,sadness_without_threat,english,distress_v3_negatives
+Kahin safe nahi lagta.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Someone suggested that I stay away from the dispute.,0,benign_advice,english,synthetic_v6
+"Notice aane ke baad se, chinta ho rahi hai, par kaam pe jaa raha hoon.",0,sadness_without_threat,hinglish,distress_v3_negatives
+He warned me that I would be sorry for taking the case further.,1,direct_threat,english,synthetic
+Kuch samajh nahi aa raha kaise aage badhun.,0,sadness_without_threat,hinglish,synthetic
+I feel unsettled because of everything that happened.,0,sadness_without_threat,english,synthetic
+"Date paas aa rahi hai toh, thodi ghabrahat hai, phir bhi din nikal jaata hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Everything feels impossible right now.,0,sadness_without_threat,english,synthetic
+Is hafte kaam pe dhyan lagana mushkil raha.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Lagta hai toot raha hoon aur kuch kaam nahi aa raha.,0,sadness_without_threat,hinglish,distress_v3_negatives
+"I need some reassurance, I've been feeling shaky about all this.",0,sadness_without_threat,english,distress_v3_negatives
+"This month, it's been hard to focus.",0,sadness_without_threat,english,distress_v3_negatives
+Samajh nahi aa raha aage kya hoga.,0,fear_without_threat,hinglish,synthetic
+Process ki wajah se bahut irritation ho rahi hai.,0,anger_without_threat,hinglish,synthetic
+I am upset that nobody seems to understand my situation.,0,anger_without_threat,english,synthetic
+Complaint ki toh tumhare liye mushkil ho jayegi.,1,direct_threat,hinglish,synthetic_v6
+I was told to abandon the complaint.,1,case_withdrawal_coercion,english,synthetic
+I feel uneasy about seeing the other party in court.,0,sadness_without_threat,english,distress_v3_negatives
+They told me to remain silent about what happened.,1,forced_silence,english,synthetic
+I feel stressed whenever I have to deal with the paperwork.,0,legal_stress_without_threat,english,synthetic
+I am frustrated with how slowly the case is moving.,0,anger_without_threat,english,synthetic
+"Because of the delay, I feel nervous, but I'm coping.",0,sadness_without_threat,english,distress_v3_negatives
+"Kai din se theek se khaya nahi, rona band nahi hota.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Thane jaane se pehle tension ho jaati hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Statement wapas lena padega.,1,case_withdrawal_coercion,hinglish,synthetic
+Someone told me to stay quiet about the investigation.,1,forced_silence,english,synthetic
+I feel like my life is falling apart.,0,sadness_without_threat,english,distress_v3_negatives
+Apni job risk mein mat daalo aur complaint wapas le lo.,1,financial_coercion,hinglish,synthetic
+He told me to change my statement.,1,case_withdrawal_coercion,english,synthetic
+I feel numb and empty all the time.,0,sadness_without_threat,english,distress_v3_negatives
+I find the legal process emotionally exhausting.,0,legal_stress_without_threat,english,synthetic
+Someone tried to stop me from giving evidence.,1,witness_intimidation,english,synthetic
+I don't feel safe anywhere and I feel I can't go on.,0,sadness_without_threat,english,distress_v3_negatives
+They said I should reconsider testifying.,1,witness_intimidation,english,synthetic
+I feel emotionally exhausted.,0,sadness_without_threat,english,synthetic
+No one has threatened me.,0,negation,english,synthetic_v6
+The paperwork is overwhelming me.,0,legal_stress_without_threat,english,synthetic
+Police ko bataya toh tumhare liye problem hogi.,1,indirect_threat,hinglish,synthetic_v6
+"I feel worried, though I can still get through my day.",0,sadness_without_threat,english,distress_v3_negatives
+I've been more irritable than usual with my family.,0,sadness_without_threat,english,distress_v3_negatives
+"Before the hearing, it's been hard to focus, but I'm managing.",0,sadness_without_threat,english,distress_v3_negatives
+I worry that there could be retaliation.,0,fear_without_threat,english,synthetic_v6
+"Please meri madad karo, ab kuch samajh nahi aa raha.",0,sadness_without_threat,hinglish,distress_v3_negatives
+"Kaam pe rona aa gaya, ghar aana pada.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Jo hua usko lekar mujhe bahut gussa hai.,0,anger_without_threat,hinglish,synthetic
+I'm having panic attacks and I can't face anyone.,0,sadness_without_threat,english,distress_v3_negatives
+He warned me that continuing the complaint would not end well.,1,direct_threat,english,synthetic_v6
+"This month, I feel tense, but I'm coping.",0,sadness_without_threat,english,distress_v3_negatives
+I am afraid something bad might happen to my family.,0,hard_negative,english,synthetic
+Mujhe pura situation unfair lag raha hai.,0,anger_without_threat,hinglish,synthetic
+Stress hai par positive rehne ki koshish kar raha hoon.,0,sadness_without_threat,hinglish,distress_v3_negatives
+"Hearing ke baare mein sochta rehta hoon, relax nahi ho pa raha.",0,sadness_without_threat,hinglish,distress_v3_negatives
+I get tense every time I have to go to the police station.,0,sadness_without_threat,english,distress_v3_negatives
+Someone suggested that I reconsider my involvement.,0,ambiguous,english,synthetic_v6
+They demanded that I stop with the complaint.,1,case_withdrawal_coercion,english,synthetic
+"I wish this would all just end, I can't take it.",0,sadness_without_threat,english,distress_v3_negatives
+"Hearing ka saamna nahi kar sakta, lagta hai gir jaunga.",0,sadness_without_threat,hinglish,distress_v3_negatives
+They warned me to take the matter no further.,1,case_withdrawal_coercion,english,synthetic
+Sab chhod dene ka man karta hai aur kuch kaam nahi aa raha.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Nobody has tried to force me to withdraw the complaint.,0,negation,english,synthetic_v6
+"With the date coming up, I've been worried, though I can get through the day.",0,sadness_without_threat,english,distress_v3_negatives
+Please think carefully before getting involved.,0,ambiguous,english,synthetic_v6
+They warned me that my family could suffer if I testified.,1,indirect_threat,english,synthetic_v6
+"Sab andhera lagta hai, koi raasta nahi dikhta.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Har court visit ke baad thak jaata hoon.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I was pressured into withdrawing the complaint.,1,case_withdrawal_coercion,english,synthetic
+Kaanpna band nahi hota aur lagta hai ab aur nahi.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I feel irritated by how difficult the process has become.,0,anger_without_threat,english,synthetic
+I feel drained by the situation.,0,sadness_without_threat,english,synthetic
+The situation has affected me emotionally.,0,sadness_without_threat,english,synthetic
+They warned me not to discuss the matter publicly.,1,forced_silence,english,synthetic
+He warned me not to give evidence against them.,1,witness_intimidation,english,synthetic
+He pressured me to stay silent.,1,forced_silence,english,synthetic
+I feel completely overwhelmed.,0,sadness_without_threat,english,synthetic
+Na kha pa raha hoon na so pa raha hoon.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I am nervous because I do not know what to expect.,0,fear_without_threat,english,synthetic
+"Har waqt rona aata hai, control nahi hota.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Someone told me that my income was at risk.,1,financial_coercion,english,synthetic
+"They first advised me to stop, then made it clear there would be consequences.",1,direct_threat,english,synthetic_v6
+Complaint withdraw nahi ki toh job se nikalwa denge.,1,financial_coercion,hinglish,synthetic
+Lagta hai doob raha hoon aur koi bachane nahi aayega.,0,sadness_without_threat,hinglish,distress_v3_negatives
+The case procedure is difficult for me to understand.,0,legal_stress_without_threat,english,synthetic
+They told me to think about what could happen to my family.,1,direct_threat,english,synthetic_v6
+He said I should stop the case for the sake of my family.,1,third_party_threat,english,synthetic
+I feel worthless and I don't want to see anyone.,0,sadness_without_threat,english,distress_v3_negatives
+Case ke baare mein kisi se baat mat karna.,1,forced_silence,hinglish,synthetic
+I feel lonely after everything that happened.,0,sadness_without_threat,english,synthetic
+They told me that nobody should hear about the incident.,1,forced_silence,english,synthetic
+They suggested that I avoid unnecessary conflict.,0,benign_advice,english,synthetic_v6
+I can't stop shaking and I don't know what to do.,0,sadness_without_threat,english,distress_v3_negatives
+No one has told me that I would be harmed.,0,negation,english,synthetic_v6
+Lagta hai dimaag kharab ho jayega.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Case continue karne ki zarurat nahi hai.,1,case_withdrawal_coercion,hinglish,synthetic
+Pehle jaisi neend nahi aa rahi.,0,sadness_without_threat,hinglish,distress_v3_negatives
+He asked me to take back my statement.,1,case_withdrawal_coercion,english,synthetic
+I feel angry and exhausted by the process.,0,anger_without_threat,english,synthetic
+Mujhe nahi pata aage kya hoga aur isliye tension hai.,0,fear_without_threat,hinglish,synthetic_v6
+Stay quiet or there will be consequences.,1,direct_threat,english,synthetic_v6
+I'm worried about money because I've missed work for court dates.,0,sadness_without_threat,english,distress_v3_negatives
+Complaint ki toh meri family ko problem hogi.,1,third_party_threat,hinglish,synthetic
+Panic attack jaise hote hain aur kisi ka saamna nahi kar sakta.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Case ko lekar mujhe bahut darr lag raha hai.,0,fear_without_threat,hinglish,synthetic_v6
+Nobody threatened me.,0,negation,english,synthetic_v6
+Gawahi di toh tumhe iska result bhugatna padega.,1,direct_threat,hinglish,synthetic
+I was told to stop cooperating or I would face serious consequences.,1,direct_threat,english,synthetic
+Legal process bahut overwhelming hai.,0,legal_stress_without_threat,hinglish,synthetic
+Mujhe situation par bahut gussa aa raha hai.,0,anger_without_threat,hinglish,synthetic
+I was warned that continuing the matter could put me at risk.,1,direct_threat,english,synthetic
+They asked me to keep my statement to myself.,1,witness_intimidation,english,synthetic
+"Khana chhod diya, har waqt jee machalta hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+No threatening message was sent to me.,0,negation,english,synthetic_v6
+I can't stop crying.,0,sadness_without_threat,english,distress_v3_negatives
+Complaint ki toh dekh lena kya hota hai.,1,direct_threat,hinglish,synthetic
+"Since the notice came, I've been worried, but I'm coping.",0,sadness_without_threat,english,distress_v3_negatives
+Kahin safe nahi lagta aur lagta hai ab aur nahi.,0,sadness_without_threat,hinglish,distress_v3_negatives
+"Before the hearing, I feel nervous, but my routine is mostly okay.",0,sadness_without_threat,english,distress_v3_negatives
+They told me that I would pay for continuing with the case.,1,direct_threat,english,synthetic
+You should consider whether this case is worth continuing.,0,ambiguous,english,synthetic_v6
+Police ko bataya toh mere parents ko trouble ho sakta hai.,1,third_party_threat,hinglish,synthetic
+I am angry about the way I was treated.,0,anger_without_threat,english,synthetic
+Family ko involve nahi karna hai toh case withdraw kar do.,1,third_party_threat,hinglish,synthetic
+"I feel a bit scared about the next step, but I'll go.",0,sadness_without_threat,english,distress_v3_negatives
+I was warned that cooperating could affect my employment.,1,financial_coercion,english,synthetic
+Gawahi di toh job safe nahi rahegi.,1,financial_coercion,hinglish,synthetic
+My hands tremble so badly I can't hold a cup.,0,sadness_without_threat,english,distress_v3_negatives
+I'm terrified to leave the house.,0,sadness_without_threat,english,distress_v3_negatives
+Kaanpna band nahi hota aur bachon ka dhyan nahi rakh pa raha.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Sab hopeless lagta hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+He told me to forget everything I had seen.,1,witness_intimidation,english,synthetic
+They threatened to destroy my business if I testified.,1,direct_threat,english,synthetic_v6
+"Date paas aa rahi hai toh, thodi ghabrahat hai, par sambhal raha hoon.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Mujhe future ko lekar tension ho rahi hai.,0,fear_without_threat,hinglish,synthetic_v6
+"I'm managing, but the stress is getting to me some days.",0,sadness_without_threat,english,distress_v3_negatives
+Maybe it is better to stay away from the dispute.,0,ambiguous,english,synthetic_v6
+"Hearing se pehle, focus karna mushkil hai, par manage ho raha hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+The situation has made me very frustrated.,0,anger_without_threat,english,synthetic
+I can't sleep at all and I can't go to work.,0,sadness_without_threat,english,distress_v3_negatives
+I don't know how much longer I can bear this.,0,sadness_without_threat,english,distress_v3_negatives
+I can't stop shaking and nothing helps.,0,sadness_without_threat,english,distress_v3_negatives
+"Cross-examination ke liye ready hoon ya nahi, pata nahi.",0,sadness_without_threat,hinglish,distress_v3_negatives
+"This month, it's been hard to focus, but I'm coping.",0,sadness_without_threat,english,distress_v3_negatives
+I feel trapped and completely helpless.,0,sadness_without_threat,english,distress_v3_negatives
+Sab hopeless lagta hai aur kisi ka saamna nahi kar sakta.,0,sadness_without_threat,hinglish,distress_v3_negatives
+They told me to end the matter before it became worse.,1,case_withdrawal_coercion,english,synthetic
+I feel so much fear that I've stopped going to work entirely.,0,sadness_without_threat,english,distress_v3_negatives
+I'm not sure I'm ready for the cross-examination.,0,sadness_without_threat,english,distress_v3_negatives
+Someone told me another family received threats.,0,third_party_statement,english,synthetic_v6
+I was not threatened because of my complaint.,0,negation,english,synthetic_v6
+I feel like I can't go on with this anymore.,0,sadness_without_threat,english,distress_v3_negatives
+I am extremely angry about what happened.,0,anger_without_threat,english,synthetic
+Kahin safe nahi lagta aur kuch kaam nahi aa raha.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Roz panic attack jaisa ho raha hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I'm having panic attacks and I can't take care of my children.,0,sadness_without_threat,english,distress_v3_negatives
+I've been sleeping a bit less since the notice came.,0,sadness_without_threat,english,distress_v3_negatives
+Mujhe situation ko lekar fear ho raha hai.,0,fear_without_threat,hinglish,synthetic
+He said people who speak in court can face consequences.,1,direct_threat,english,synthetic_v6
+There has been no threat against me.,0,negation,english,synthetic_v6
+Hearing ka sochke pet mein ajeeb sa lagta hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I'm crying all the time and I can't control it.,0,sadness_without_threat,english,distress_v3_negatives
+I was told that my financial situation would suffer if I cooperated.,1,financial_coercion,english,synthetic
+"I've isolated myself completely, I can't face people.",0,sadness_without_threat,english,distress_v3_negatives
+Complaint withdraw karna hi better hoga.,1,case_withdrawal_coercion,hinglish,synthetic
+They told me my family would have problems if I cooperated.,1,third_party_threat,english,synthetic
+Sab kuch hopeless lag raha hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I'm tired of waiting and it's making me anxious.,0,sadness_without_threat,english,distress_v3_negatives
+I heard that another witness was threatened.,0,third_party_statement,english,synthetic_v6
+Case continue kiya toh income ka problem hoga.,1,financial_coercion,hinglish,synthetic
+Mujhe bola gaya ki case ko aage mat badhao.,1,indirect_threat,hinglish,synthetic_v6
+There were threats against another person involved in the case.,0,third_party_statement,english,synthetic_v6
+Kisi ne police ke paas jaane se mujhe nahi roka.,0,negation,hinglish,synthetic_v6
+"Bas sab khatam ho jaye, ab bardasht nahi hota.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Mujhe court jaane mein anxiety ho rahi hai.,0,fear_without_threat,hinglish,synthetic
+Statement change kar do.,1,case_withdrawal_coercion,hinglish,synthetic
+"Hearing kaise jayegi, iski chinta hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+I'm too frightened to go to the village well anymore.,0,sadness_without_threat,english,distress_v3_negatives
+They told me to stop cooperating with the case.,1,case_withdrawal_coercion,english,synthetic
+Statement mein jo hua woh mat bolna.,1,witness_intimidation,hinglish,synthetic
+They told me to stop cooperating if I wanted to keep working.,1,financial_coercion,english,synthetic
+I feel stressed whenever the case comes up.,0,sadness_without_threat,english,synthetic
+Kisi ko bataya toh problem hogi.,1,forced_silence,hinglish,synthetic
+Chup raho warna family ko problem hogi.,1,direct_threat,hinglish,synthetic_v6
+They warned me to think carefully before going to the police.,1,direct_threat,english,synthetic
+"Nobody has threatened me, but I am worried about what could happen.",0,hard_negative,english,synthetic
+Gawahi di toh tumhare family ko dekh lenge.,1,direct_threat,hinglish,synthetic_v6
+I feel completely hopeless about everything.,0,sadness_without_threat,english,distress_v3_negatives
+"I have no energy, no appetite, and no will to continue.",0,sadness_without_threat,english,distress_v3_negatives
+Uncertainty ki wajah se anxiety ho rahi hai.,0,fear_without_threat,hinglish,synthetic
+"I'm having a breakdown, I need help right now.",0,sadness_without_threat,english,distress_v3_negatives
+They said I should stop talking about the case if I knew what was good for me.,1,indirect_threat,english,synthetic_v6
+I feel uneasy about going to court.,0,fear_without_threat,english,synthetic
+"I felt shaky after the last hearing, but I'm slowly settling.",0,sadness_without_threat,english,distress_v3_negatives
+They told me to withdraw the complaint unless I wanted trouble.,1,indirect_threat,english,synthetic_v6
+Court mein unko dekhne ka sochke uneasy lagta hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+"Last court visit ke baad, chinta ho rahi hai, par routine theek hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Stop the case or your family will suffer.,1,direct_threat,english,synthetic_v6
+Lagta hai toot raha hoon.,0,sadness_without_threat,hinglish,distress_v3_negatives
+They pressured me to stop pursuing the case.,1,case_withdrawal_coercion,english,synthetic
+I've been feeling nervous and it's affecting my appetite a little.,0,sadness_without_threat,english,distress_v3_negatives
+Paperwork ka sochke sar dard hone lagta hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Complaint wapas le lo.,1,case_withdrawal_coercion,hinglish,synthetic
+They told me I would be hurt if I went to the police.,1,direct_threat,english,synthetic
+They told me my family would suffer if I continued the case.,1,third_party_threat,english,synthetic
+I am afraid that someone might hurt me.,0,fear_without_threat,english,synthetic_v6
+Mere khilaaf statement mat dena.,1,direct_threat,hinglish,synthetic_v6
+They asked me to forget about the case.,1,case_withdrawal_coercion,english,synthetic
+I have been feeling very sad since the incident.,0,sadness_without_threat,english,synthetic
+"I am scared that they might hurt me, but nobody has threatened me.",0,hard_negative,english,synthetic
+They warned me not to jeopardize my livelihood by speaking up.,1,financial_coercion,english,synthetic
+"Hearing se pehle, nervous lag raha hai, par routine theek hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+I was warned not to talk about the complaint.,1,forced_silence,english,synthetic
+I am worried about how everything will turn out.,0,fear_without_threat,english,synthetic
+"The waiting makes me anxious, especially before each date.",0,sadness_without_threat,english,distress_v3_negatives
+They said my brother would face problems if I testified.,1,third_party_threat,english,synthetic
+Gawahi di toh tumhare family ko consequences face karne padenge.,1,third_party_threat,hinglish,synthetic
+He reminded me that he knew where my parents lived.,1,indirect_threat,english,synthetic_v6
+I feel angry whenever I think about what happened.,0,anger_without_threat,english,synthetic
+Agar gawahi di toh tumhare liye achha nahi hoga.,1,witness_intimidation,hinglish,synthetic
+I can't eat or sleep.,0,sadness_without_threat,english,distress_v3_negatives
+Thinking about the case makes me anxious.,0,fear_without_threat,english,synthetic
+Mere family ko kisi ne threaten nahi kiya.,0,negation,hinglish,synthetic_v6
+Nobody has threatened my family.,0,negation,english,synthetic_v6
+They threatened consequences for my family if I refused to withdraw.,1,third_party_threat,english,synthetic
+Incident ke baad routine disturb ho gaya hai.,0,sadness_without_threat,hinglish,synthetic
+The situation feels too difficult to manage.,0,sadness_without_threat,english,synthetic
+Bhookh thodi kam ho gayi hai aajkal.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I am unsure about what I should do during the hearing.,0,legal_stress_without_threat,english,synthetic
+"Is mahine, tension rehti hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+"Hearing se pehle, thodi ghabrahat hai, phir bhi din nikal jaata hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Mujhe lag raha hai main sab kuch manage nahi kar paunga.,0,sadness_without_threat,hinglish,synthetic
+I feel completely hopeless and I feel I can't go on.,0,sadness_without_threat,english,distress_v3_negatives
+Someone suggested that I forget about the complaint.,0,benign_advice,english,synthetic_v6
+I get a headache when I think about the paperwork.,0,sadness_without_threat,english,distress_v3_negatives
+Cooperate kiya toh salary ka problem ho sakta hai.,1,financial_coercion,hinglish,synthetic
+I keep imagining that something bad could happen.,0,fear_without_threat,english,synthetic_v6
+Unhone kaha case aage le gaye toh accha nahi hoga.,1,indirect_threat,hinglish,synthetic_v6
+I have not received any threats.,0,negation,english,synthetic_v6
+Jo dekha hai woh court mein mat batana.,1,witness_intimidation,hinglish,synthetic
+Police ke paas mat jaana warna problem hogi.,1,direct_threat,hinglish,synthetic_v6
+I was told that I should not cooperate with investigators.,1,witness_intimidation,english,synthetic
+Panic attack jaise hote hain aur lagta hai ab aur nahi.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Apne family ke baare mein socho aur complaint wapas le lo.,1,third_party_threat,hinglish,synthetic
+There is no actual threat against me.,0,negation,english,synthetic_v6
+"Notice aane ke baad se, tension rehti hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Kisi aur ko threat mila tha aur uske baad mujhe darr lagne laga.,0,hard_negative,hinglish,synthetic
+"Date paas aa rahi hai toh, tension rehti hai, par sambhal raha hoon.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Someone else involved in the case was threatened.,0,third_party_statement,english,synthetic_v6
+I am upset about how my complaint was handled.,0,anger_without_threat,english,synthetic
+I have been feeling low for several days.,0,sadness_without_threat,english,synthetic
+Case ke baare mein din bhar sochta rehta hoon.,0,sadness_without_threat,hinglish,synthetic
+Paperwork handle karna difficult lag raha hai.,0,legal_stress_without_threat,hinglish,synthetic
+Police ko bataya toh consequences face karne padenge.,1,direct_threat,hinglish,synthetic
+Na kha pa raha hoon na so pa raha hoon aur kaam pe nahi jaa pa raha.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I worry about my family's reaction to the hearing.,0,sadness_without_threat,english,distress_v3_negatives
+I feel unsafe even though nobody has contacted me.,0,fear_without_threat,english,synthetic_v6
+Another victim told me that they had received threats.,0,third_party_statement,english,synthetic_v6
+Case ka bojh umeed se zyada lag raha hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+"Court ki dates ki wajah se kaam chhoota, paison ki chinta hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+They said continuing the complaint could cost me my livelihood.,1,financial_coercion,english,synthetic
+I am struggling emotionally.,0,sadness_without_threat,english,synthetic
+I have never dealt with a case before.,0,legal_stress_without_threat,english,synthetic
+"I was not threatened when I first complained, but they later threatened my family.",1,direct_threat,english,synthetic_v6
+Authorities ko kuch nahi batana.,1,forced_silence,hinglish,synthetic
+I was asked to wait before making a decision.,0,ambiguous,english,synthetic_v6
+They made it clear that I should keep silent.,1,direct_threat,english,synthetic_v6
+Nobody made any threat against me.,0,negation,english,synthetic_v6
+Tumhari wajah se ghar walon ko problem hogi.,1,third_party_threat,hinglish,synthetic
+Statement diya toh employment ka issue ho jayega.,1,financial_coercion,hinglish,synthetic
+I can't sleep at all and I can't face anyone.,0,sadness_without_threat,english,distress_v3_negatives
+Bilkul neend nahi aati aur samajh nahi aata kya karun.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I feel like nothing is getting better.,0,sadness_without_threat,english,synthetic
+"Hearing se pehle, chinta ho rahi hai, phir bhi din nikal jaata hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Mujhe situation se kaafi emotional stress ho raha hai.,0,sadness_without_threat,hinglish,synthetic
+Case yahin khatam kar do.,1,case_withdrawal_coercion,hinglish,synthetic
+I can't eat or sleep and I can't go to work.,0,sadness_without_threat,english,distress_v3_negatives
+Case aage badhaya toh accha nahi hoga.,1,direct_threat,hinglish,synthetic_v6
+Mujhe aage kya hoga iska darr lag raha hai.,0,fear_without_threat,hinglish,synthetic
+He said my job could disappear if I helped the investigation.,1,indirect_threat,english,synthetic_v6
+"Last court visit ke baad, mood low rehta hai, par sambhal raha hoon.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Case ki wajah se kaam mein dhyan bhatak jaata hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Har waqt darr lagta hai aur kisi ka saamna nahi kar sakta.,0,sadness_without_threat,hinglish,distress_v3_negatives
+The pressure of the case is starting to affect my mood.,0,sadness_without_threat,english,distress_v3_negatives
+Someone told me not to become involved as a witness.,1,witness_intimidation,english,synthetic
+My appetite has been a bit off lately.,0,sadness_without_threat,english,distress_v3_negatives
+I can't sleep at all and I feel I can't go on.,0,sadness_without_threat,english,distress_v3_negatives
+He warned me that my job was in their hands.,1,financial_coercion,english,synthetic
+I'm terrified all the time.,0,sadness_without_threat,english,distress_v3_negatives
+Sab chhod dene ka man karta hai aur samajh nahi aata kya karun.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I do not know how I will handle this situation.,0,sadness_without_threat,english,synthetic
+They warned me not to discuss the case with anyone.,1,forced_silence,english,synthetic
+I am upset about how complicated everything has become.,0,anger_without_threat,english,synthetic
+"I can't concentrate on anything, my mind is in pieces.",0,sadness_without_threat,english,distress_v3_negatives
+Case continue kiya toh family ko problem hogi.,1,direct_threat,hinglish,synthetic_v6
+I cannot see a clear way forward.,0,sadness_without_threat,english,synthetic
+Agar statement diya toh tumhe regret hoga.,1,indirect_threat,hinglish,synthetic_v6
+They recommended that I speak to a lawyer first.,0,benign_advice,english,synthetic_v6
+I feel emotionally tired after dealing with everything.,0,sadness_without_threat,english,synthetic
+I can't stop crying and I can't go to work.,0,sadness_without_threat,english,distress_v3_negatives
+I feel restless most evenings.,0,sadness_without_threat,english,distress_v3_negatives
+"Is mahine, focus karna mushkil hai, par routine theek hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+He made it clear that I should stop pursuing the complaint.,1,direct_threat,english,synthetic
+"Notice aane ke baad se, mood low rehta hai, par sambhal raha hoon.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Case slow chalne ki wajah se irritate hoon.,0,anger_without_threat,hinglish,synthetic
+They warned me against cooperating with the investigation.,1,witness_intimidation,english,synthetic
+They told me I could lose my job if I reported this.,1,financial_coercion,english,synthetic
+Case band karo warna bahut bura hoga.,1,direct_threat,hinglish,synthetic_v6
+Investigation mein cooperate mat karna.,1,witness_intimidation,hinglish,synthetic
+They told me to withdraw the complaint before my family faced problems.,1,third_party_threat,english,synthetic
+Mujhe hearing ka process confusing lag raha hai.,0,legal_stress_without_threat,hinglish,synthetic
+Someone told me that my brother could be targeted.,1,third_party_threat,english,synthetic
+"Delay ki wajah se, mood low rehta hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+"Date paas aa rahi hai toh, focus karna mushkil hai, par manage ho raha hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Lawyer ka phone aata hai toh nervous ho jaata hoon.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Police ko inform kiya toh tumhe nuksaan ho sakta hai.,1,direct_threat,hinglish,synthetic_v6
+He said I should keep quiet if I wanted things to remain peaceful.,1,indirect_threat,english,synthetic_v6
+Bilkul neend nahi aati aur kisi ka saamna nahi kar sakta.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Case ki wajah se focus karna mushkil ho raha hai.,0,sadness_without_threat,hinglish,synthetic
+The possibility of retaliation makes me anxious.,0,fear_without_threat,english,synthetic_v6
+Case ko aage mat badhao.,1,case_withdrawal_coercion,hinglish,synthetic
+Someone pressured me by threatening my income.,1,financial_coercion,english,synthetic
+I am nervous about continuing the case.,0,fear_without_threat,english,synthetic_v6
+Kaanpna band nahi hota aur kuch kaam nahi aa raha.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Case continue kiya toh tumhari job ka problem ho jayega.,1,direct_threat,hinglish,synthetic_v6
+"Kisi ne mujhe dhamki nahi di, bas mujhe darr lag raha hai.",0,fear_without_threat,hinglish,synthetic_v6
+Lagta hai toot raha hoon aur lagta hai ab aur nahi.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Notice aane ke baad se neend thodi kam ho gayi hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I keep worrying about the case throughout the day.,0,sadness_without_threat,english,synthetic
+I feel angry because nobody is listening to me.,0,anger_without_threat,english,synthetic
+Bahar gaadi ki awaaz aate hi dil zor se dhadakne lagta hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+"Gaon mein log kya bol rahe hain, uski chinta hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Case continue kiya toh job ka problem ho jayega.,1,indirect_threat,hinglish,synthetic_v6
+I was warned that my family would not be left out of the situation.,1,third_party_threat,english,synthetic
+"Is mahine, tension rehti hai, phir bhi din nikal jaata hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+He told me that cooperating with the police would be a mistake.,1,indirect_threat,english,synthetic_v6
+He told me to stay quiet or there would be consequences.,1,indirect_threat,english,synthetic_v6
+Agle step se thoda darr lagta hai par jaunga.,0,sadness_without_threat,hinglish,distress_v3_negatives
+"The case is on my mind a lot, but I'm still going to work.",0,sadness_without_threat,english,distress_v3_negatives
+They told me that my family would not be safe if I continued.,1,indirect_threat,english,synthetic_v6
+Case aage badhaya toh tumhe regret hoga.,1,direct_threat,hinglish,synthetic_v6
+"Because of the delay, I feel tense, but I'm coping.",0,sadness_without_threat,english,distress_v3_negatives
+They said I should avoid unnecessary conflict.,0,ambiguous,english,synthetic_v6
+Kisi ne mujhe harm karne ki baat nahi boli.,0,negation,hinglish,synthetic_v6
+I've been worried about what people in the village are saying.,0,sadness_without_threat,english,distress_v3_negatives
+Someone recommended that I think carefully before continuing.,0,benign_advice,english,synthetic_v6
+Situation ki wajah se mentally tired hoon.,0,sadness_without_threat,hinglish,synthetic
+They said I would not be safe if I gave my statement.,1,direct_threat,english,synthetic
+"I feel like giving up on everything, including myself.",0,sadness_without_threat,english,distress_v3_negatives
+The uncertainty is making me anxious.,0,fear_without_threat,english,synthetic
+Court jaane ka kharcha sochke chinta hoti hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Pichhle kuch din se bahut low feel ho raha hai.,0,sadness_without_threat,hinglish,synthetic
+I am worried that I will make a mistake in court.,0,legal_stress_without_threat,english,synthetic
+Case ko yahin khatam karo warna mushkil hogi.,1,direct_threat,hinglish,synthetic_v6
+I have been finding it hard to feel normal again.,0,sadness_without_threat,english,synthetic
+I feel like nobody can help me and I'm all alone.,0,sadness_without_threat,english,distress_v3_negatives
+Everything feels too difficult at the moment.,0,sadness_without_threat,english,synthetic
+I feel frightened by everything that has happened.,0,fear_without_threat,english,synthetic
+I feel anxious but I know I have support.,0,sadness_without_threat,english,distress_v3_negatives
+I heard about threats in the neighbourhood.,0,third_party_statement,english,synthetic_v6
+I can't eat or sleep and I don't know what to do.,0,sadness_without_threat,english,distress_v3_negatives
+Case continue kiya toh mujhe problem face karni padegi.,1,direct_threat,hinglish,synthetic
+Puri situation se darr lag raha hai.,0,fear_without_threat,hinglish,synthetic
+Ghar se bahar nikalne mein bahut darr lagta hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I was told that things would become dangerous if I continued.,1,direct_threat,english,synthetic
+"I'm exhausted, I can't cope with any of this anymore.",0,sadness_without_threat,english,distress_v3_negatives
+"I can't sleep at all, I lie awake every night shaking.",0,sadness_without_threat,english,distress_v3_negatives
+Date postpone hone ke baad se mood low hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Teen raat se neend nahi aayi darr ke maare.,0,sadness_without_threat,hinglish,distress_v3_negatives
+They warned me that my salary could be affected.,1,financial_coercion,english,synthetic
+This experience has left me feeling very upset.,0,sadness_without_threat,english,synthetic
+"Before the hearing, I feel tense, but I'm still going to work.",0,sadness_without_threat,english,distress_v3_negatives
+"He initially gave advice, but later threatened me if I continued.",1,direct_threat,english,synthetic_v6
+No one has contacted me about the case in a threatening way.,0,negation,english,synthetic_v6
+Case chhodo warna bahut bura hoga.,1,direct_threat,hinglish,synthetic_v6
+Jo hua woh kisi ko mat batana.,1,forced_silence,hinglish,synthetic
+Statement diya toh main safe nahi rahunga.,1,direct_threat,hinglish,synthetic
+Someone pressured me not to provide evidence.,1,witness_intimidation,english,synthetic
+Har waqt darr lagta hai aur kaam pe nahi jaa pa raha.,0,sadness_without_threat,hinglish,distress_v3_negatives
+They asked me to stop taking the case forward.,1,case_withdrawal_coercion,english,synthetic
+He warned me against supporting the complaint.,1,witness_intimidation,english,synthetic
+"I'm coping, but I'd feel better if the case moved faster.",0,sadness_without_threat,english,distress_v3_negatives
+"Before the hearing, I feel nervous, but I'm managing.",0,sadness_without_threat,english,distress_v3_negatives
+Main is situation mein lost feel kar raha hoon.,0,sadness_without_threat,hinglish,synthetic
+They warned me against speaking to the authorities.,1,direct_threat,english,synthetic
+I'm coping but I'd like to talk to the counsellor soon.,0,sadness_without_threat,english,distress_v3_negatives
+Bilkul neend nahi aati.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Police ko bataya toh tumhe problem hogi.,1,direct_threat,hinglish,synthetic_v6
+Unhone bola complaint wapas le lo warna dekh lena.,1,indirect_threat,hinglish,synthetic_v6
+"Zyadatar theek hoon, par kuch din mushkil hote hain.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Manage kar raha hoon par kabhi kabhi stress zyada ho jaata hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Main kaafi upset feel kar raha hoon.,0,sadness_without_threat,hinglish,synthetic
+I feel overwhelmed by the court procedure.,0,legal_stress_without_threat,english,synthetic
+The word threat came up in the discussion and it made me uncomfortable.,0,hard_negative,english,synthetic
+I feel like I'm breaking down and nothing helps.,0,sadness_without_threat,english,distress_v3_negatives
+Agar safe rehna hai toh complaint withdraw kar do.,1,case_withdrawal_coercion,hinglish,synthetic
+Case ke phone se pehle ghabrahat hoti hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Matter ko aur aage mat le jao.,1,case_withdrawal_coercion,hinglish,synthetic
+He said I should never mention the incident again.,1,forced_silence,english,synthetic
+My heart races every time I hear a vehicle outside.,0,sadness_without_threat,english,distress_v3_negatives
+I feel like giving up.,0,sadness_without_threat,english,distress_v3_negatives
+They warned me against discussing the complaint.,1,forced_silence,english,synthetic
+I haven't slept in three nights because of the fear.,0,sadness_without_threat,english,distress_v3_negatives
+I do not know what I am supposed to do next.,0,sadness_without_threat,english,synthetic
+My sleep is disturbed a couple of nights a week.,0,sadness_without_threat,english,distress_v3_negatives
+Complaint continue karne par mujhe nuksan ho sakta hai.,1,direct_threat,hinglish,synthetic
+"Since the notice came, I'm a bit anxious, but my routine is mostly okay.",0,sadness_without_threat,english,distress_v3_negatives
+I am having trouble understanding the paperwork.,0,legal_stress_without_threat,english,synthetic
+Unhone bola chup raho warna problem ho sakti hai.,1,indirect_threat,hinglish,synthetic_v6
+"Unhone bola zyada bolna mat, warna situation kharab ho sakti hai.",1,indirect_threat,hinglish,synthetic_v6
+"Koi meri madad nahi kar sakta, main bilkul akela hoon.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Mujhe apni statement ko lekar concern hai.,0,legal_stress_without_threat,hinglish,synthetic
+My friend advised me to avoid the case.,0,benign_advice,english,synthetic_v6
+I'm somewhat stressed but I'm still able to manage my routine.,0,sadness_without_threat,english,distress_v3_negatives
+Sab kuch emotionally difficult lag raha hai.,0,sadness_without_threat,hinglish,synthetic
+They warned me that my relatives could face consequences.,1,third_party_threat,english,synthetic
+This situation has been emotionally exhausting.,0,sadness_without_threat,english,synthetic
+Situation ki wajah se emotionally drained hoon.,0,sadness_without_threat,hinglish,synthetic
+Case ko lekar chup rehna.,1,forced_silence,hinglish,synthetic
+They made it clear that I should not appear as a witness.,1,witness_intimidation,english,synthetic
+"I'm more stressed than last month, but I'm still functioning.",0,sadness_without_threat,english,distress_v3_negatives
+They told me to stop the complaint or they would hurt me.,1,direct_threat,english,synthetic_v6
+Witness mat banna warna problem hogi.,1,witness_intimidation,hinglish,synthetic
+"Before the hearing, I feel nervous, but I'm coping.",0,sadness_without_threat,english,distress_v3_negatives
+It feels like I have no idea what to do next.,0,sadness_without_threat,english,synthetic
+Unhone clear bola ki police ke paas nahi jaana hai.,1,indirect_threat,hinglish,synthetic_v6
+I have received no threats about the case.,0,negation,english,synthetic_v6
+Sab kuch bahut stressful lag raha hai.,0,sadness_without_threat,hinglish,synthetic
+"Kisi ne mujhe threaten nahi kiya, bas mujhe future ko lekar concern hai.",0,hard_negative,hinglish,synthetic
+They pressured me into keeping silent.,1,forced_silence,english,synthetic
+Itna darr hai ki bachon ko school bhejna band kar diya.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Police ko bataya toh dekh lena.,1,direct_threat,hinglish,synthetic_v6
+"The fear is unbearable, I can't breathe properly.",0,sadness_without_threat,english,distress_v3_negatives
+Mujhe safety ko lekar concern hai.,0,fear_without_threat,hinglish,synthetic_v6
+Hearing ke liye prepare karna stressful lag raha hai.,0,legal_stress_without_threat,hinglish,synthetic
+Main bahut helpless feel kar raha hoon.,0,sadness_without_threat,hinglish,synthetic
+No one has pressured me to change my statement.,0,negation,english,synthetic_v6
+Har waqt darr lagta hai aur kuch kaam nahi aa raha.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I am frustrated with the lack of response.,0,anger_without_threat,english,synthetic
+I'm afraid something terrible is going to happen to my family.,0,sadness_without_threat,english,distress_v3_negatives
+Authorities se baat ki toh job lose kar doge.,1,financial_coercion,hinglish,synthetic
+Nobody has warned me that I would be harmed.,0,negation,english,synthetic_v6
+"Because of the delay, I've been feeling low, though I can get through the day.",0,sadness_without_threat,english,distress_v3_negatives
+I feel like giving up and nothing helps.,0,sadness_without_threat,english,distress_v3_negatives
+I feel helpless about what is happening.,0,sadness_without_threat,english,synthetic
+I am concerned about my safety even though nobody has intimidated me.,0,hard_negative,english,synthetic
+They advised me not to get involved in the matter.,0,benign_advice,english,synthetic_v6
+"Is mahine, focus karna mushkil hai, phir bhi din nikal jaata hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+They warned me that continuing the case could affect my livelihood.,1,financial_coercion,english,synthetic
+He said I would regret speaking to the authorities.,1,direct_threat,english,synthetic_v6
+I have not received any threats about testifying.,0,negation,english,synthetic_v6
+He said my family would suffer if I continued the case.,1,direct_threat,english,synthetic_v6
+Raat ko incident baar baar yaad aata hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+They made it clear that I should not speak in court.,1,indirect_threat,english,synthetic_v6
+Mujhe case ke wajah se koi dhamki nahi mili.,0,negation,hinglish,synthetic_v6
+Complaint ka response nahi milne se frustration hai.,0,anger_without_threat,hinglish,synthetic
+Mujhe normal cheezon par concentrate karna difficult lag raha hai.,0,sadness_without_threat,hinglish,synthetic
+"Hearing se pehle, mood low rehta hai, phir bhi din nikal jaata hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+I am afraid of being threatened even though nothing has happened.,0,hard_negative,english,synthetic
+"I'm okay most of the time, but some days are hard.",0,sadness_without_threat,english,distress_v3_negatives
+Case ko aage mat badhao warna problem hogi.,1,direct_threat,hinglish,synthetic
+He told me that speaking up could cost me my job.,1,financial_coercion,english,synthetic
+Family ko involve mat karo warna problem hogi.,1,direct_threat,hinglish,synthetic_v6
+He told me to stop speaking about what I had seen.,1,forced_silence,english,synthetic
+They told me that testifying would be a bad idea.,1,witness_intimidation,english,synthetic
+"Bed se uthne ki bhi himmat nahi hoti, itna bojh hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Lagta hai zindagi bikhar rahi hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Main emotionally exhausted ho gaya hoon.,0,sadness_without_threat,hinglish,synthetic
+They said my source of income could disappear.,1,financial_coercion,english,synthetic
+I feel completely hopeless and I can't take care of my children.,0,sadness_without_threat,english,distress_v3_negatives
+Complaint ki toh tumhari job chali jayegi.,1,direct_threat,hinglish,synthetic_v6
+I do not understand the legal process.,0,legal_stress_without_threat,english,synthetic
+"Likhte likhte haath kaanp rahe hain, itna darr hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Rona band nahi hota aur samajh nahi aata kya karun.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I've been skipping meals because I'm preoccupied with the case.,0,sadness_without_threat,english,distress_v3_negatives
+I'm so overwhelmed I can't even get out of bed.,0,sadness_without_threat,english,distress_v3_negatives
+"I don't feel safe anywhere, not even at home.",0,sadness_without_threat,english,distress_v3_negatives
+They warned me before I was supposed to give my statement.,1,witness_intimidation,english,synthetic
+I've started avoiding conversations about the case because they stress me out.,0,sadness_without_threat,english,distress_v3_negatives
+I am worried about what comes next.,0,fear_without_threat,english,synthetic
+"Kahin bhi safe nahi lagta, ghar mein bhi nahi.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Samajh nahi aa raha kis se help loon.,0,sadness_without_threat,hinglish,synthetic
+"Since the notice came, I feel uneasy, but I'm still going to work.",0,sadness_without_threat,english,distress_v3_negatives
+I am scared because the process is unfamiliar to me.,0,fear_without_threat,english,synthetic
+Gawahi di toh tumhare liye accha nahi hoga.,1,direct_threat,hinglish,synthetic_v6
+Koi meri baat nahi sun raha isliye frustrated hoon.,0,anger_without_threat,hinglish,synthetic
+He warned me that my family would pay for my decision.,1,third_party_threat,english,synthetic
+"Wait karte karte thak gaya hoon, anxiety hoti hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Someone told me the complaint should end here.,1,case_withdrawal_coercion,english,synthetic
+"I'm shaking as I write this, I'm so afraid.",0,sadness_without_threat,english,distress_v3_negatives
+Complaint wapas lo warna dekh lena.,1,direct_threat,english,synthetic_v6
+Unhone bola police ke paas gaya toh dekh lenge.,1,direct_threat,hinglish,synthetic_v6
+"Raat bhar neend nahi aati, kaanpta rehta hoon.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Case ki wajah se mentally frustrated hoon.,0,anger_without_threat,hinglish,synthetic
+I am afraid of what will happen in court.,0,fear_without_threat,english,synthetic
+I can't stop shaking and I can't face anyone.,0,sadness_without_threat,english,distress_v3_negatives
+He warned me to think about my parents before making a complaint.,1,third_party_threat,english,synthetic
+The case makes me fear for my safety.,0,fear_without_threat,english,synthetic_v6
+"I know another family was intimidated, but nobody threatened me.",0,third_party_statement,english,synthetic_v6
+Witness ke taur par case mein involve mat hona.,1,witness_intimidation,hinglish,synthetic
+"Before the hearing, I feel uneasy, but I'm still going to work.",0,sadness_without_threat,english,distress_v3_negatives
+It has become difficult for me to focus on college.,0,sadness_without_threat,english,synthetic
+They made it clear that I would be in trouble if I continued.,1,direct_threat,english,synthetic
+I'm so scared I've stopped sending my children to school.,0,sadness_without_threat,english,distress_v3_negatives
+Darr hai ki gawahi dete waqt details bhool jaunga.,0,sadness_without_threat,hinglish,distress_v3_negatives
+"Is mahine, neend thodi kam ho gayi hai, phir bhi din nikal jaata hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+I have continued the case without receiving any threats.,0,negation,english,synthetic_v6
+I keep having nightmares about the incident every night.,0,sadness_without_threat,english,distress_v3_negatives
+I keep thinking something awful will happen at the hearing.,0,sadness_without_threat,english,distress_v3_negatives
+They told me not to make the complaint any bigger.,1,direct_threat,english,synthetic
+"I can't work, I can't think, I can't do anything.",0,sadness_without_threat,english,distress_v3_negatives
+I feel like giving up and I feel I can't go on.,0,sadness_without_threat,english,distress_v3_negatives
+Sab hopeless lagta hai aur kuch kaam nahi aa raha.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Unhone kaha matter ko yahin khatam karo.,1,indirect_threat,hinglish,synthetic_v6
+Panic attack jaise hote hain.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Mujhe darr hai ki mere family ko kuch ho sakta hai.,0,hard_negative,hinglish,synthetic
+"Before the hearing, I've been feeling low, but my routine is mostly okay.",0,sadness_without_threat,english,distress_v3_negatives
+I feel on edge before every phone call about the case.,0,sadness_without_threat,english,distress_v3_negatives
+Shaam ko bechaini si rehti hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+The whole situation has been difficult for me.,0,sadness_without_threat,english,synthetic
+He pressured me to stay quiet to protect my job.,1,financial_coercion,english,synthetic
+Bilkul neend nahi aati aur kuch kaam nahi aa raha.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Court mein kya hoga samajh nahi aa raha.,0,legal_stress_without_threat,hinglish,synthetic
+Court mein kuch bola toh consequences honge.,1,direct_threat,hinglish,synthetic_v6
+Case ki wajah se main bahut nervous hoon.,0,fear_without_threat,hinglish,synthetic_v6
+Mere against kisi ne threat nahi diya.,0,negation,hinglish,synthetic_v6
+Complaint wapas le lo warna problem hogi.,1,direct_threat,hinglish,synthetic_v6
+They asked me to stop talking about the case.,1,forced_silence,english,synthetic
+Apni complaint wapas le lo warna problem hogi.,1,case_withdrawal_coercion,hinglish,synthetic
+"Date paas aa rahi hai toh, neend thodi kam ho gayi hai, par routine theek hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Legal case ka experience nahi hai isliye tension ho rahi hai.,0,legal_stress_without_threat,hinglish,synthetic
+"This month, I've been sleeping a little less, but my routine is mostly okay.",0,sadness_without_threat,english,distress_v3_negatives
+I'm having panic attacks almost every day.,0,sadness_without_threat,english,distress_v3_negatives
+Case ko lekar bahut anxiety ho rahi hai.,0,fear_without_threat,hinglish,synthetic
+"Because of the delay, I feel uneasy.",0,sadness_without_threat,english,distress_v3_negatives
+They warned me that there would be consequences if I testified.,1,indirect_threat,english,synthetic_v6
+Retaliation ka sochkar mujhe anxiety hoti hai.,0,fear_without_threat,hinglish,synthetic_v6
+He said I should take back what I had reported.,1,case_withdrawal_coercion,english,synthetic
+I am worried that someone may become angry with me.,0,fear_without_threat,english,synthetic_v6
+I'm not sleeping as well as I used to.,0,sadness_without_threat,english,distress_v3_negatives
+"After the last court visit, I feel tense, but I'm still going to work.",0,sadness_without_threat,english,distress_v3_negatives
+"Delay ki wajah se, nervous lag raha hai, phir bhi din nikal jaata hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+I've been feeling low since the last hearing was postponed.,0,sadness_without_threat,english,distress_v3_negatives
+Case continue kiya toh mere parents ko dekh lenge.,1,third_party_threat,hinglish,synthetic
+Mere against statement diya toh accha nahi hoga.,1,direct_threat,hinglish,synthetic_v6
+Case mein cooperate kiya toh salary band ho jayegi.,1,financial_coercion,hinglish,synthetic
+They made it clear that my family could become involved.,1,third_party_threat,english,synthetic
+Some nights I lie awake thinking about what will happen.,0,sadness_without_threat,english,distress_v3_negatives
+Every day is worse than the last and I'm breaking down.,0,sadness_without_threat,english,distress_v3_negatives
+"Since the notice came, I'm a bit anxious, but I'm coping.",0,sadness_without_threat,english,distress_v3_negatives
+I feel down whenever I think about what happened.,0,sadness_without_threat,english,synthetic
+I do not know where to turn for help.,0,sadness_without_threat,english,synthetic
+Someone told me it might be better to stay out of the matter.,0,benign_advice,english,synthetic_v6
+Sab hopeless lagta hai aur bachon ka dhyan nahi rakh pa raha.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I can't stop crying and I don't know what to do.,0,sadness_without_threat,english,distress_v3_negatives
+"I can't face the hearing, I feel like collapsing.",0,sadness_without_threat,english,distress_v3_negatives
+Do not go to the police if you know what is good for you.,1,direct_threat,english,synthetic_v6
+Mujhe bahut lonely feel ho raha hai.,0,sadness_without_threat,hinglish,synthetic
+Mera mood bahut low chal raha hai.,0,sadness_without_threat,hinglish,synthetic
+I keep worrying about the situation.,0,fear_without_threat,english,synthetic
+Nobody contacted me to threaten me.,0,negation,english,synthetic_v6
+"Some days I feel like giving up on the case, but then I carry on.",0,sadness_without_threat,english,distress_v3_negatives
+I feel like I'm breaking down and I can't take care of my children.,0,sadness_without_threat,english,distress_v3_negatives
+No one has made a threat against my family.,0,negation,english,synthetic_v6
+"Last court visit ke baad, bechaini rehti hai, phir bhi din nikal jaata hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+The newspaper reported threats against other witnesses.,0,third_party_statement,english,synthetic_v6
+I worry that I'll forget details when I testify.,0,sadness_without_threat,english,distress_v3_negatives
+I do not know how to get through this.,0,sadness_without_threat,english,synthetic
+I am worried that someone might threaten me in the future.,0,hard_negative,english,synthetic
+Court mein bola toh consequences honge.,1,direct_threat,hinglish,synthetic_v6
+Evidence diya toh consequences honge.,1,witness_intimidation,hinglish,synthetic
+Incident ke baad se main unsettled feel kar raha hoon.,0,sadness_without_threat,hinglish,synthetic
+Police ke paas gaye toh dekh lenge.,1,direct_threat,hinglish,synthetic_v6
+Court mein sach mat bolna.,1,direct_threat,hinglish,synthetic_v6
+Court mein iske baare mein kuch mat bolna.,1,forced_silence,hinglish,synthetic
+Puri situation handle karna mushkil lag raha hai.,0,sadness_without_threat,hinglish,synthetic
+"Since the notice came, I feel nervous, but my routine is mostly okay.",0,sadness_without_threat,english,distress_v3_negatives
+Withdraw the complaint or you will regret it.,1,direct_threat,english,synthetic_v6
+He told me that continuing the complaint would create trouble for my parents.,1,third_party_threat,english,synthetic
+"Khud ko bekaar samajhta hoon, kisi se milna nahi chahta.",0,sadness_without_threat,hinglish,distress_v3_negatives
+I feel completely hopeless and nothing helps.,0,sadness_without_threat,english,distress_v3_negatives
+"Notice aane ke baad se, nervous lag raha hai, par manage ho raha hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+They warned me not to pursue the case any further.,1,case_withdrawal_coercion,english,synthetic
+"I'm doing my work, but I feel distracted and tense.",0,sadness_without_threat,english,distress_v3_negatives
+"Last court visit ke baad, bechaini rehti hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Everything feels dark and I don't see a way out.,0,sadness_without_threat,english,distress_v3_negatives
+I feel like I'm losing my mind.,0,sadness_without_threat,english,distress_v3_negatives
+I feel like I'm breaking down and I feel I can't go on.,0,sadness_without_threat,english,distress_v3_negatives
+"Bilkul thak gaya hoon, ab kuch sambhal nahi raha.",0,sadness_without_threat,hinglish,distress_v3_negatives
+I am frustrated that nothing seems to be changing.,0,anger_without_threat,english,synthetic
+"Since the notice came, I've been feeling low.",0,sadness_without_threat,english,distress_v3_negatives
+"Nobody threatened me at first, but later they warned me to withdraw the case.",1,direct_threat,english,synthetic_v6
+Complaint ki toh job chali jayegi.,1,financial_coercion,hinglish,synthetic
+"I haven't eaten properly in days, I can't stop crying.",0,sadness_without_threat,english,distress_v3_negatives
+Kisi ne mujhe dhamki nahi di.,0,negation,hinglish,synthetic_v6
+He reminded me that he knew where my family lived.,1,third_party_threat,english,synthetic
+He made it clear that continuing would cause problems for me.,1,indirect_threat,english,synthetic_v6
+I am scared about what might happen next.,0,fear_without_threat,english,synthetic
+"Na kaam ho raha hai, na kuch sochne ki himmat.",0,sadness_without_threat,hinglish,distress_v3_negatives
+"Since the notice came, I feel uneasy, but my routine is mostly okay.",0,sadness_without_threat,english,distress_v3_negatives
+Mujhe bahut akela feel ho raha hai.,0,sadness_without_threat,hinglish,synthetic
+Mujhe future ko lekar bahut tension hai.,0,fear_without_threat,hinglish,synthetic
+"Is mahine, bechaini rehti hai, par manage ho raha hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+They told me not to appear in court.,1,witness_intimidation,english,synthetic
+"Because of the delay, I feel tense, though I can get through the day.",0,sadness_without_threat,english,distress_v3_negatives
+I have not been threatened by anyone.,0,negation,english,synthetic_v6
+"I can't stop the panic, it comes over me without warning.",0,sadness_without_threat,english,distress_v3_negatives
+Kisi ne mujhe chup rehne ke liye force nahi kiya.,0,negation,hinglish,synthetic_v6
+No one has asked me to drop the case.,0,negation,english,synthetic_v6
+"After the last court visit, I've been feeling low, but I'm coping.",0,sadness_without_threat,english,distress_v3_negatives
+I've been vomiting from anxiety before every court date.,0,sadness_without_threat,english,distress_v3_negatives
+I am frightened by the possibility that things could get worse.,0,hard_negative,english,synthetic
+Court mein testify karne ki zarurat nahi hai.,1,witness_intimidation,hinglish,synthetic
+I feel mentally tired whenever I think about everything.,0,sadness_without_threat,english,synthetic
+Mujhe complaint handle karne ka tareeka pasand nahi aaya.,0,anger_without_threat,hinglish,synthetic
+I'm a little anxious about giving my statement next week.,0,sadness_without_threat,english,distress_v3_negatives
+Ummeed bilkul khatam ho gayi hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Aage ka koi clear way nahi dikh raha.,0,sadness_without_threat,hinglish,synthetic
+Do not take this matter to court.,1,direct_threat,hinglish,synthetic_v6
+Someone advised me to speak with a lawyer first.,0,ambiguous,english,synthetic_v6
+"Date paas aa rahi hai toh, chinta ho rahi hai, par sambhal raha hoon.",0,sadness_without_threat,hinglish,distress_v3_negatives
+The delay is frustrating and it's starting to bother me.,0,sadness_without_threat,english,distress_v3_negatives
+I've lost all hope that things will ever get better.,0,sadness_without_threat,english,distress_v3_negatives
+"I've stopped eating, I feel sick all the time.",0,sadness_without_threat,english,distress_v3_negatives
+I'm terrified all the time and I feel I can't go on.,0,sadness_without_threat,english,distress_v3_negatives
+Darr itna hai ki saans theek se nahi aati.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I haven't been myself lately because of this case.,0,sadness_without_threat,english,distress_v3_negatives
+Rona band nahi hota.,0,sadness_without_threat,hinglish,distress_v3_negatives
+"I'm handling it, but I feel drained after each court visit.",0,sadness_without_threat,english,distress_v3_negatives
+I don't feel safe anywhere and I can't go to work.,0,sadness_without_threat,english,distress_v3_negatives
+The case has been affecting my ability to concentrate.,0,sadness_without_threat,english,synthetic
+Kisi ne complaint wapas lene ko nahi bola.,0,negation,hinglish,synthetic_v6
+The hearing process is confusing.,0,legal_stress_without_threat,english,synthetic
+Sochta hoon ki mere bina ghar walon ko behtar hoga.,0,sadness_without_threat,hinglish,distress_v3_negatives
+They told me not to tell anyone what happened.,1,forced_silence,english,synthetic
+"Last court visit ke baad, nervous lag raha hai, par sambhal raha hoon.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Gawahi di toh family ko problem ho jayegi.,1,indirect_threat,hinglish,synthetic_v6
+I keep replaying the incident in my head at night.,0,sadness_without_threat,english,distress_v3_negatives
+My mind keeps drifting to the case during work.,0,sadness_without_threat,english,distress_v3_negatives
+"Before the hearing, I've been sleeping a little less, but my routine is mostly okay.",0,sadness_without_threat,english,distress_v3_negatives
+I'm worried about the cost of travelling to court again.,0,sadness_without_threat,english,distress_v3_negatives
+Agar court gaya toh mere liye situation kharab ho jayegi.,1,direct_threat,hinglish,synthetic
+"Case dimaag mein rehta hai, par kaam pe jaa raha hoon.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Main is process se bahut upset hoon.,0,anger_without_threat,hinglish,synthetic
+I'm scared to sleep because of the nightmares.,0,sadness_without_threat,english,distress_v3_negatives
+"Date paas aa rahi hai toh, tension rehti hai, par kaam pe jaa raha hoon.",0,sadness_without_threat,hinglish,distress_v3_negatives
+He suggested that I reconsider my decision unless I wanted problems.,1,indirect_threat,english,synthetic_v6
+"Na taakat hai, na bhookh, na jeene ki ichha.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Sab chhod dene ka man karta hai aur lagta hai ab aur nahi.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Kisi ko kuch mat batana.,1,forced_silence,hinglish,synthetic
+I was told to be careful because the situation is complicated.,0,ambiguous,english,synthetic_v6
+They said my family might face trouble if I testified.,1,direct_threat,english,synthetic_v6
+I've been thinking that my family would be better off without me.,0,sadness_without_threat,english,distress_v3_negatives
+Mujhe kisi se baat karne ka mann nahi karta.,0,sadness_without_threat,hinglish,synthetic
+I am struggling to see a solution.,0,sadness_without_threat,english,synthetic
+I feel like I'm drowning and no one is coming.,0,sadness_without_threat,english,distress_v3_negatives
+I feel like giving up and I can't go to work.,0,sadness_without_threat,english,distress_v3_negatives
+I'm terrified all the time and I can't go to work.,0,sadness_without_threat,english,distress_v3_negatives
+I can't remember the last time I felt okay.,0,sadness_without_threat,english,distress_v3_negatives
+It's been hard to concentrate at work this week.,0,sadness_without_threat,english,distress_v3_negatives
+I was given advice to step away from the dispute.,0,benign_advice,english,synthetic_v6
+I feel completely hopeless and I can't go to work.,0,sadness_without_threat,english,distress_v3_negatives
+Agar case continue kiya toh tumhe regret hoga.,1,direct_threat,hinglish,synthetic_v6
+Someone told me to close the matter and stay quiet.,1,case_withdrawal_coercion,english,synthetic
+Complaint ke baare mein silent raho.,1,forced_silence,hinglish,synthetic
+I feel nervous about speaking during the hearing.,0,fear_without_threat,english,synthetic
+Do not testify against us.,1,direct_threat,english,synthetic_v6
+Unhone kaha case chhodo warna problem hogi.,1,direct_threat,hinglish,synthetic_v6
+They said things would become difficult if I continued.,1,indirect_threat,english,synthetic_v6
+I'm worried about how the hearing will go.,0,sadness_without_threat,english,distress_v3_negatives
+They warned me not to risk my family's safety.,1,third_party_threat,english,synthetic
+"Mujhe retaliation ka fear hai, lekin mujhe koi threat nahi mila.",0,hard_negative,hinglish,synthetic
+They said I would have to face the consequences if I testified.,1,direct_threat,english,synthetic
+Agar statement diya toh mere bachchon ko nuksan ho sakta hai.,1,third_party_threat,hinglish,synthetic
+The case is making me very anxious.,0,fear_without_threat,english,synthetic
+Statement dene ko lekar thoda anxious hoon.,0,sadness_without_threat,hinglish,distress_v3_negatives
+They said I should forget the complaint if I wanted peace.,1,direct_threat,english,synthetic_v6
+I can't sleep at all and I don't know what to do.,0,sadness_without_threat,english,distress_v3_negatives
+I was advised to wait before continuing.,0,benign_advice,english,synthetic_v6
+They said they would hurt me if I reported the incident.,1,direct_threat,english,synthetic_v6
+Gawahi mat dena warna tumhare liye accha nahi hoga.,1,direct_threat,hinglish,synthetic_v6
+Nobody told me to withdraw the complaint.,0,negation,english,synthetic_v6
+Kaanpna band nahi hota aur kisi ka saamna nahi kar sakta.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Mujhe samajh nahi aa raha kya karun.,0,sadness_without_threat,hinglish,synthetic
+I can't stop shaking.,0,sadness_without_threat,english,distress_v3_negatives
+I'm having panic attacks.,0,sadness_without_threat,english,distress_v3_negatives
+He warned me not to speak about what I witnessed.,1,witness_intimidation,english,synthetic
+They pressured me to change what I had said.,1,case_withdrawal_coercion,english,synthetic
+Mujhe legal process samajh nahi aa raha.,0,legal_stress_without_threat,hinglish,synthetic
+They said something bad would happen if I kept pursuing the case.,1,direct_threat,english,synthetic
+I was told to keep the matter to myself.,1,forced_silence,english,synthetic
+The thought of being threatened makes me anxious.,0,hard_negative,english,synthetic
+The slow process is making me increasingly frustrated.,0,anger_without_threat,english,synthetic
+I have been crying a lot lately.,0,sadness_without_threat,english,synthetic
+I heard about threats against other people and it made me nervous.,0,hard_negative,english,synthetic
+I keep thinking about possible retaliation.,0,hard_negative,english,synthetic
+"My whole body is tense, I can't eat or sleep or rest.",0,sadness_without_threat,english,distress_v3_negatives
+I think about the incident sometimes and it makes me sad.,0,sadness_without_threat,english,distress_v3_negatives
+Mere bhai ko bhi consequences face karne padenge.,1,third_party_threat,hinglish,synthetic
+Concentrating on anything has been harder this month.,0,sadness_without_threat,english,distress_v3_negatives
+The case has made normal activities harder for me.,0,sadness_without_threat,english,synthetic
+"It's stressful, but I'm trying to stay positive.",0,sadness_without_threat,english,distress_v3_negatives
+He told me that continuing the case would put me in danger.,1,direct_threat,english,synthetic
+Mujhe situation bahut difficult lag rahi hai.,0,sadness_without_threat,hinglish,synthetic
+"This month, I'm a bit anxious, though I can get through the day.",0,sadness_without_threat,english,distress_v3_negatives
+I feel unable to cope with everything happening around me.,0,sadness_without_threat,english,synthetic
+They said my salary could stop if I cooperated.,1,financial_coercion,english,synthetic
+They warned me that I would not be safe if I spoke up.,1,direct_threat,english,synthetic
+Sab chhod dene ka man karta hai aur kisi ka saamna nahi kar sakta.,0,sadness_without_threat,hinglish,distress_v3_negatives
+"Hearing se pehle, nervous lag raha hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+They told me to stay out of the case as a witness.,1,witness_intimidation,english,synthetic
+"Delay ki wajah se, neend thodi kam ho gayi hai, par manage ho raha hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Everything has become emotionally difficult for me.,0,sadness_without_threat,english,synthetic
+Court mein mere against kuch mat bolna.,1,direct_threat,hinglish,synthetic_v6
+Thoda stress hai par routine chal raha hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+"I worry about what they might do, but they have not said anything to me.",0,hard_negative,english,synthetic
+Is incident ke baad main bahut sad hoon.,0,sadness_without_threat,hinglish,synthetic
+I burst into tears at work and had to go home.,0,sadness_without_threat,english,distress_v3_negatives
+The pressure is crushing me and I feel I might break.,0,sadness_without_threat,english,distress_v3_negatives
+They asked me to stop telling people about the case.,1,forced_silence,english,synthetic
+I am worried about the future of my case.,0,fear_without_threat,english,synthetic
+Puri situation ki wajah se bahut stress hai.,0,sadness_without_threat,hinglish,synthetic
+Threats ke baare mein sun kar mujhe anxiety ho rahi hai.,0,hard_negative,english,synthetic
+Hearing ke baare mein soch kar nervous ho jata hoon.,0,fear_without_threat,hinglish,synthetic
+"Mujhe safety ko lekar concern hai, kisi ne mujhe directly threaten nahi kiya.",0,hard_negative,hinglish,synthetic
+Someone demanded that I withdraw my complaint.,1,case_withdrawal_coercion,english,synthetic
+I am frightened by the situation but nobody has threatened me.,0,fear_without_threat,english,synthetic_v6
+I am worried about saying something incorrectly in court.,0,legal_stress_without_threat,english,synthetic
+"Delay se frustration ho rahi hai, ab pareshan karne laga hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Is incident ke baare mein chup raho.,1,forced_silence,hinglish,synthetic
+"Ab aur nahi ho raha mujhse, main toot gaya hoon.",0,sadness_without_threat,hinglish,distress_v3_negatives
+They asked me not to tell the authorities.,1,forced_silence,english,synthetic
+Mujhe koi threatening message nahi mila.,0,negation,hinglish,synthetic_v6
+Court mein gawahi mat dena.,1,witness_intimidation,hinglish,synthetic
+I feel nervous whenever the lawyer calls.,0,sadness_without_threat,english,distress_v3_negatives
+I was warned that my family would be dragged into the matter.,1,third_party_threat,english,synthetic
+He told me that withdrawing the complaint would be better for me.,1,case_withdrawal_coercion,english,synthetic
+Someone mentioned threats during the hearing and I became nervous.,0,hard_negative,english,synthetic
+I feel uncertain and it's difficult to plan anything.,0,sadness_without_threat,english,distress_v3_negatives
+"After the last court visit, I've been worried, though I can get through the day.",0,sadness_without_threat,english,distress_v3_negatives
+They said my parents could be affected if I spoke to the police.,1,third_party_threat,english,synthetic
+"Because of the delay, it's been hard to focus, but my routine is mostly okay.",0,sadness_without_threat,english,distress_v3_negatives
+He told me not to tell the court what happened.,1,witness_intimidation,english,synthetic
+Mujhe lagta hai kuch bura ho sakta hai.,0,fear_without_threat,hinglish,synthetic_v6
+Andar se bilkul khaali aur sunn ho gaya hoon.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I can't stop shaking and my chest hurts from the anxiety.,0,sadness_without_threat,english,distress_v3_negatives
+"Before the hearing, I'm a bit anxious.",0,sadness_without_threat,english,distress_v3_negatives
+They said my children could be affected if I continued.,1,third_party_threat,english,synthetic
+I don't feel safe anywhere and I can't face anyone.,0,sadness_without_threat,english,distress_v3_negatives
+"Delay ki wajah se, bechaini rehti hai, par sambhal raha hoon.",0,sadness_without_threat,hinglish,distress_v3_negatives
+He made it clear that I should not appear in court.,1,direct_threat,english,synthetic_v6
+"Honestly, the case is weighing on me more than I expected.",0,sadness_without_threat,english,distress_v3_negatives
+I have not been able to sleep properly because I keep thinking about it.,0,sadness_without_threat,english,synthetic
+The legal process is making me stressed.,0,legal_stress_without_threat,english,synthetic
+He told me not to speak about the incident unless I wanted problems.,1,direct_threat,english,synthetic
+"Please help me, I don't know what to do anymore.",0,sadness_without_threat,english,distress_v3_negatives
+"Notice aane ke baad se, thodi ghabrahat hai.",0,sadness_without_threat,hinglish,distress_v3_negatives
+Chup raho warna problem hogi.,1,direct_threat,hinglish,synthetic_v6
+I am having trouble concentrating because of the case.,0,sadness_without_threat,english,synthetic
+"Mujhe lagta hai future mein threat ho sakta hai, lekin abhi kuch nahi hua.",0,hard_negative,hinglish,synthetic
+I keep thinking about the situation when I should be working.,0,sadness_without_threat,english,synthetic
+Someone told me my children would not be safe if I went to court.,1,third_party_threat,english,synthetic
+Case aage badhaya toh bahut bura hoga.,1,direct_threat,hinglish,synthetic
+He threatened to harm my brother if I gave evidence.,1,direct_threat,english,synthetic_v6
+Mujhe koi threaten nahi kar raha hai.,0,negation,hinglish,synthetic_v6
+The uncertainty is getting on my nerves.,0,sadness_without_threat,english,distress_v3_negatives
+Matter ko aage le gaye toh consequences honge.,1,direct_threat,hinglish,synthetic_v6
+Case continue kiya toh earning affect hogi.,1,financial_coercion,hinglish,synthetic
+I was told to stay quiet because my family could suffer.,1,third_party_threat,english,synthetic
+I'm having panic attacks and I can't go to work.,0,sadness_without_threat,english,distress_v3_negatives
+Gawahi dene se pehle soch lena.,1,witness_intimidation,hinglish,synthetic
+Ghar walon pe zyada chidh raha hoon aajkal.,0,sadness_without_threat,hinglish,distress_v3_negatives
+Someone warned me not to take the matter to court.,1,direct_threat,english,synthetic
+Hafte mein do-teen raat neend kharab hoti hai.,0,sadness_without_threat,hinglish,distress_v3_negatives
+I am worried they could retaliate even though nobody has contacted me.,0,hard_negative,english,synthetic
+Case continue karne ko lekar main anxious hoon.,0,fear_without_threat,hinglish,synthetic_v6
+Someone told me not to speak to the police.,1,forced_silence,english,synthetic
+The situation has affected my daily routine.,0,sadness_without_threat,english,synthetic
+I am finding it difficult to focus on normal things.,0,sadness_without_threat,english,synthetic
+He told me to stop the complaint or face consequences.,1,direct_threat,english,synthetic
+Case aage badhaya toh family safe nahi rahegi.,1,third_party_threat,hinglish,synthetic
+They told me I would be attacked if I went to the police.,1,direct_threat,english,synthetic_v6
+Raat ko kabhi kabhi jaagta rehta hoon ki kya hoga.,0,sadness_without_threat,hinglish,distress_v3_negatives
+He said I could lose my position if I testified.,1,financial_coercion,english,synthetic
+I'm in constant dread from morning until night.,0,sadness_without_threat,english,distress_v3_negatives
+They asked me not to discuss the incident in court.,1,witness_intimidation,english,synthetic
+They said I would have employment problems if I testified.,1,financial_coercion,english,synthetic
+He told me to stay quiet if I wanted things to remain peaceful.,1,forced_silence,english,synthetic
+I was told to stay away from the courtroom.,1,witness_intimidation,english,synthetic
+I feel irritated whenever I think about the case.,0,anger_without_threat,english,synthetic

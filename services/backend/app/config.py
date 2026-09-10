@@ -36,6 +36,10 @@ class Settings(BaseSettings):
     TWILIO_PHONE_NUMBER: str | None = os.getenv("TWILIO_PHONE_NUMBER", None)
     TWILIO_MOCK_MODE: bool = os.getenv("TWILIO_MOCK_MODE", "true").lower() == "true"
 
+    # Perception scoring service (Sohon, services/scoring, port 8100)
+    SCORING_URL: str = os.getenv("SCORING_URL", "http://localhost:8100")
+    SCORING_TIMEOUT_SECONDS: float = float(os.getenv("SCORING_TIMEOUT_SECONDS", "10"))
+
     # Background worker interval (in minutes)
     CHECKIN_WORKER_INTERVAL_MINUTES: int = int(os.getenv("CHECKIN_WORKER_INTERVAL_MINUTES", "60"))
 

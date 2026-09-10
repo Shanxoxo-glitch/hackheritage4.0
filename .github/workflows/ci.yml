@@ -60,9 +60,26 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Scoring Gate Check
+      - name: Install Dependencies (contract tests only, no torch / no model download)
         run: |
-          echo "Scoring test suite gate passed"
+          python -m pip install --upgrade pip
+          pip install -r services/scoring/requirements-test.txt
+
+      - name: Run Scoring Contract Tests
+        env:
+          PYTHONPATH: .
+          SCORING_WARM_ON_START: "0"
+        run: |
+          cd services/scoring
+          python -m pytest tests/ -v -m "not integration"
+
+      - name: Verify scoring API imports without torch
+        env:
+          PYTHONPATH: .
+          SCORING_WARM_ON_START: "0"
+        run: |
+          cd services/scoring
+          python -c "from app.main import app; print('scoring app imports with no torch installed')"
 
   test-risk-engine:
     name: Risk Engine Service CI
