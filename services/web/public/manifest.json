@@ -1,0 +1,16 @@
+{
+  "name": "Sahayak — Anonymous Support Sanctuary",
+  "short_name": "Sahayak",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f1ece4",
+  "theme_color": "#f1ece4",
+  "description": "A private, anonymous sanctuary to steady yourself and reach real human support.",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
