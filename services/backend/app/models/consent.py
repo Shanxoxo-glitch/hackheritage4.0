@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, String, DateTime, ForeignKey
 from app.database import Base
 
@@ -10,5 +10,5 @@ class ConsentRecord(Base):
     victim_id = Column(String(36), ForeignKey("victims.id"), nullable=False)
     scope = Column(String(100), nullable=False)  # e.g., "SMS_CHECKIN", "LOCATION_SHARING", "SAFE_PAUSE"
     status = Column(String(20), nullable=False, default="GRANTED") # "GRANTED", "REVOKED", "PAUSED"
-    granted_at = Column(DateTime, default=datetime.utcnow)
-    revoked_at = Column(DateTime, nullable=True)
+    granted_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    revoked_at = Column(DateTime(timezone=True), nullable=True)

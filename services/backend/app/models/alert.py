@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, String, DateTime, ForeignKey
 from app.database import Base
 
@@ -10,7 +10,7 @@ class Alert(Base):
     score_id = Column(String(36), ForeignKey("distress_scores.id"), nullable=False)
     official_id = Column(String(36), nullable=True) # ID of assigned official/counsellor
     risk_level = Column(String(20), nullable=False) # "LOW", "MODERATE", "HIGH", "CRITICAL"
-    raised_at = Column(DateTime, default=datetime.utcnow)
+    raised_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     status = Column(String(30), default="PENDING") # "PENDING", "ASSIGNED", "ACKNOWLEDGED", "RESOLVED"
     confirmed_outcome = Column(String(30), nullable=True) # "TRUE_POSITIVE", "FALSE_POSITIVE", "UNCLEAR"
 

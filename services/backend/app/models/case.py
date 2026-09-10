@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, String, Date, DateTime, ForeignKey
 from app.database import Base
 
@@ -13,4 +13,4 @@ class CaseFile(Base):
     case_stage = Column(String(50), nullable=False, default="FIR") # "FIR", "CHARGESHEET", "TRIAL", "COMPENSATION"
     registered_on = Column(Date, nullable=False)
     next_hearing_date = Column(Date, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

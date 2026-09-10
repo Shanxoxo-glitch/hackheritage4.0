@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, String, Float, Boolean, DateTime, ForeignKey
 from app.database import Base
 
@@ -14,4 +14,4 @@ class DistressScore(Base):
     composite_score = Column(Float, nullable=False, default=0.0)
     confidence = Column(Float, nullable=False, default=0.95)
     trend_flag = Column(String(20), nullable=False, default="STABLE") # "IMPROVING", "STABLE", "ESCALATING"
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

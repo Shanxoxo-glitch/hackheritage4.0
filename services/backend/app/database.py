@@ -2,14 +2,23 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 from sqlalchemy.orm import declarative_base
 from app.config import settings
 
-# SQLite needs check_same_thread=False; PostgreSQL does not accept it
-_connect_args = {"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {}
+from sqlalchemy.pool import NullPool
+from app.config import settings
 
-engine = create_async_engine(
-    settings.DATABASE_URL,
-    echo=False,
-    connect_args=_connect_args
-)
+# SQLite needs check_same_thread=False; PostgreSQL uses NullPool & pool_pre_ping for clean async concurrency
+if "sqlite" in settings.DATABASE_URL:
+    engine = create_async_engine(
+        settings.DATABASE_URL,
+        echo=False,
+        connect_args={"check_same_thread": False}
+    )
+else:
+    engine = create_async_engine(
+        settings.DATABASE_URL,
+        echo=False,
+        poolclass=NullPool,
+        pool_pre_ping=True
+    )
 
 AsyncSessionLocal = async_sessionmaker(
     bind=engine,

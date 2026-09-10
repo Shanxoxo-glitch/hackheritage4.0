@@ -39,12 +39,19 @@ class Settings(BaseSettings):
     # Background worker interval (in minutes)
     CHECKIN_WORKER_INTERVAL_MINUTES: int = int(os.getenv("CHECKIN_WORKER_INTERVAL_MINUTES", "60"))
 
-    # Groq API key fallback for local AI responses when VM is offline
-    GROQ_API_KEY: str | None = os.getenv("GROQ_API_KEY", "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")
+    # Groq API key fallback for local AI responses when VM is offline (set via env var GROQ_API_KEY)
+    GROQ_API_KEY: str | None = os.getenv("GROQ_API_KEY", None)
 
-    # Azure VM Orchestrator settings
+    # Azure VM Orchestrator & Microservice URLs
     ORCHESTRATOR_URL: str = os.getenv("ORCHESTRATOR_URL", "http://localhost:8500")
-    ORCHESTRATOR_API_KEY: str = os.getenv("ORCHESTRATOR_API_KEY", "")
+    ORCHESTRATOR_API_KEY: str = os.getenv("ORCHESTRATOR_API_KEY", "vk_dev")
+    SCORING_URL: str = os.getenv("SCORING_URL", "http://scoring:8100")
+    RISK_ENGINE_URL: str = os.getenv("RISK_ENGINE_URL", "http://localhost:8200")
+    BACKEND_URL: str = os.getenv("BACKEND_URL", "http://localhost:8400")
+
+    # Supabase credentials (optional for PostgreSQL / Supabase Auth)
+    SUPABASE_URL: str | None = os.getenv("SUPABASE_URL", None)
+    SUPABASE_KEY: str | None = os.getenv("SUPABASE_KEY", None)
 
     # CORS Origins (Explicit list for allow_credentials=True compatibility)
     ALLOWED_ORIGINS: list[str] = [
@@ -55,6 +62,6 @@ class Settings(BaseSettings):
         "http://127.0.0.1:5173"
     ]
 
-    model_config = SettingsConfigDict(case_sensitive=True, extra="ignore")
+    model_config = SettingsConfigDict(case_sensitive=True, extra="ignore", env_file=".env")
 
 settings = Settings()
