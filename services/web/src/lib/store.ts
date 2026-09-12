@@ -99,7 +99,25 @@ const STORAGE_KEYS = {
   CASES: "sahayak_cases",
   ACTIVE_CODEWORD: "sahayak_active_codeword",
   ROLE: "sahayak_role",
+  TRACES: "sahayak_traces",
 };
+
+export function notifyStoreChange(): void {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new Event("sahayak_store_updated"));
+  window.dispatchEvent(new Event("storage"));
+}
+
+export function subscribeToStore(callback: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  const handler = () => callback();
+  window.addEventListener("sahayak_store_updated", handler);
+  window.addEventListener("storage", handler);
+  return () => {
+    window.removeEventListener("sahayak_store_updated", handler);
+    window.removeEventListener("storage", handler);
+  };
+}
 
 // Natural evocative codeword generator
 const ADJECTIVES = ["quiet", "amber", "gentle", "misty", "calm", "river", "silver", "forest", "cedar", "warm"];
@@ -133,6 +151,7 @@ export function saveCheckIn(entry: Omit<CheckInEntry, "id" | "createdAt">): Chec
   };
   const updated = [newEntry, ...all];
   localStorage.setItem(STORAGE_KEYS.CHECKINS, JSON.stringify(updated));
+  notifyStoreChange();
   return newEntry;
 }
 
@@ -140,6 +159,7 @@ export function deleteCheckIn(id: string): void {
   const all = getCheckIns();
   const filtered = all.filter((c) => c.id !== id);
   localStorage.setItem(STORAGE_KEYS.CHECKINS, JSON.stringify(filtered));
+  notifyStoreChange();
 }
 
 // Help Requests
@@ -167,6 +187,7 @@ export function saveHelpRequest(req: Omit<HelpRequest, "id" | "createdAt">): Hel
 
   // Auto-sync into counsellor case files for seamless live demo!
   syncNewRequestToCases(newReq);
+  notifyStoreChange();
 
   return newReq;
 }
@@ -205,6 +226,7 @@ export function decideAlert(alertId: string, approved: boolean, note?: string): 
     return a;
   });
   localStorage.setItem(STORAGE_KEYS.ALERTS, JSON.stringify(updated));
+  notifyStoreChange();
 }
 
 // Counsellor Cases
@@ -238,6 +260,7 @@ export function updateCaseStatus(id: string, status: CounsellorCase["status"]): 
   const reqs = getHelpRequests();
   const updatedReqs = reqs.map((r) => (r.id === id || r.codeword === id ? { ...r, status } : r));
   localStorage.setItem(STORAGE_KEYS.REQUESTS, JSON.stringify(updatedReqs));
+  notifyStoreChange();
 }
 
 export function addCaseNote(id: string, noteText: string, author = "Dr. Ananya Roy"): void {
@@ -259,10 +282,39 @@ export function addCaseNote(id: string, noteText: string, author = "Dr. Ananya R
     return c;
   });
   localStorage.setItem(STORAGE_KEYS.CASES, JSON.stringify(updated));
+  notifyStoreChange();
+}
+
+export function saveDecisionTrace(trace: DecisionTrace): void {
+  if (typeof window === "undefined") return;
+  const raw = localStorage.getItem(STORAGE_KEYS.TRACES);
+  let traces: Record<string, DecisionTrace> = {};
+  if (raw) {
+    try {
+      traces = JSON.parse(raw);
+    } catch {
+      traces = {};
+    }
+  }
+  traces[trace.thread_id] = trace;
+  localStorage.setItem(STORAGE_KEYS.TRACES, JSON.stringify(traces));
+  notifyStoreChange();
 }
 
 // Decision Trace audit retrieval
 export function getDecisionTrace(threadId: string): DecisionTrace {
+  if (typeof window !== "undefined") {
+    const raw = localStorage.getItem(STORAGE_KEYS.TRACES);
+    if (raw) {
+      try {
+        const stored = JSON.parse(raw);
+        if (stored[threadId]) return stored[threadId];
+      } catch (e) {
+        console.error("Failed to parse stored traces", e);
+      }
+    }
+  }
+
   const traces: Record<string, DecisionTrace> = {
     "thread-8492": {
       thread_id: "thread-8492",
@@ -337,6 +389,243 @@ export function executeQuickExit(): void {
   }
   // Immediately navigate to innocent search page
   window.location.replace("https://www.google.com/search?q=weather+today");
+}
+
+export interface VictimInteractionScores {
+  sentiment: {
+    label: "LOW" | "MODERATE" | "HIGH";
+    sentiment_score: number;
+    confidence: number;
+    model_version?: string;
+  };
+  threat: {
+    threat_flag: boolean;
+    prob: number;
+    confidence: number;
+    model_version?: string;
+  };
+  fusion?: {
+    composite_score: number;
+    confidence: number;
+    label: "LOW" | "ELEVATED" | "HIGH" | "CRITICAL";
+    triggers: string[];
+    top_signals: string[];
+    contributions?: Record<string, number>;
+    weights?: Record<string, number>;
+    posterior_std?: number;
+    conflict?: boolean;
+    conflict_chi2?: number;
+  };
+  composite_score?: number;
+}
+
+export function recordVictimInteraction(
+  userText: string,
+  scores: VictimInteractionScores
+): { caseId: string; threadId: string; alertId?: string } {
+  const cases = getCases();
+  let codeword = getActiveCodeword();
+  if (!codeword) {
+    codeword = generateCodeword();
+    setActiveCodeword(codeword);
+  }
+
+  const threadId = `thread-${Math.floor(1000 + Math.random() * 9000)}`;
+  const nowTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  const isThreat = scores.threat.threat_flag || scores.threat.prob >= 0.70;
+  const isCritical =
+    scores.fusion?.label === "CRITICAL" ||
+    isThreat ||
+    (scores.fusion?.triggers && scores.fusion.triggers.includes("threat_force"));
+  const isHighRisk =
+    isCritical ||
+    scores.fusion?.label === "HIGH" ||
+    scores.sentiment.sentiment_score >= 0.65;
+
+  const compositeScore =
+    scores.fusion?.composite_score ??
+    scores.composite_score ??
+    Number(((scores.sentiment.sentiment_score * 0.262) + (scores.threat.prob * 0.590) + (0.35 * 0.148)).toFixed(2));
+
+  const confidenceScore =
+    scores.fusion?.confidence ??
+    Number(((scores.sentiment.confidence + scores.threat.confidence) / 2).toFixed(2));
+
+  // Find existing case or create a new one
+  let targetCase = cases.find((c) => c.codeword === codeword || c.case_id === codeword);
+  let updatedCases: CounsellorCase[];
+
+  const newNote: CaseNote = {
+    id: `fn_msg_${Date.now()}`,
+    timestamp: nowTime,
+    author: isCritical ? "🚨 VICTIM (CRITICAL FUSION ALERT)" : "Victim (Live Chat)",
+    text: userText,
+  };
+
+  const trendFlag = isCritical ? "ESCALATING" : isHighRisk ? "ESCALATING" : "STABLE";
+  const priorityStr = isCritical
+    ? "P1 - Immediate"
+    : isHighRisk
+    ? "P2 - Within 2h"
+    : "P3 - Routine";
+
+  if (targetCase) {
+    const newTraj = [
+      ...targetCase.distress_trajectory,
+      {
+        date: "Today " + nowTime,
+        score: Number(compositeScore.toFixed(2)),
+        event: isCritical ? "Crisis Fusion Warning" : "Live chat interaction",
+      },
+    ];
+
+    updatedCases = cases.map((c) => {
+      if (c.id === targetCase!.id) {
+        return {
+          ...c,
+          summary: userText.length > 120 ? userText.slice(0, 117) + "..." : userText,
+          last_interaction: "Just now",
+          triage_priority: priorityStr,
+          distress_trajectory: newTraj,
+          fieldNotes: [newNote, ...c.fieldNotes],
+          status: c.status === "resolved" ? "in_support" : c.status, // Reopen case if closed
+          signals: Array.from(new Set([
+            ...c.signals,
+            `Fusion: ${scores.fusion?.label || (isCritical ? "CRITICAL" : "ELEVATED")}`,
+            `Distress: ${scores.sentiment.label}`,
+            scores.threat.threat_flag ? "Threat Flagged" : "Threat Clear",
+            "Live Sanctuary Stream",
+          ])),
+          ml_scores: {
+            sentiment_label: scores.sentiment.label,
+            sentiment_score: Number(scores.sentiment.sentiment_score.toFixed(2)),
+            threat_flag: scores.threat.threat_flag,
+            threat_prob: Number(scores.threat.prob.toFixed(2)),
+            voice_stress_score: c.ml_scores?.voice_stress_score || 0.35,
+            voice_label: c.ml_scores?.voice_label || "NOT_STRESSED",
+            composite_score: Number(compositeScore.toFixed(2)),
+            confidence: confidenceScore,
+            trend_flag: trendFlag,
+          },
+        };
+      }
+      return c;
+    });
+  } else {
+    const newCaseId = `case-${Math.floor(1000 + Math.random() * 9000)}`;
+    const createdCase: CounsellorCase = {
+      id: newCaseId,
+      case_id: newCaseId,
+      codeword,
+      triage_priority: priorityStr,
+      status: "new",
+      distress_trajectory: [
+        { date: "Intake", score: 0.35 },
+        {
+          date: "Now",
+          score: Number(compositeScore.toFixed(2)),
+          event: isCritical ? "Urgent Crisis Flagged" : "First Interaction",
+        },
+      ],
+      fieldNotes: [newNote],
+      signals: [
+        `Fusion: ${scores.fusion?.label || (isCritical ? "CRITICAL" : "ELEVATED")}`,
+        `Distress: ${scores.sentiment.label}`,
+        scores.threat.threat_flag ? "Threat Flagged" : "Threat Clear",
+        "Sanctuary Chat",
+      ],
+      summary: userText.length > 120 ? userText.slice(0, 117) + "..." : userText,
+      last_interaction: "Just now",
+      created_at: new Date().toLocaleDateString("en-IN", { month: "short", day: "numeric" }),
+      ml_scores: {
+        sentiment_label: scores.sentiment.label,
+        sentiment_score: Number(scores.sentiment.sentiment_score.toFixed(2)),
+        threat_flag: scores.threat.threat_flag,
+        threat_prob: Number(scores.threat.prob.toFixed(2)),
+        voice_stress_score: 0.35,
+        voice_label: "NOT_STRESSED",
+        composite_score: Number(compositeScore.toFixed(2)),
+        confidence: confidenceScore,
+        trend_flag: trendFlag,
+      },
+    };
+    targetCase = createdCase;
+    updatedCases = [createdCase, ...cases];
+  }
+
+  localStorage.setItem(STORAGE_KEYS.CASES, JSON.stringify(updatedCases));
+
+  let alertId: string | undefined = undefined;
+
+  // If elevated or critical risk, automatically inject into Triage Alert Queue and generate Decision Trace!
+  if (isHighRisk || isCritical) {
+    alertId = `alt-${Math.floor(1000 + Math.random() * 9000)}`;
+    const riskLevel = isCritical ? "CRITICAL" : "HIGH";
+
+    const reasons: string[] = [];
+    if (scores.threat.threat_flag || scores.threat.prob >= 0.70) {
+      reasons.push(`🚨 Threat classifier flagged high danger (P=${(scores.threat.prob * 100).toFixed(0)}%)`);
+    }
+    if (scores.fusion?.triggers && scores.fusion.triggers.includes("threat_force")) {
+      reasons.push(`⚡ Bayesian Fusion Trigger: threat_force override engaged (risk floored at 0.80)`);
+    }
+    if (scores.sentiment.sentiment_score >= 0.65) {
+      reasons.push(`Distress indicator elevated (MuRIL score ${(scores.sentiment.sentiment_score * 100).toFixed(0)}%)`);
+    }
+    reasons.push(`Victim snippet: "${userText.slice(0, 85)}${userText.length > 85 ? "..." : ""}"`);
+    reasons.push(`Safety protocol: human counsellor review and active response required`);
+
+    const newAlert: TriageAlert = {
+      alert_id: alertId,
+      case_id: targetCase.case_id,
+      thread_id: threadId,
+      risk_level: riskLevel,
+      composite_score: Number(compositeScore.toFixed(2)),
+      confidence: confidenceScore,
+      triage_priority_score: Math.round(compositeScore * 100),
+      raised_at: "Just now",
+      decision_status: "pending",
+      reasons,
+      channel: "pwa_chat",
+    };
+
+    const existingAlerts = getAlerts();
+    localStorage.setItem(STORAGE_KEYS.ALERTS, JSON.stringify([newAlert, ...existingAlerts]));
+
+    // Generate matching Explainable Decision Trace for the audit trail
+    const traceSignals = scores.fusion?.top_signals?.length
+      ? scores.fusion.top_signals.map((s) => {
+          if (s === "threat") return `threat_detector (${(scores.threat.prob * 100).toFixed(0)}%)`;
+          if (s === "sentiment") return `muril_distress (${(scores.sentiment.sentiment_score * 100).toFixed(0)}%)`;
+          if (s === "voice_stress") return `voice_stress_sensor (35%)`;
+          return s;
+        })
+      : [
+          `muril_distress (${(scores.sentiment.sentiment_score * 100).toFixed(0)}%)`,
+          `threat_detector (${(scores.threat.prob * 100).toFixed(0)}%)`,
+          `chat_sentiment (${scores.sentiment.label})`,
+        ];
+
+    const trace: DecisionTrace = {
+      thread_id: threadId,
+      case_id: targetCase.case_id,
+      decision: {
+        route: isCritical ? "crisis" : "escalate",
+        policy_version: "v2.4.1-safety",
+        reasons,
+      },
+      fusion: {
+        confidence: confidenceScore,
+        top_signals: traceSignals,
+      },
+      errors: [],
+    };
+    saveDecisionTrace(trace);
+  }
+
+  notifyStoreChange();
+  return { caseId: targetCase.case_id, threadId, alertId };
 }
 
 // Sync helper

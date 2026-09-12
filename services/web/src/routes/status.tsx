@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { getHelpRequests, getActiveCodeword, HelpRequest } from "@/lib/store";
+import { getHelpRequests, getActiveCodeword, subscribeToStore, HelpRequest } from "@/lib/store";
 import { ArrowLeft, Search, ShieldCheck, HeartHandshake, Clock, CheckCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/status")({
@@ -17,18 +17,24 @@ export default function CaseStatusPage() {
   const [searched, setSearched] = useState(false);
 
   useEffect(() => {
-    const list = getHelpRequests();
-    setRequests(list);
-    const storedCode = getActiveCodeword();
-    if (storedCode) {
-      setActiveCode(storedCode);
-      const found = list.find((r) => r.codeword.toLowerCase() === storedCode.toLowerCase());
-      if (found) setMatchedRequest(found);
-    } else if (list.length > 0) {
-      setActiveCode(list[0].codeword);
-      setMatchedRequest(list[0]);
-    }
-  }, []);
+    const refresh = () => {
+      const list = getHelpRequests();
+      setRequests(list);
+      const storedCode = getActiveCodeword();
+      const codeToMatch = activeCode.trim() || storedCode || (list[0] ? list[0].codeword : "");
+      if (codeToMatch) {
+        if (!activeCode && (storedCode || list[0]?.codeword)) {
+          setActiveCode(storedCode || list[0]?.codeword || "");
+        }
+        const found = list.find((r) => r.codeword.toLowerCase() === codeToMatch.toLowerCase());
+        if (found) setMatchedRequest(found);
+      }
+    };
+
+    refresh();
+    const unsubscribe = subscribeToStore(refresh);
+    return () => unsubscribe();
+  }, [activeCode]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

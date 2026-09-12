@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { getAlerts, decideAlert, TriageAlert } from "@/lib/store";
+import { getAlerts, decideAlert, subscribeToStore, TriageAlert } from "@/lib/store";
 import {
   ArrowLeft,
   AlertTriangle,
@@ -24,7 +24,10 @@ export default function AlertQueuePage() {
   const [selectedRisk, setSelectedRisk] = useState<string>("ALL");
 
   useEffect(() => {
-    setAlerts(getAlerts());
+    const refresh = () => setAlerts(getAlerts());
+    refresh();
+    const unsubscribe = subscribeToStore(refresh);
+    return () => unsubscribe();
   }, []);
 
   const handleDecision = (alertId: string, approved: boolean) => {

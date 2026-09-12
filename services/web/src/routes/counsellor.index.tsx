@@ -4,6 +4,7 @@ import {
   getCases,
   updateCaseStatus,
   addCaseNote,
+  subscribeToStore,
   CounsellorCase,
 } from "@/lib/store";
 import { TimelineOverlay } from "@/components/counsellor/TimelineOverlay";
@@ -43,11 +44,22 @@ export default function CounsellorDashboardPage() {
   const [liveResult, setLiveResult] = useState<LiveScoreResult | null>(null);
 
   useEffect(() => {
-    const list = getCases();
-    setCases(list);
-    if (list.length > 0) {
-      setSelectedCase(list[0]);
-    }
+    const refresh = () => {
+      const list = getCases();
+      setCases(list);
+      setSelectedCase((current) => {
+        if (!current && list.length > 0) return list[0];
+        if (current) {
+          const matching = list.find((c) => c.id === current.id || c.case_id === current.case_id);
+          return matching || list[0] || null;
+        }
+        return null;
+      });
+    };
+
+    refresh();
+    const unsubscribe = subscribeToStore(refresh);
+    return () => unsubscribe();
   }, []);
 
   const handleStatusChange = (status: CounsellorCase["status"]) => {
@@ -124,6 +136,13 @@ export default function CounsellorDashboardPage() {
     }
   };
 
+  const criticalCases = cases.filter(
+    (c) =>
+      c.triage_priority.startsWith("P1") ||
+      c.ml_scores?.threat_flag ||
+      c.ml_scores?.trend_flag === "ESCALATING"
+  );
+
   return (
     <div className="grain min-h-screen bg-background text-foreground p-6 md:p-12">
       <div className="mx-auto max-w-7xl space-y-8">
@@ -147,10 +166,15 @@ export default function CounsellorDashboardPage() {
             >
               <AlertTriangle className="h-3.5 w-3.5" />
               <span>Triage Alert Queue</span>
+              {criticalCases.length > 0 && (
+                <span className="rounded-full bg-red-600 px-1.5 py-0.2 text-[10px] font-bold text-white">
+                  {criticalCases.length}
+                </span>
+              )}
             </Link>
             <Link
               to="/counsellor/trace/$threadId"
-              params={{ threadId: "thread-8492" }}
+              params={{ threadId: selectedCase?.case_id || "thread-8492" }}
               className="inline-flex items-center gap-2 rounded-full bg-forest px-5 py-2.5 text-xs font-semibold text-forest-foreground hover:bg-clay transition-colors"
             >
               <Layers className="h-3.5 w-3.5" />
@@ -158,6 +182,55 @@ export default function CounsellorDashboardPage() {
             </Link>
           </div>
         </div>
+
+        {/* Real-time Critical Triage Warning Banner */}
+        {criticalCases.length > 0 && (
+          <div className="rounded-3xl border-2 border-red-500/40 bg-red-500/10 p-5 md:p-6 space-y-3 animate-in fade-in slide-in-from-top-3 duration-500 shadow-[var(--shadow-lift)]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <span className="relative flex h-3.5 w-3.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-red-600" />
+                </span>
+                <span className="font-display text-lg font-bold text-red-700 dark:text-red-400 flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-red-600" />
+                  CRITICAL ESCALATION WARNING — {criticalCases.length} Victim Case{criticalCases.length > 1 ? "s" : ""} Requiring Immediate Review
+                </span>
+              </div>
+              <Link
+                to="/counsellor/alerts"
+                className="inline-flex items-center gap-2 rounded-full bg-red-600 px-4 py-2 text-xs font-bold text-white hover:bg-red-700 transition-colors self-start sm:self-auto shadow-sm"
+              >
+                <span>Open Alert Queue ({criticalCases.length})</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
+              {criticalCases.slice(0, 3).map((cc) => (
+                <div
+                  key={cc.id}
+                  onClick={() => setSelectedCase(cc)}
+                  className="rounded-2xl border border-red-500/20 bg-background/80 p-3.5 space-y-1.5 cursor-pointer hover:border-red-500/50 transition-all"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs font-bold text-foreground">{cc.codeword}</span>
+                    <span className="rounded-full bg-red-500/20 px-2 py-0.5 text-[10px] font-bold text-red-700">
+                      {cc.triage_priority}
+                    </span>
+                  </div>
+                  <p className="text-xs text-foreground/80 line-clamp-1 italic">
+                    "{cc.summary}"
+                  </p>
+                  <div className="flex items-center justify-between text-[10px] font-mono text-foreground/50 pt-1">
+                    <span>Risk: {((cc.ml_scores?.composite_score || 0.8) * 100).toFixed(0)}%</span>
+                    <span className="text-red-600 font-bold">⚠️ Click to inspect</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Main Work Area: Case Cards Grid + Selected Case Notebook */}
         <div className="grid lg:grid-cols-12 gap-8">
@@ -256,6 +329,51 @@ export default function CounsellorDashboardPage() {
                     ))}
                   </div>
                 </div>
+
+                {/* Real-time AI Threat & Crisis Escalation Warning on Selected Case */}
+                {(selectedCase.triage_priority.startsWith("P1") ||
+                  selectedCase.ml_scores?.threat_flag ||
+                  selectedCase.ml_scores?.trend_flag === "ESCALATING") && (
+                  <div className="rounded-2xl border-2 border-red-500/40 bg-red-500/10 p-5 space-y-3 animate-in fade-in duration-300">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="h-5 w-5 text-red-600 animate-pulse" />
+                        <span className="text-xs font-bold uppercase tracking-wider text-red-700 dark:text-red-400">
+                          ⚠️ Live AI Threat & Crisis Escalation Warning
+                        </span>
+                      </div>
+                      <Link
+                        to="/counsellor/trace/$threadId"
+                        params={{ threadId: selectedCase.case_id || "thread-8492" }}
+                        className="text-[11px] font-semibold text-red-700 dark:text-red-400 hover:underline flex items-center gap-1"
+                      >
+                        <span>Audit Explainable Trace →</span>
+                      </Link>
+                    </div>
+                    <p className="text-xs text-foreground/85 leading-relaxed">
+                      Bayesian linear-Gaussian model detected an escalation state. Recent victim interaction:{" "}
+                      <strong className="text-foreground">"{selectedCase.summary}"</strong>.
+                      Sensor weighting:{" "}
+                      <span className="font-mono text-clay font-bold">Threat: 59%, Distress: 26%, Voice: 15%</span>.
+                    </p>
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => handleStatusChange("in_support")}
+                        className="rounded-full bg-red-600 px-4 py-1.5 text-xs font-bold text-white hover:bg-red-700 transition-colors shadow-sm"
+                      >
+                        Initiate Urgent Contact
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleStatusChange("contacted")}
+                        className="rounded-full border border-foreground/20 bg-background/60 px-4 py-1.5 text-xs font-medium text-foreground hover:bg-background transition-colors"
+                      >
+                        Mark Contacted
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 {/* SHOWPIECE: Timeline Distress Overlay */}
                 <div className="rounded-2xl border border-foreground/10 bg-background/50 p-5 space-y-2">
@@ -515,6 +633,45 @@ export default function CounsellorDashboardPage() {
                             <span>Conf: {(liveResult.threat.confidence * 100).toFixed(0)}%</span>
                           </div>
                         </div>
+
+                        {/* Bayesian Fusion Engine Box */}
+                        {liveResult.fusion && (
+                          <div className="sm:col-span-2 rounded-lg bg-card p-3 border border-clay/30 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-mono uppercase tracking-wider text-foreground/50 flex items-center gap-1">
+                                <Cpu className="h-3 w-3 text-clay" />
+                                Bayesian Linear-Gaussian Fusion Engine (Port :8200)
+                              </span>
+                              <span className="text-[10px] font-mono font-bold text-clay uppercase">
+                                {liveResult.fusion.label}
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                              <div className="bg-background/60 p-2 rounded-lg border border-foreground/5">
+                                <span className="text-[10px] text-foreground/50 block">Composite Risk</span>
+                                <span className="font-mono font-bold text-foreground">
+                                  {(liveResult.fusion.composite_score * 100).toFixed(0)}%
+                                </span>
+                              </div>
+                              <div className="bg-background/60 p-2 rounded-lg border border-foreground/5">
+                                <span className="text-[10px] text-foreground/50 block">Confidence</span>
+                                <span className="font-mono font-bold text-forest">
+                                  {(liveResult.fusion.confidence * 100).toFixed(0)}%
+                                </span>
+                              </div>
+                              <div className="bg-background/60 p-2 rounded-lg border border-foreground/5">
+                                <span className="text-[10px] text-foreground/50 block">Triggers</span>
+                                <span className="font-mono font-bold text-red-600">
+                                  {liveResult.fusion.triggers.length > 0 ? liveResult.fusion.triggers.join(", ") : "nominal"}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between text-[10px] font-mono text-foreground/50 pt-1">
+                              <span>Weights: Threat 59% · Sentiment 26% · Voice 15%</span>
+                              <span>Signals: {liveResult.fusion.top_signals.join(" > ")}</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

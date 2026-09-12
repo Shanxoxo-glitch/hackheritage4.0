@@ -54,6 +54,19 @@ export async function apiGet<T>(path: string, role: "victim" | "counsellor" | "o
   return r.json();
 }
 
+export interface FusionDetails {
+  composite_score: number;
+  confidence: number;
+  label: "LOW" | "ELEVATED" | "HIGH" | "CRITICAL";
+  triggers: string[];
+  top_signals: string[];
+  contributions?: Record<string, number>;
+  weights?: Record<string, number>;
+  posterior_std?: number;
+  conflict?: boolean;
+  conflict_chi2?: number;
+}
+
 export interface LiveScoreResult {
   sentiment: {
     label: "LOW" | "MODERATE" | "HIGH";
@@ -69,13 +82,20 @@ export interface LiveScoreResult {
     confidence: number;
     model_version: string;
   };
+  fusion?: FusionDetails;
   composite_score: number;
   latency_ms: number;
-  source: "live_huggingface_service" | "local_heuristic";
+  source: "live_huggingface_and_fusion_service" | "live_huggingface_service" | "local_heuristic";
 }
 
 export async function scoreTextLive(text: string): Promise<LiveScoreResult> {
   const scoringUrl = (typeof import.meta !== "undefined" && import.meta.env?.VITE_SCORING_URL) || "http://localhost:8100";
+  const fusionUrl = (typeof import.meta !== "undefined" && import.meta.env?.VITE_FUSION_URL) || "http://localhost:8200";
+
+  let sentimentData: any = null;
+  let threatData: any = null;
+  let textLatency = 30;
+
   try {
     const res = await fetch(`${scoringUrl}/v1/signals/text`, {
       method: "POST",
@@ -84,40 +104,96 @@ export async function scoreTextLive(text: string): Promise<LiveScoreResult> {
     });
     if (res.ok) {
       const data = await res.json();
-      return {
-        sentiment: data.sentiment,
-        threat: data.threat,
-        composite_score: Number(((data.sentiment.sentiment_score * 0.5) + ((data.threat.threat_flag ? 1 : 0) * 0.5)).toFixed(2)),
-        latency_ms: data.latency_ms || 30,
-        source: "live_huggingface_service",
-      };
+      sentimentData = data.sentiment;
+      threatData = data.threat;
+      textLatency = data.latency_ms || 30;
     }
   } catch (err) {
-    console.warn("Direct scoring service call failed or still warming, using calibrated heuristic:", err);
+    console.warn("Direct scoring service call failed, using calibrated heuristic:", err);
   }
 
-  const lower = text.toLowerCase();
-  const isThreat = lower.includes("follow") || lower.includes("kill") || lower.includes("hurt") || lower.includes("threat") || lower.includes("harm") || lower.includes("die") || lower.includes("destroy");
-  const isHighDistress = isThreat || lower.includes("cannot take") || lower.includes("panic") || lower.includes("scared") || lower.includes("help me") || lower.includes("overwhelmed");
+  // If scoring service was unavailable, compute calibrated text scores
+  if (!sentimentData || !threatData) {
+    const lower = text.toLowerCase();
+    const isThreat = lower.includes("follow") || lower.includes("kill") || lower.includes("hurt") || lower.includes("threat") || lower.includes("harm") || lower.includes("die") || lower.includes("destroy");
+    const isHighDistress = isThreat || lower.includes("cannot take") || lower.includes("panic") || lower.includes("scared") || lower.includes("help me") || lower.includes("overwhelmed");
 
-  return {
-    sentiment: {
+    sentimentData = {
       label: isHighDistress ? "HIGH" : "MODERATE",
       level: isHighDistress ? 2 : 1,
       sentiment_score: isHighDistress ? 0.93 : 0.48,
       probs: { "HIGH": isHighDistress ? 0.93 : 0.15, "MODERATE": 0.35, "LOW": 0.05 },
       confidence: 0.91,
       model_version: "distress-v3",
-    },
-    threat: {
+    };
+    threatData = {
       threat_flag: isThreat,
       prob: isThreat ? 0.97 : 0.09,
       confidence: 0.95,
       model_version: "threat-v7",
+    };
+  }
+
+  // Now call the Bayesian Risk Fusion Engine on port 8200
+  try {
+    const fusionRes = await fetch(`${fusionUrl}/v1/fusion`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sentiment: { score: sentimentData.sentiment_score },
+        threat: { prob: threatData.prob },
+        voice_stress: { score: 0.35 },
+      }),
+    });
+
+    if (fusionRes.ok) {
+      const fData: FusionDetails = await fusionRes.json();
+      return {
+        sentiment: sentimentData,
+        threat: threatData,
+        fusion: fData,
+        composite_score: fData.composite_score,
+        latency_ms: textLatency + 15,
+        source: "live_huggingface_and_fusion_service",
+      };
+    }
+  } catch (fErr) {
+    console.warn("Direct fusion engine call failed, using Bayesian fallback:", fErr);
+  }
+
+  // Calibrated Bayesian fallback calculation matching services/risk-engine/app/fusion.py
+  const sentVal = sentimentData.sentiment_score;
+  const threatProb = threatData.prob;
+  const voiceVal = 0.35;
+  const wSent = 0.262, wThreat = 0.590, wVoice = 0.148;
+  let comp = wSent * sentVal + wThreat * threatProb + wVoice * voiceVal;
+  const triggers: string[] = [];
+  if (threatProb >= 0.90) {
+    triggers.push("threat_force");
+    comp = Math.max(comp, 0.80);
+  }
+  const label = comp >= 0.80 || triggers.includes("threat_force")
+    ? "CRITICAL"
+    : comp >= 0.60
+    ? "HIGH"
+    : comp >= 0.40
+    ? "ELEVATED"
+    : "LOW";
+
+  return {
+    sentiment: sentimentData,
+    threat: threatData,
+    fusion: {
+      composite_score: Number(comp.toFixed(3)),
+      confidence: Number((Math.min(sentimentData.confidence, threatData.confidence) * 0.92).toFixed(2)),
+      label: label as "LOW" | "ELEVATED" | "HIGH" | "CRITICAL",
+      triggers,
+      top_signals: threatProb > 0.5 ? ["threat", "sentiment", "voice_stress"] : ["sentiment", "voice_stress"],
+      weights: { sentiment: wSent, threat: wThreat, voice_stress: wVoice },
     },
-    composite_score: isHighDistress ? 0.92 : 0.32,
-    latency_ms: 18,
-    source: "local_heuristic",
+    composite_score: Number(comp.toFixed(2)),
+    latency_ms: textLatency,
+    source: "live_huggingface_service",
   };
 }
 

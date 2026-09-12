@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { streamChat } from "@/lib/api";
+import { streamChat, scoreTextLive } from "@/lib/api";
+import { recordVictimInteraction } from "@/lib/store";
 import {
   ArrowLeft,
   Send,
@@ -77,6 +78,18 @@ export default function CrisisChatPage() {
     if (isDanger) {
       setShowCrisisBanner(true);
     }
+
+    // Evaluate message with Hugging Face models and update Counsellor / Admin records live
+    scoreTextLive(userMsg)
+      .then((scores) => {
+        recordVictimInteraction(userMsg, scores);
+        if (scores.threat.threat_flag || scores.sentiment.label === "HIGH") {
+          setShowCrisisBanner(true);
+        }
+      })
+      .catch((err) => {
+        console.warn("Live victim perception scoring error:", err);
+      });
 
     setMessages((prev) => [
       ...prev,

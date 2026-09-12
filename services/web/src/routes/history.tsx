@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { getCheckIns, deleteCheckIn, CheckInEntry } from "@/lib/store";
+import { getCheckIns, deleteCheckIn, subscribeToStore, CheckInEntry } from "@/lib/store";
 import { ArrowLeft, Trash2, Calendar, Sparkles, Moon, Sun, Flower2, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/history")({
@@ -15,11 +15,22 @@ export default function HistoryGardenPage() {
   const [selectedEntry, setSelectedEntry] = useState<CheckInEntry | null>(null);
 
   useEffect(() => {
-    const list = getCheckIns();
-    setEntries(list);
-    if (list.length > 0) {
-      setSelectedEntry(list[0]);
-    }
+    const refresh = () => {
+      const list = getCheckIns();
+      setEntries(list);
+      setSelectedEntry((curr) => {
+        if (!curr && list.length > 0) return list[0];
+        if (curr) {
+          const matching = list.find((e) => e.id === curr.id);
+          return matching || list[0] || null;
+        }
+        return null;
+      });
+    };
+
+    refresh();
+    const unsubscribe = subscribeToStore(refresh);
+    return () => unsubscribe();
   }, []);
 
   const handleDelete = (id: string) => {

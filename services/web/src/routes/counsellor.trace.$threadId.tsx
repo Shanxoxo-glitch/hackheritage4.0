@@ -1,5 +1,6 @@
+import { useState, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { getDecisionTrace } from "@/lib/store";
+import { getDecisionTrace, subscribeToStore } from "@/lib/store";
 import {
   ArrowLeft,
   ShieldCheck,
@@ -18,7 +19,14 @@ export const Route = createFileRoute("/counsellor/trace/$threadId")({
 
 export default function TraceViewPage() {
   const { threadId } = Route.useParams();
-  const trace = getDecisionTrace(threadId);
+  const [trace, setTrace] = useState(() => getDecisionTrace(threadId));
+
+  useEffect(() => {
+    const refresh = () => setTrace(getDecisionTrace(threadId));
+    refresh();
+    const unsubscribe = subscribeToStore(refresh);
+    return () => unsubscribe();
+  }, [threadId]);
 
   const routeColor =
     trace.decision.route === "crisis"
