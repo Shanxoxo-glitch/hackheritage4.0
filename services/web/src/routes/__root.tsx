@@ -14,7 +14,6 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { QuickExit } from "../components/common/QuickExit";
 import { DemoNav } from "../components/common/DemoNav";
 import { SplineLoadingScreen } from "../components/common/SplineLoadingScreen";
-import { PwaInstallPrompt } from "../components/common/PwaInstallPrompt";
 
 function NotFoundComponent() {
   return (
@@ -149,7 +148,7 @@ function RootComponent() {
 
   useEffect(() => {
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
+      const registerSW = () => {
         navigator.serviceWorker
           .register("/sw.js")
           .then((registration) => {
@@ -158,7 +157,13 @@ function RootComponent() {
           .catch((error) => {
             console.warn("[Sahayak PWA] Service worker registration failed:", error);
           });
-      });
+      };
+
+      if (document.readyState === "complete" || document.readyState === "interactive") {
+        registerSW();
+      } else {
+        window.addEventListener("load", registerSW, { once: true });
+      }
     }
   }, []);
 
@@ -166,7 +171,6 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <SplineLoadingScreen />
       <QuickExit />
-      <PwaInstallPrompt />
       <Outlet />
       <DemoNav />
     </QueryClientProvider>

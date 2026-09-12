@@ -94,10 +94,24 @@ export function PwaInstallPrompt() {
     );
   }
 
-  // Do not show install prompt if dismissed, standalone, or not installable
-  if (isStandalone || isDismissed || !deferredPrompt) {
+  const [showGuide, setShowGuide] = useState(false);
+
+  // Do not show install prompt if dismissed or already running as installed standalone app
+  if (isStandalone || isDismissed) {
     return null;
   }
+
+  const handleInstall = async () => {
+    if (deferredPrompt) {
+      await deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      if (choice.outcome === "accepted") {
+        setDeferredPrompt(null);
+      }
+    } else {
+      setShowGuide(true);
+    }
+  };
 
   return (
     <aside aria-label="Install Sahayak Sanctuary App" className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 max-w-sm rounded-2xl bg-card/95 backdrop-blur-md p-3.5 shadow-xl border border-border text-foreground transition-all duration-300 animate-slide-up">
@@ -110,10 +124,10 @@ export function PwaInstallPrompt() {
           />
           <div>
             <h4 className="text-xs font-semibold font-display tracking-tight text-foreground">
-              Install Sahayak App
+              Install Sahayak PWA
             </h4>
             <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
-              Instant offline access & private home-screen sanctuary.
+              Instant offline access & home-screen sanctuary.
             </p>
           </div>
         </div>
@@ -127,21 +141,37 @@ export function PwaInstallPrompt() {
         </button>
       </div>
 
-      <div className="mt-3 flex items-center gap-2">
-        <button
-          onClick={handleInstallClick}
-          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full bg-forest text-forest-foreground text-xs font-medium hover:bg-clay transition-colors shadow-xs"
-        >
-          <Download className="w-3.5 h-3.5" />
-          <span>Install Sanctuary</span>
-        </button>
-        <button
-          onClick={handleDismiss}
-          className="px-3 py-1.5 rounded-full border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors"
-        >
-          Later
-        </button>
-      </div>
+      {showGuide ? (
+        <div className="mt-2.5 pt-2.5 border-t border-border/60 text-[11px] text-muted-foreground space-y-1.5">
+          <p className="font-medium text-foreground">To install on your device:</p>
+          <p>• <strong className="text-foreground">Desktop Chrome / Edge:</strong> Click the <strong>Install icon (💻/⬇️)</strong> on the right side of the address bar, or menu (⋮) → <em>"Install Sahayak"</em>.</p>
+          <p>• <strong className="text-foreground">iOS Safari:</strong> Tap <strong>Share (📤)</strong> → <em>"Add to Home Screen"</em>.</p>
+          <div className="pt-1 flex justify-end">
+            <button
+              onClick={() => setShowGuide(false)}
+              className="text-[11px] font-medium text-forest hover:underline"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-3 flex items-center gap-2">
+          <button
+            onClick={handleInstall}
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full bg-forest text-forest-foreground text-xs font-medium hover:bg-clay transition-colors shadow-xs"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Install App</span>
+          </button>
+          <button
+            onClick={handleDismiss}
+            className="px-3 py-1.5 rounded-full border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors"
+          >
+            Later
+          </button>
+        </div>
+      )}
     </aside>
   );
 }

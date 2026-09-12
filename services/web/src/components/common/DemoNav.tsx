@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
-import { Compass, HeartHandshake, Stethoscope, BarChart3, ChevronUp, Layers, Power, Scale } from "lucide-react";
+import { Compass, HeartHandshake, Stethoscope, BarChart3, ChevronUp, Layers, Power, Scale, Download } from "lucide-react";
 import { getCurrentUser, logoutUser, subscribeToStore, AuthUser } from "@/lib/store";
 
 export function DemoNav() {
@@ -168,6 +168,28 @@ export function DemoNav() {
             <BarChart3 className="h-3.5 w-3.5 text-sage-deep" />
             <span>Observatory Dashboard</span>
           </Link>
+
+          <div className="pt-2 border-t border-foreground/10 px-1">
+            <button
+              onClick={() => {
+                sessionStorage.removeItem("sahayak_pwa_dismissed");
+                const promptEvent = (window as unknown as { __deferredPwaPrompt?: { prompt: () => Promise<void> } }).__deferredPwaPrompt;
+                if (promptEvent) {
+                  promptEvent.prompt();
+                } else {
+                  alert("To install Sahayak:\\n\\n• Desktop Chrome/Edge: Click the Install icon in the address bar (next to the star icon) or ⋮ menu -> 'Install Sahayak'.\\n• iOS Safari: Tap Share (📤) -> 'Add to Home Screen'.");
+                }
+                setIsOpen(false);
+              }}
+              className="w-full flex items-center justify-between gap-2 rounded-lg px-2.5 py-1.5 bg-forest/10 hover:bg-forest/20 text-forest text-xs font-medium transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <Download className="h-3.5 w-3.5" />
+                <span>Install Sahayak App</span>
+              </div>
+              <span className="text-[10px] bg-forest text-white px-1.5 py-0.2 rounded-full font-sans">PWA</span>
+            </button>
+          </div>
 
           {currentUser && (
             <div className="border-t border-foreground/10 pt-2 flex items-center justify-between px-1 text-[11px]">
