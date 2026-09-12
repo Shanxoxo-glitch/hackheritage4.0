@@ -1,8 +1,18 @@
-fastapi>=0.111
-uvicorn[standard]>=0.30
-pydantic>=2.7
-numpy>=1.26
-httpx>=0.27
-structlog>=24.1
-scikit-learn>=1.5
-joblib>=1.4
+# PS-26094 Risk Engine -- runtime deps.
+# Upper bounds guard the majors that actually break things here:
+# sklearn/joblib pickles and pydantic models. For full reproducibility,
+# generate a machine-made lock instead of hand-editing this file:
+#   pip install pip-tools && pip-compile --generate-hashes -o requirements.lock
+
+fastapi>=0.111,<1
+uvicorn[standard]>=0.30,<1
+pydantic>=2.7,<3
+numpy>=1.26,<3
+# httpx is test-only (TestClient transport) -- fine to keep for local dev,
+# remove this line for a slim production image
+httpx>=0.27,<1
+structlog>=24.1,<25
+# runtime too, not just training: the served artifact unpickles
+# LogisticRegression estimators (ensemble members + Platt calibrator)
+scikit-learn>=1.5,<2
+joblib>=1.4,<2
