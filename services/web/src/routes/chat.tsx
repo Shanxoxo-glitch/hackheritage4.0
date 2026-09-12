@@ -15,7 +15,7 @@ import {
 
 export const Route = createFileRoute("/chat")({
   head: () => ({
-    meta: [{ title: "Sanctuary Chat — Casewriter" }],
+    meta: [{ title: "Sanctuary Chat — Sahayak" }],
   }),
   component: CrisisChatPage,
 });
@@ -161,7 +161,7 @@ export default function CrisisChatPage() {
             <ArrowLeft className="h-4 w-4" />
           </Link>
           <div>
-            <h1 className="font-display text-xl leading-none">Casewriter Sanctuary</h1>
+            <h1 className="font-display text-xl leading-none">Sahayak Sanctuary</h1>
             <p className="text-[11px] text-foreground/50">Anonymous · Encrypted · Non-judgmental</p>
           </div>
         </div>

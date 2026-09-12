@@ -23,6 +23,7 @@ class InteractionStreamPayload(BaseModel):
     channel: str = "pwa"   # must be lowercase: pwa | sms | ivr | email
     message: str
     language: str | None = "en"
+    model: str | None = "casewriter"   # which AI model the VM orchestrator should use
 
 ORCHESTRATOR_VM_URL = getattr(settings, "ORCHESTRATOR_URL", "http://localhost:8500")
 # API key for VM Orchestrator — can be overridden via ORCHESTRATOR_API_KEY env var
@@ -90,7 +91,8 @@ async def stream_interaction_to_vm(payload: InteractionStreamPayload):
                         "case_id": payload.case_id or "demo-case-01",
                         "channel": channel,
                         "message": payload.message,
-                        "language": payload.language
+                        "language": payload.language,
+                        "model": payload.model or "casewriter"
                     },
                     headers=headers
                 )

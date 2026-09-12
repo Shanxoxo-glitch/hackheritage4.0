@@ -104,12 +104,20 @@ def build_scheduler() -> AsyncIOScheduler:
     """
     try:
         import redis
+        import socket
         host = settings.REDIS_URL.split("//")[1].split(":")[0]
         port = int(settings.REDIS_URL.split(":")[-1].split("/")[0])
         db = int(settings.REDIS_URL.split("/")[-1])
         
-        # Test ping to check if Redis server is reachable
-        r = redis.Redis(host=host, port=port, db=db, socket_timeout=1)
+        # Fast non-blocking socket probe (0.1s) to check if Redis port is open
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(0.1)
+        res = sock.connect_ex((host, port))
+        sock.close()
+        if res != 0:
+            raise ConnectionError("Redis port closed")
+
+        r = redis.Redis(host=host, port=port, db=db, socket_timeout=0.2)
         r.ping()
 
         jobstores = {

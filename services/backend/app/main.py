@@ -20,25 +20,37 @@ logger = logging.getLogger("main")
 async def lifespan(app: FastAPI):
     # ── Startup ──────────────────────────────────────────────
     # 1. Create all database tables
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    logger.info("✅ Database tables initialised.")
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("✅ Database tables initialised.")
+    except Exception as e:
+        logger.warning(f"⚠️ Database initialization error: {e}")
 
     # 2. Start background check-in sweep worker (APScheduler + Redis)
-    scheduler = build_scheduler()
-    scheduler.start()
-    logger.info(
-        f"✅ Background check-in worker started. "
-        f"Sweep interval: every {settings.CHECKIN_WORKER_INTERVAL_MINUTES} minute(s)."
-    )
+    try:
+        scheduler = build_scheduler()
+        scheduler.start()
+        logger.info(
+            f"✅ Background check-in worker started. "
+            f"Sweep interval: every {settings.CHECKIN_WORKER_INTERVAL_MINUTES} minute(s)."
+        )
+    except Exception as e:
+        logger.warning(f"⚠️ Background worker skipped (Redis not running): {e}")
 
     yield  # Server is running
 
     # ── Shutdown ──────────────────────────────────────────────
-    scheduler.shutdown(wait=False)
-    logger.info("🛑 Background worker stopped.")
-    await engine.dispose()
-    logger.info("🛑 Database engine disposed.")
+    try:
+        scheduler.shutdown(wait=False)
+        logger.info("🛑 Background worker stopped.")
+    except Exception:
+        pass
+    try:
+        await engine.dispose()
+        logger.info("🛑 Database engine disposed.")
+    except Exception:
+        pass
 
 
 app = FastAPI(

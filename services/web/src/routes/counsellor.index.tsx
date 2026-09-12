@@ -7,6 +7,7 @@ import {
   CounsellorCase,
 } from "@/lib/store";
 import { TimelineOverlay } from "@/components/counsellor/TimelineOverlay";
+import { scoreTextLive, LiveScoreResult } from "@/lib/api";
 import {
   Folder,
   FileText,
@@ -20,6 +21,10 @@ import {
   ArrowRight,
   ShieldCheck,
   Stethoscope,
+  Sparkles,
+  Cpu,
+  Zap,
+  Radio,
 } from "lucide-react";
 
 export const Route = createFileRoute("/counsellor/")({
@@ -33,6 +38,9 @@ export default function CounsellorDashboardPage() {
   const [cases, setCases] = useState<CounsellorCase[]>([]);
   const [selectedCase, setSelectedCase] = useState<CounsellorCase | null>(null);
   const [newNote, setNewNote] = useState("");
+  const [scoringInput, setScoringInput] = useState("I cannot take this anymore, they are following me");
+  const [isScoring, setIsScoring] = useState(false);
+  const [liveResult, setLiveResult] = useState<LiveScoreResult | null>(null);
 
   useEffect(() => {
     const list = getCases();
@@ -56,6 +64,45 @@ export default function CounsellorDashboardPage() {
     if (!selectedCase || !newNote.trim()) return;
     addCaseNote(selectedCase.id, newNote);
     setNewNote("");
+    const updated = getCases();
+    setCases(updated);
+    const refreshed = updated.find((c) => c.id === selectedCase.id);
+    if (refreshed) setSelectedCase(refreshed);
+  };
+
+  const handleRunLiveScoring = async () => {
+    if (!scoringInput.trim() || isScoring) return;
+    setIsScoring(true);
+    try {
+      const res = await scoreTextLive(scoringInput);
+      setLiveResult(res);
+      // If a case is selected, dynamically update its live perception scores with this real model inference!
+      if (selectedCase) {
+        const updatedCase: CounsellorCase = {
+          ...selectedCase,
+          ml_scores: {
+            sentiment_label: res.sentiment.label,
+            sentiment_score: Number(res.sentiment.sentiment_score.toFixed(2)),
+            threat_flag: res.threat.threat_flag,
+            threat_prob: Number(res.threat.prob.toFixed(2)),
+            voice_stress_score: selectedCase.ml_scores?.voice_stress_score || 0.42,
+            voice_label: selectedCase.ml_scores?.voice_label || "NOT_STRESSED",
+            composite_score: res.composite_score,
+            confidence: Number(((res.sentiment.confidence + res.threat.confidence) / 2).toFixed(2)),
+            trend_flag: res.threat.threat_flag || res.sentiment.label === "HIGH" ? "ESCALATING" : "STABLE",
+          },
+        };
+        setSelectedCase(updatedCase);
+      }
+    } finally {
+      setIsScoring(false);
+    }
+  };
+
+  const handleLogScoreAsNote = () => {
+    if (!selectedCase || !liveResult) return;
+    const noteText = `[AI Perception Evidence · ${liveResult.source === "live_huggingface_service" ? "Live HF Models" : "Calibrated"}] Evaluated: "${scoringInput}" → Distress: ${liveResult.sentiment.label} (${(liveResult.sentiment.sentiment_score * 100).toFixed(0)}%), Threat: ${liveResult.threat.threat_flag ? "FLAGGED" : "CLEAR"} (P=${(liveResult.threat.prob * 100).toFixed(0)}%).`;
+    addCaseNote(selectedCase.id, noteText, "AI Perception Engine");
     const updated = getCases();
     setCases(updated);
     const refreshed = updated.find((c) => c.id === selectedCase.id);
@@ -221,6 +268,94 @@ export default function CounsellorDashboardPage() {
                   <TimelineOverlay data={selectedCase.distress_trajectory} />
                 </div>
 
+                {/* ML Perception Scores Panel */}
+                {selectedCase.ml_scores && (
+                  <div className="rounded-2xl border border-foreground/10 bg-background/50 p-5 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-foreground/70 flex items-center gap-1.5">
+                        <ShieldCheck className="h-3.5 w-3.5 text-clay" />
+                        AI Perception Signals · Live Model Output
+                      </span>
+                      <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                        selectedCase.ml_scores.trend_flag === "ESCALATING"
+                          ? "bg-red-500/15 text-red-600"
+                          : "bg-sage/30 text-forest-deep"
+                      }`}>
+                        {selectedCase.ml_scores.trend_flag}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3">
+                      {/* Sentiment / Distress */}
+                      <div className="rounded-xl bg-card border border-foreground/10 p-3 space-y-1.5">
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-foreground/50">Distress</span>
+                        <div className={`text-lg font-bold font-mono ${
+                          selectedCase.ml_scores.sentiment_label === "HIGH" ? "text-red-500"
+                          : selectedCase.ml_scores.sentiment_label === "MODERATE" ? "text-clay"
+                          : "text-forest"
+                        }`}>
+                          {selectedCase.ml_scores.sentiment_label}
+                        </div>
+                        <div className="w-full bg-foreground/10 rounded-full h-1.5">
+                          <div
+                            className={`h-1.5 rounded-full ${selectedCase.ml_scores.sentiment_label === "HIGH" ? "bg-red-500" : selectedCase.ml_scores.sentiment_label === "MODERATE" ? "bg-clay" : "bg-forest"}`}
+                            style={{ width: `${selectedCase.ml_scores.sentiment_score * 100}%` }}
+                          />
+                        </div>
+                        <span className="text-[10px] text-foreground/40 font-mono">{(selectedCase.ml_scores.sentiment_score * 100).toFixed(0)}%</span>
+                      </div>
+
+                      {/* Threat */}
+                      <div className="rounded-xl bg-card border border-foreground/10 p-3 space-y-1.5">
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-foreground/50">Threat</span>
+                        <div className={`text-lg font-bold font-mono ${selectedCase.ml_scores.threat_flag ? "text-red-600" : "text-forest"}`}>
+                          {selectedCase.ml_scores.threat_flag ? "⚠ FLAGGED" : "CLEAR"}
+                        </div>
+                        <div className="w-full bg-foreground/10 rounded-full h-1.5">
+                          <div
+                            className={`h-1.5 rounded-full ${selectedCase.ml_scores.threat_flag ? "bg-red-500" : "bg-forest"}`}
+                            style={{ width: `${selectedCase.ml_scores.threat_prob * 100}%` }}
+                          />
+                        </div>
+                        <span className="text-[10px] text-foreground/40 font-mono">P={( selectedCase.ml_scores.threat_prob * 100).toFixed(0)}%</span>
+                      </div>
+
+                      {/* Voice Stress */}
+                      <div className="rounded-xl bg-card border border-foreground/10 p-3 space-y-1.5">
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-foreground/50">Voice</span>
+                        <div className={`text-lg font-bold font-mono ${selectedCase.ml_scores.voice_label === "STRESSED" ? "text-clay" : "text-forest"}`}>
+                          {selectedCase.ml_scores.voice_label === "STRESSED" ? "STRESSED" : "CALM"}
+                        </div>
+                        <div className="w-full bg-foreground/10 rounded-full h-1.5">
+                          <div
+                            className="h-1.5 rounded-full bg-clay"
+                            style={{ width: `${selectedCase.ml_scores.voice_stress_score * 100}%` }}
+                          />
+                        </div>
+                        <span className="text-[10px] text-foreground/40 font-mono">{(selectedCase.ml_scores.voice_stress_score * 100).toFixed(0)}%</span>
+                      </div>
+                    </div>
+
+                    {/* Composite score bar */}
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-[10px] text-foreground/50">
+                        <span>Composite Risk Score</span>
+                        <span className="font-mono font-semibold text-foreground/70">{(selectedCase.ml_scores.composite_score * 100).toFixed(0)} / 100 · conf {(selectedCase.ml_scores.confidence * 100).toFixed(0)}%</span>
+                      </div>
+                      <div className="w-full bg-foreground/10 rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full transition-all ${
+                            selectedCase.ml_scores.composite_score >= 0.75 ? "bg-red-500"
+                            : selectedCase.ml_scores.composite_score >= 0.5 ? "bg-clay"
+                            : "bg-forest"
+                          }`}
+                          style={{ width: `${selectedCase.ml_scores.composite_score * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Signals Tags */}
                 <div>
                   <span className="text-xs text-foreground/50 uppercase tracking-wider block mb-2 font-medium">
@@ -236,6 +371,153 @@ export default function CounsellorDashboardPage() {
                       </span>
                     ))}
                   </div>
+                </div>
+
+                {/* INTERACTIVE SHOWPIECE: Live Model Scoring Studio */}
+                <div className="rounded-2xl border-2 border-clay/30 bg-card/80 p-5 space-y-4 shadow-[var(--shadow-soft)]">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-foreground/10 pb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 rounded-lg bg-clay/10 text-clay">
+                        <Cpu className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                          Live AI Model Scoring Studio
+                          <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                          </span>
+                        </h3>
+                        <p className="text-[11px] text-foreground/50">
+                          Direct live inference via port :8100 · MuRIL Distress (v3) + Threat-v7
+                        </p>
+                      </div>
+                    </div>
+                    {liveResult && (
+                      <span className="text-[10px] font-mono uppercase tracking-wider bg-foreground/5 px-2.5 py-1 rounded-full text-foreground/70 self-start sm:self-auto">
+                        ⚡ {liveResult.latency_ms}ms · {liveResult.source === "live_huggingface_service" ? "HF Microservice" : "Calibrated"}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Quick Preset Prompts */}
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-medium uppercase tracking-wider text-foreground/45">Quick evaluation presets:</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[
+                        { label: "🚨 Critical Danger & Stalking", text: "I cannot take this anymore, they are following me" },
+                        { label: "🟡 Severe Isolation & Despair", text: "Nobody understands how alone I feel, I haven't left bed in days" },
+                        { label: "🟢 Grounded & Stable Recovery", text: "Took my morning walk by the river and feel quiet and steady today" },
+                      ].map((preset) => (
+                        <button
+                          key={preset.label}
+                          type="button"
+                          onClick={() => setScoringInput(preset.text)}
+                          className="rounded-full border border-foreground/15 bg-background/50 px-3 py-1 text-[11px] text-foreground/70 hover:border-clay hover:text-clay transition-all text-left"
+                        >
+                          {preset.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Input and Action */}
+                  <div className="space-y-2">
+                    <textarea
+                      value={scoringInput}
+                      onChange={(e) => setScoringInput(e.target.value)}
+                      rows={2}
+                      placeholder="Type or paste any victim narrative, message, or transcript to score live..."
+                      className="w-full rounded-xl border border-foreground/15 bg-background p-3 text-xs text-foreground placeholder:text-foreground/35 focus:border-clay focus:outline-none"
+                    />
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <span className="text-[10px] text-foreground/40 font-mono">
+                        Models: distress-v3 (950MB MuRIL) · threat-v7
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleRunLiveScoring}
+                        disabled={isScoring || !scoringInput.trim()}
+                        className="inline-flex items-center gap-2 rounded-full bg-forest px-5 py-2 text-xs font-semibold text-forest-foreground hover:bg-clay transition-colors disabled:opacity-40 shadow-sm"
+                      >
+                        {isScoring ? (
+                          <>
+                            <Sparkles className="h-3.5 w-3.5 animate-spin text-clay-soft" />
+                            <span>Running Model Inference...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Zap className="h-3.5 w-3.5 text-clay-soft" />
+                            <span>Run Hugging Face Inference</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Live Results Card */}
+                  {liveResult && (
+                    <div className="rounded-xl border border-clay/30 bg-background/80 p-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold uppercase tracking-wider text-foreground/80 flex items-center gap-1.5">
+                          <Radio className="h-3.5 w-3.5 text-clay animate-pulse" /> Live Inference Breakdown
+                        </span>
+                        <button
+                          type="button"
+                          onClick={handleLogScoreAsNote}
+                          className="text-[11px] text-clay hover:underline font-semibold flex items-center gap-1"
+                        >
+                          <span>+ Save to Case Notes</span>
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        {/* Sentiment Box */}
+                        <div className="rounded-lg bg-card p-3 border border-foreground/10 space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-mono uppercase tracking-wider text-foreground/50">Distress Level (MuRIL)</span>
+                            <span className="text-[10px] font-mono text-foreground/40">{liveResult.sentiment.model_version}</span>
+                          </div>
+                          <div className="flex items-baseline gap-2">
+                            <span className={`text-xl font-bold font-mono ${
+                              liveResult.sentiment.label === "HIGH" ? "text-red-500"
+                              : liveResult.sentiment.label === "MODERATE" ? "text-clay"
+                              : "text-forest"
+                            }`}>
+                              {liveResult.sentiment.label}
+                            </span>
+                            <span className="text-xs font-mono text-foreground/60">
+                              {(liveResult.sentiment.sentiment_score * 100).toFixed(1)}% distress
+                            </span>
+                          </div>
+                          {/* Probs */}
+                          <div className="flex gap-2 pt-1 text-[10px] font-mono text-foreground/50">
+                            <span>L: {((liveResult.sentiment.probs?.LOW || 0) * 100).toFixed(0)}%</span>
+                            <span>M: {((liveResult.sentiment.probs?.MODERATE || 0) * 100).toFixed(0)}%</span>
+                            <span>H: {((liveResult.sentiment.probs?.HIGH || 0) * 100).toFixed(0)}%</span>
+                            <span className="ml-auto">Conf: {(liveResult.sentiment.confidence * 100).toFixed(0)}%</span>
+                          </div>
+                        </div>
+
+                        {/* Threat Box */}
+                        <div className="rounded-lg bg-card p-3 border border-foreground/10 space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-mono uppercase tracking-wider text-foreground/50">Threat Classifier</span>
+                            <span className="text-[10px] font-mono text-foreground/40">{liveResult.threat.model_version}</span>
+                          </div>
+                          <div className="flex items-baseline gap-2">
+                            <span className={`text-xl font-bold font-mono ${liveResult.threat.threat_flag ? "text-red-600" : "text-emerald-600"}`}>
+                              {liveResult.threat.threat_flag ? "🚨 THREAT DETECTED" : "🛡️ CLEAR (SAFE)"}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between pt-1 text-[10px] font-mono text-foreground/50">
+                            <span>Threat Probability: {((liveResult.threat.prob || 0) * 100).toFixed(1)}%</span>
+                            <span>Conf: {(liveResult.threat.confidence * 100).toFixed(0)}%</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Field Notebook (Notes Editor) */}

@@ -46,8 +46,9 @@ MAX_AUDIO_BYTES = 25 * 1024 * 1024        # 25 MB raw upload cap (413 above this
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    import asyncio
     if C.WARM_ON_START:
-        log.info("warming models: %s", models.warm_all())
+        asyncio.create_task(asyncio.to_thread(models.warm_all))
     yield
 
 

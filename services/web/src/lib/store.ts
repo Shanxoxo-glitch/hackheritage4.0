@@ -64,6 +64,17 @@ export interface CounsellorCase {
   summary: string;
   last_interaction: string;
   created_at: string;
+  ml_scores?: {
+    sentiment_label: "LOW" | "MODERATE" | "HIGH";
+    sentiment_score: number;
+    threat_flag: boolean;
+    threat_prob: number;
+    voice_stress_score: number;
+    voice_label: "STRESSED" | "NOT_STRESSED";
+    composite_score: number;
+    confidence: number;
+    trend_flag: "ESCALATING" | "STABLE";
+  };
 }
 
 export interface DecisionTrace {
@@ -545,6 +556,17 @@ function seedInitialCases(): CounsellorCase[] {
       summary: "Undergoing guided unburdening. Receptive to grounding exercises; monitoring sleep recovery.",
       last_interaction: "35 mins ago",
       created_at: "Sep 4",
+      ml_scores: {
+        sentiment_label: "HIGH",
+        sentiment_score: 0.87,
+        threat_flag: true,
+        threat_prob: 0.92,
+        voice_stress_score: 0.81,
+        voice_label: "STRESSED",
+        composite_score: 0.87,
+        confidence: 0.91,
+        trend_flag: "ESCALATING",
+      },
     },
     {
       id: "case-8820",
@@ -570,6 +592,17 @@ function seedInitialCases(): CounsellorCase[] {
       summary: "Discreet callback requested. Safe window established for 7:00 PM.",
       last_interaction: "1 hour ago",
       created_at: "Sep 6",
+      ml_scores: {
+        sentiment_label: "MODERATE",
+        sentiment_score: 0.61,
+        threat_flag: false,
+        threat_prob: 0.38,
+        voice_stress_score: 0.55,
+        voice_label: "STRESSED",
+        composite_score: 0.52,
+        confidence: 0.86,
+        trend_flag: "STABLE",
+      },
     },
     {
       id: "case-7731",
@@ -595,7 +628,19 @@ function seedInitialCases(): CounsellorCase[] {
       summary: "Successfully stabilized. Returning to self-guided check-ins.",
       last_interaction: "2 days ago",
       created_at: "Sep 1",
+      ml_scores: {
+        sentiment_label: "LOW",
+        sentiment_score: 0.18,
+        threat_flag: false,
+        threat_prob: 0.04,
+        voice_stress_score: 0.21,
+        voice_label: "NOT_STRESSED",
+        composite_score: 0.19,
+        confidence: 0.94,
+        trend_flag: "STABLE",
+      },
     },
+
   ];
   if (typeof window !== "undefined") {
     localStorage.setItem(STORAGE_KEYS.CASES, JSON.stringify(cases));

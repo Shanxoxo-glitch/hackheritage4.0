@@ -37,8 +37,10 @@ export function SplineLoadingScreen() {
         const canvas = canvasRef.current;
         if (!canvas) throw new Error("Spline preload canvas is unavailable");
 
-        splineApp = new Application(canvas);
-        await splineApp.load("/gradient.splinecode");
+        if (canvas.clientWidth > 0 && canvas.clientHeight > 0) {
+          splineApp = new Application(canvas);
+          await splineApp.load("/gradient.splinecode");
+        }
       } catch (error) {
         console.warn("Spline runtime preload failed; continuing with the visual fallback:", error);
       } finally {
