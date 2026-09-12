@@ -1,16 +1,112 @@
 {
+  "id": "/?source=pwa",
   "name": "Sahayak — Anonymous Support Sanctuary",
   "short_name": "Sahayak",
-  "start_url": "/",
+  "description": "A private, anonymous sanctuary to steady yourself, unburden, and connect with support when you're ready.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
   "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
+  "orientation": "portrait-primary",
   "background_color": "#f1ece4",
   "theme_color": "#f1ece4",
-  "description": "A private, anonymous sanctuary to steady yourself and reach real human support.",
+  "categories": [
+    "lifestyle",
+    "health",
+    "support",
+    "government"
+  ],
+  "dir": "ltr",
+  "lang": "en",
   "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
     {
       "src": "/favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Daily Check-in",
+      "short_name": "Check-in",
+      "description": "One question per screen emotional check-in",
+      "url": "/checkin",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Sanctuary Chat",
+      "short_name": "Chat",
+      "description": "Speak with Sahayak AI sanctuary companion",
+      "url": "/chat",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Case Dossier",
+      "short_name": "Dossier",
+      "description": "Counsellor legal case file review",
+      "url": "/counsellor",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "India Helplines",
+      "short_name": "Helplines",
+      "description": "24/7 crisis support and emergency contacts",
+      "url": "/help",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

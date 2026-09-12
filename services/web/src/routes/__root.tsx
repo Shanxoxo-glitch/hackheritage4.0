@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { QuickExit } from "../components/common/QuickExit";
 import { DemoNav } from "../components/common/DemoNav";
 import { SplineLoadingScreen } from "../components/common/SplineLoadingScreen";
+import { PwaInstallPrompt } from "../components/common/PwaInstallPrompt";
 
 function NotFoundComponent() {
   return (
@@ -95,6 +96,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "application-name", content: "Sahayak" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+      { name: "apple-mobile-web-app-title", content: "Sahayak" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "msapplication-TileColor", content: "#f1ece4" },
+      { name: "msapplication-TileImage", content: "/icon-192.png" },
+      { name: "msapplication-tap-highlight", content: "no" },
     ],
     links: [
       {
@@ -109,6 +118,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "manifest", href: "/manifest.json" },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { rel: "icon", href: "/icon.svg", type: "image/svg+xml" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
     ],
   }),
 
@@ -135,10 +147,26 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  useEffect(() => {
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((registration) => {
+            console.log("[Sahayak PWA] Service worker registered successfully. Scope:", registration.scope);
+          })
+          .catch((error) => {
+            console.warn("[Sahayak PWA] Service worker registration failed:", error);
+          });
+      });
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <SplineLoadingScreen />
       <QuickExit />
+      <PwaInstallPrompt />
       <Outlet />
       <DemoNav />
     </QueryClientProvider>

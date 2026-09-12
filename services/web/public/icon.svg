@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="112" fill="#f1ece4"/>
+  <circle cx="256" cy="256" r="180" fill="none" stroke="#2d4a3e" stroke-width="2" opacity="0.25"/>
+  <circle cx="256" cy="256" r="162" fill="none" stroke="#2d4a3e" stroke-width="4" opacity="0.6"/>
+  <g transform="translate(256, 290)">
+    <path d="M-90,-10 Q0,50 90,-10" fill="none" stroke="#2d4a3e" stroke-width="8" stroke-linecap="round"/>
+    <path d="M0,0 C-40,-50 -100,-80 -90,-120 C-60,-100 -30,-60 0,0 Z" fill="#2d4a3e" opacity="0.75"/>
+    <path d="M0,0 C40,-50 100,-80 90,-120 C60,-100 30,-60 0,0 Z" fill="#2d4a3e" opacity="0.75"/>
+    <path d="M0,0 C-30,-60 -60,-110 -45,-145 C-25,-120 -10,-70 0,0 Z" fill="#2d4a3e"/>
+    <path d="M0,0 C30,-60 60,-110 45,-145 C25,-120 10,-70 0,0 Z" fill="#2d4a3e"/>
+    <path d="M0,0 C-20,-70 -20,-130 0,-170 C20,-130 20,-70 0,0 Z" fill="#2d4a3e"/>
+    <path d="M0,0 C-10,-40 -10,-75 0,-95 C10,-75 10,-40 0,0 Z" fill="#b45339"/>
+    <path d="M0,0 C-5,-25 -5,-45 0,-55 C5,-45 5,-25 0,0 Z" fill="#d4a359"/>
+    <circle cx="0" cy="-195" r="10" fill="#b45339"/>
+  </g>
+</svg>
