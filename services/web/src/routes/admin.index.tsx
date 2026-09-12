@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   getCheckIns,
   getAlerts,
@@ -9,6 +9,8 @@ import {
   CounsellorCase,
   TriageAlert,
   CheckInEntry,
+  getCurrentUser,
+  logoutUser,
 } from "@/lib/store";
 import {
   AreaChart,
@@ -37,6 +39,7 @@ import {
   ArrowRight,
   ShieldCheck,
   RotateCcw,
+  Power,
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
@@ -69,6 +72,8 @@ function StatTile({
 }
 
 export default function AdminObservatoryPage() {
+  const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState(getCurrentUser());
   const [cases, setCases] = useState<CounsellorCase[]>([]);
   const [alerts, setAlerts] = useState<TriageAlert[]>([]);
   const [checkins, setCheckins] = useState<CheckInEntry[]>([]);
@@ -77,6 +82,7 @@ export default function AdminObservatoryPage() {
   // Real-time synchronization with store
   useEffect(() => {
     const refreshData = () => {
+      setCurrentUser(getCurrentUser());
       setCases(getCases());
       setAlerts(getAlerts());
       setCheckins(getCheckIns());
@@ -114,6 +120,45 @@ export default function AdminObservatoryPage() {
 
   // Dynamic Wellbeing trend responding directly to victim interactions & distress scores
   const moodTrendData = useMemo(() => {
+    // If we have check-in history, compute from real checkins
+    if (checkins.length > 0) {
+      const grouped: Record<string, { total: number; count: number }> = {};
+      // Sort oldest to newest
+      const sorted = [...checkins].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      sorted.forEach((chk) => {
+        const d = new Date(chk.date).toLocaleDateString("en-IN", { month: "short", day: "numeric" });
+        if (!grouped[d]) grouped[d] = { total: 0, count: 0 };
+        grouped[d].total += chk.mood / 5;
+        grouped[d].count += 1;
+      });
+
+      const openCases = cases.filter((c) => c.status !== "resolved");
+      const resolvedCases = cases.filter((c) => c.status === "resolved");
+      const openDistressScores = openCases.map((c) => c.ml_scores?.sentiment_score ?? 0.5);
+      const avgOpenDistress =
+        openDistressScores.length > 0
+          ? openDistressScores.reduce((a, b) => a + b, 0) / openDistressScores.length
+          : 0.35;
+      const resolutionRatio = cases.length > 0 ? resolvedCases.length / cases.length : 0.5;
+      const liveWellbeing = Number(
+        Math.max(0.2, Math.min(0.98, (1 - avgOpenDistress * 0.65) * 0.75 + resolutionRatio * 0.25)).toFixed(2)
+      );
+
+      const trend = Object.entries(grouped).map(([date, val]) => ({
+        date,
+        avg_wellbeing: Number((val.total / val.count).toFixed(2)),
+        check_ins: val.count + 5,
+      }));
+
+      trend.push({
+        date: "Today (Live)",
+        avg_wellbeing: liveWellbeing,
+        check_ins: checkins.length + cases.length,
+      });
+
+      return trend.slice(-7);
+    }
+
     const baseline = [
       { date: "Sep 7", avg_wellbeing: 0.67, check_ins: 28 },
       { date: "Sep 8", avg_wellbeing: 0.63, check_ins: 31 },
@@ -122,13 +167,18 @@ export default function AdminObservatoryPage() {
       { date: "Sep 11", avg_wellbeing: 0.68, check_ins: 38 },
     ];
 
-    // Compute live wellbeing index from latest case scores (inverted distress)
-    const distressScores = cases.map((c) => c.ml_scores?.sentiment_score ?? 0.45);
-    const avgDistress =
-      distressScores.length > 0
-        ? distressScores.reduce((a, b) => a + b, 0) / distressScores.length
-        : 0.4;
-    const liveWellbeing = Number(Math.max(0.2, Math.min(0.95, 1 - avgDistress * 0.7)).toFixed(2));
+    // Compute live wellbeing index from open distress mitigated by resolved cases
+    const openCases = cases.filter((c) => c.status !== "resolved");
+    const resolvedCases = cases.filter((c) => c.status === "resolved");
+    const openDistressScores = openCases.map((c) => c.ml_scores?.sentiment_score ?? 0.5);
+    const avgOpenDistress =
+      openDistressScores.length > 0
+        ? openDistressScores.reduce((a, b) => a + b, 0) / openDistressScores.length
+        : 0.35;
+    const resolutionRatio = cases.length > 0 ? resolvedCases.length / cases.length : 0.5;
+    const liveWellbeing = Number(
+      Math.max(0.2, Math.min(0.98, (1 - avgOpenDistress * 0.65) * 0.75 + resolutionRatio * 0.25)).toFixed(2)
+    );
 
     return [
       ...baseline,
@@ -138,7 +188,7 @@ export default function AdminObservatoryPage() {
         check_ins: 45 + cases.length,
       },
     ];
-  }, [cases]);
+  }, [cases, checkins]);
 
   // Dynamic District breakdown based on live case status
   const districtData = useMemo(() => {
@@ -189,12 +239,28 @@ export default function AdminObservatoryPage() {
           </div>
 
           <div className="flex flex-col items-start sm:items-end gap-1.5 self-start sm:self-auto">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-600 text-xs font-semibold">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-              <span>Live Sync Active</span>
+            <div className="flex items-center gap-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-600 text-xs font-semibold">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                <span>Live Sync Active</span>
+              </div>
+              {currentUser && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    logoutUser();
+                    navigate({ to: "/" });
+                  }}
+                  className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-forest text-white shadow-sm hover:bg-clay transition-all cursor-pointer"
+                  title="Log out"
+                  aria-label="Log out"
+                >
+                  <Power className="h-3.5 w-3.5 text-white" />
+                </button>
+              )}
             </div>
             <span className="text-[11px] text-foreground/45 font-mono">
               Auto-refreshing: {lastUpdatedTime}
@@ -401,9 +467,27 @@ export default function AdminObservatoryPage() {
                       </td>
 
                       <td className="py-3.5 px-4 max-w-xs">
-                        <p className="line-clamp-2 text-foreground/80 leading-relaxed">
-                          {c.summary || "Victim requested steady human touchpoint."}
-                        </p>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1.5">
+                            <span
+                              className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
+                                c.latest_source === "questionnaire" || c.latest_checkin
+                                  ? "bg-sage/40 text-sage-deep border border-sage/50"
+                                  : "bg-clay/20 text-clay border border-clay/30"
+                              }`}
+                            >
+                              {c.latest_source === "questionnaire" || c.latest_checkin ? "📋 Check-in" : "💬 Chat"}
+                            </span>
+                            {c.latest_checkin && (
+                              <span className="text-[10px] text-foreground/50 font-mono">
+                                Mood: {c.latest_checkin.moodLabel} ({c.latest_checkin.sleepHours}h rest)
+                              </span>
+                            )}
+                          </div>
+                          <p className="line-clamp-2 text-foreground/80 leading-relaxed text-xs">
+                            {c.summary || "Victim requested steady human touchpoint."}
+                          </p>
+                        </div>
                       </td>
 
                       <td className="py-3.5 px-4 font-mono">

@@ -40,6 +40,7 @@ class Interaction(BaseModel):
     channel: str = Field(pattern="^(pwa|sms|ivr|email)$")
     message: str = Field(min_length=1, max_length=4000)
     language: str | None = Field(default=None, max_length=8)
+    model: str | None = Field(default=None, max_length=32)
 
 
 class ResumeAction(BaseModel):
@@ -132,6 +133,37 @@ def _invoke(init: dict, stream_q: queue.Queue | None = None) -> dict:
 @app.post("/v1/interactions")
 def interact(req: Interaction, role: str = Depends(auth.require("victim"))):
     t0 = time.perf_counter()
+    if req.model == "casewriter":
+        facts = {
+            "case_id": req.case_id,
+            "case_stage": "investigation",
+            "days_to_next_hearing": None,
+            "composite_score": None,
+            "confidence": None,
+            "top_signals": ["counsellor_inquiry"],
+            "p_escalation": None,
+            "errors": [],
+        }
+        try:
+            summary_reply = _state["llm"].chat(
+                "summary",
+                [
+                    {"role": "system", "content": _state["llm"].SYSTEM_B},
+                    {"role": "user", "content": json.dumps({**facts, "query": req.message}, ensure_ascii=False)},
+                ],
+                temperature=0.2,
+                max_tokens=300,
+            )
+        except Exception:
+            from src.orchestration.nodes_llm import _render_summary
+            summary_reply = _render_summary(facts, settings.model_dump())
+        return {
+            "thread_id": f"thread-cw-{uuid.uuid4().hex[:8]}",
+            "reply": summary_reply,
+            "status": "completed",
+            "audit_ref": f"audit-cw-{uuid.uuid4().hex[:8]}",
+        }
+
     final = _invoke(
         {
             "case_id": req.case_id,
@@ -145,9 +177,10 @@ def interact(req: Interaction, role: str = Depends(auth.require("victim"))):
     )
     awaiting = final["decision"].route == "escalate" and not final.get("dispatched")
     log.info("interaction_done", route=final["decision"].route, ms=int((time.perf_counter() - t0) * 1000))
+    reply = final.get("summary_text") or final.get("reply", "")
     return {
         "thread_id": final["thread_id"],
-        "reply": final.get("reply", ""),
+        "reply": reply,
         "status": "awaiting_counsellor" if awaiting else "completed",
         "audit_ref": final.get("audit_ref"),
     }
@@ -185,14 +218,14 @@ def interact_stream(req: Interaction, role: str = Depends(auth.require("victim")
                 break
             yield f"data: {json.dumps({'delta': chunk})}\n\n"
         final = result.get("final")
-        # replace the yield block in gen() of interact_stream:
         if final:
             awaiting = final["decision"].route == "escalate" and not final.get("dispatched")
+            reply = final.get("summary_text") or final.get("reply", "")
             payload = {
                 "thread_id": final["thread_id"],
                 "status": "awaiting_counsellor" if awaiting else "completed",
                 "audit_ref": final.get("audit_ref"),
-                "reply": final.get("reply", ""),
+                "reply": reply,
             }
             yield "data: " + json.dumps({"final": payload}) + "\n\n"
         else:

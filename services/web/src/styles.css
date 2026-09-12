@@ -222,6 +222,13 @@
     opacity: 0;
     animation: stoneRise 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { saveCheckIn } from "@/lib/store";
+import { saveCheckIn, recordVictimQuestionnaire } from "@/lib/store";
 import { ArrowLeft, ArrowRight, Check, Heart, Moon, Wind, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/checkin")({
@@ -57,7 +57,7 @@ export default function CheckInPage() {
 
   const handleFinish = () => {
     const selectedMoodObj = MOODS.find((m) => m.val === mood);
-    saveCheckIn({
+    const entry = saveCheckIn({
       date: new Date().toISOString().split("T")[0],
       mood,
       moodLabel: selectedMoodObj?.label || "Steady",
@@ -66,6 +66,8 @@ export default function CheckInPage() {
       feelings,
       reflection: reflection.trim() || undefined,
     });
+    // Immediately sync questionnaire to Counsellor Case Dossier & Admin Observatory!
+    recordVictimQuestionnaire(entry);
     setStep(5); // Move to closing breathing circle
   };
 

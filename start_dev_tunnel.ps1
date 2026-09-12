@@ -11,8 +11,8 @@ Write-Host "=========================================================" -Foregrou
 # 1. Start SSH Tunnel to Azure VM in Background
 Write-Host "`n[1/3] Starting SSH Tunnel to Azure VM ($VM_IP)..." -ForegroundColor Yellow
 if (Test-Path $SSH_KEY) {
-    Start-Process -FilePath "ssh" -ArgumentList "-N", "-L", "8500:localhost:8500", "azureuser@$VM_IP" -WindowStyle Hidden
-    Write-Host "  -> SSH Tunnel active: localhost:8500 <==> $VM_IP:8500 (VM Orchestrator)" -ForegroundColor Green
+    Start-Process -FilePath "ssh" -ArgumentList "-N", "-o", "StrictHostKeyChecking=no", "-o", "ServerAliveInterval=30", "-L", "8500:localhost:8500", "-L", "11434:localhost:11434", "azureuser@$VM_IP" -WindowStyle Hidden
+    Write-Host "  -> SSH Tunnel active: localhost:8500 (Orchestrator) & localhost:11434 (Avik's Ollama Models)" -ForegroundColor Green
 } else {
     Write-Host "  -> Warning: SSH Key $SSH_KEY not found. Please ensure SSH key is generated." -ForegroundColor Red
 }

@@ -8,6 +8,7 @@ import {
   AlertTriangle,
   CheckCircle2,
   ChevronRight,
+  MessageSquare,
 } from "lucide-react";
 
 export const Route = createFileRoute("/counsellor/trace/$threadId")({
@@ -81,6 +82,24 @@ export default function TraceViewPage() {
             override applies at all times
           </p>
         </div>
+
+        {/* Evaluated Victim Text */}
+        {trace.victim_text && (
+          <div className="rounded-3xl border border-clay/30 bg-card p-6 md:p-8 space-y-3 shadow-[var(--shadow-soft)]">
+            <div className="flex items-center gap-2 text-clay">
+              <MessageSquare className="h-4 w-4" />
+              <span className="text-sm font-semibold uppercase tracking-wider">
+                Evaluated Victim Input
+              </span>
+            </div>
+            <p className="text-sm text-foreground/90 italic bg-background/60 p-4 rounded-2xl border border-foreground/5 font-mono leading-relaxed">
+              "{trace.victim_text}"
+            </p>
+            <span className="text-[11px] text-foreground/50 font-mono block">
+              Direct telemetry from victim · Ingested into Bayesian Fusion Engine & Policy Evaluator
+            </span>
+          </div>
+        )}
 
         {/* Why — Structured Reasons */}
         <div className="rounded-3xl border border-foreground/10 bg-card p-6 md:p-8 space-y-4 shadow-[var(--shadow-soft)]">

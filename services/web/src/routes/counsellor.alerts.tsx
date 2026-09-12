@@ -10,6 +10,9 @@ import {
   ShieldAlert,
   ArrowRight,
   Filter,
+  MessageSquare,
+  EyeOff,
+  Lock,
 } from "lucide-react";
 
 export const Route = createFileRoute("/counsellor/alerts")({
@@ -130,6 +133,87 @@ export default function AlertQueuePage() {
                       </span>
                     </div>
                   </div>
+
+                  {/* Victim Privacy & Identity Status */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-background/60 p-3 border border-foreground/10 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono font-bold text-foreground">
+                        Victim Codeword: {a.victim_info?.codeword || a.case_id}
+                      </span>
+                      {a.victim_info?.share_personal_info ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
+                          <CheckCircle2 className="h-3 w-3" />
+                          <span>Personal Info Disclosed</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-foreground/10 border border-foreground/15 px-2.5 py-0.5 text-[11px] font-semibold text-foreground/70">
+                          <Lock className="h-3 w-3 text-foreground/60" />
+                          <span>Strict Anonymous Shield</span>
+                        </span>
+                      )}
+                    </div>
+                    {a.victim_info?.share_personal_info && (
+                      <div className="text-[11px] text-foreground/75 font-medium">
+                        {a.victim_info.name && <span>{a.victim_info.name}</span>}
+                        {a.victim_info.email && <span> · {a.victim_info.email}</span>}
+                      </div>
+                    )}
+                    {a.victim_info?.latest_mood && (
+                      <div className="text-[11px] text-foreground/60 font-mono">
+                        Intake Mood: <span className="text-clay font-bold">{a.victim_info.latest_mood}</span>
+                        {a.victim_info.latest_sleep && ` · Rest: ${a.victim_info.latest_sleep}`}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Text from Victim (Live Input Trigger) */}
+                  {a.victim_text && (
+                    <div className="rounded-2xl bg-background/80 p-4 border border-foreground/10 space-y-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-clay flex items-center gap-1.5">
+                        <MessageSquare className="h-3.5 w-3.5" /> Triggering Text Received From Victim
+                      </span>
+                      <p className="text-xs text-foreground/90 italic font-mono bg-card/70 p-3 rounded-xl border border-foreground/5 leading-relaxed">
+                        {a.victim_info?.share_personal_info === false
+                          ? "[Confidential sanctuary chat message shielded by victim choice]"
+                          : `"${a.victim_text}"`}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Multi-turn Interaction History leading to Alert */}
+                  {a.history && a.history.length > 0 && (
+                    <div className="rounded-2xl bg-background/50 p-4 border border-foreground/5 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-foreground/50 block">
+                          Victim Interaction History Timeline ({a.history.length} events leading to alert)
+                        </span>
+                        <span className="text-[10px] font-mono text-foreground/40">Chronological Telemetry</span>
+                      </div>
+                      <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                        {a.history.map((h, hIdx) => (
+                          <div
+                            key={h.id || hIdx}
+                            className="bg-card/80 p-2.5 rounded-xl border border-foreground/5 text-xs space-y-1"
+                          >
+                            <div className="flex items-center justify-between text-[10px] font-mono text-foreground/45">
+                              <span className="font-semibold text-clay uppercase">
+                                {h.source === "chat" ? "Sanctuary Chat" : h.source === "questionnaire" ? "Check-in" : "Intake"}
+                              </span>
+                              <span>{h.timestamp}</span>
+                            </div>
+                            <p className="text-foreground/80 italic font-mono text-[11px]">
+                              {a.victim_info?.share_personal_info === false && h.source === "chat"
+                                ? "[Confidential chat message shielded]"
+                                : `"${h.text}"`}
+                            </p>
+                            {h.details && (
+                              <div className="text-[10px] text-foreground/50 font-mono">{h.details}</div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Reasons Triggered */}
                   <div className="rounded-2xl bg-background/50 p-4 border border-foreground/5 space-y-2">

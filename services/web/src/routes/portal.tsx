@@ -50,6 +50,7 @@ const ROLES = [
     imageAlt: "Warm clay textures — the counsellor field office",
     links: [
       { label: "Assigned Cases & Field Notes", path: "/counsellor" },
+      { label: "CaseWriter Clinical Studio", path: "/casewriter" },
       { label: "Triage Alert Queue", path: "/counsellor/alerts" },
       { label: "AI Decision Trace Audit", path: "/counsellor/trace/thread-8492" },
     ],

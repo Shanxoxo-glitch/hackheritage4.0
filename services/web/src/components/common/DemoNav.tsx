@@ -1,12 +1,21 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
-import { Compass, HeartHandshake, Stethoscope, BarChart3, ChevronUp, Layers } from "lucide-react";
+import { Compass, HeartHandshake, Stethoscope, BarChart3, ChevronUp, Layers, Power, Scale } from "lucide-react";
+import { getCurrentUser, logoutUser, subscribeToStore, AuthUser } from "@/lib/store";
 
 export function DemoNav() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const currentPath = location.pathname;
   const navRef = useRef<HTMLDivElement>(null);
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+
+  useEffect(() => {
+    const refresh = () => setCurrentUser(getCurrentUser());
+    refresh();
+    const unsub = subscribeToStore(refresh);
+    return () => unsub();
+  }, []);
 
   // Close on outside click
   useEffect(() => {
@@ -114,6 +123,16 @@ export function DemoNav() {
               <span>Assigned Cases & Field Notes</span>
             </Link>
             <Link
+              to="/casewriter"
+              onClick={() => setIsOpen(false)}
+              className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 transition-colors ${
+                currentPath === "/casewriter" ? "bg-forest text-forest-foreground font-medium" : "hover:bg-foreground/5"
+              }`}
+            >
+              <Scale className="h-3.5 w-3.5 text-clay" />
+              <span>CaseWriter Clinical Studio</span>
+            </Link>
+            <Link
               to="/counsellor/alerts"
               onClick={() => setIsOpen(false)}
               className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 transition-colors ${
@@ -149,6 +168,29 @@ export function DemoNav() {
             <BarChart3 className="h-3.5 w-3.5 text-sage-deep" />
             <span>Observatory Dashboard</span>
           </Link>
+
+          {currentUser && (
+            <div className="border-t border-foreground/10 pt-2 flex items-center justify-between px-1 text-[11px]">
+              <div className="flex flex-col min-w-0 pr-2">
+                <span className="text-[9px] uppercase tracking-wider text-foreground/45">Active Session</span>
+                <span className="font-mono truncate font-medium text-foreground text-[10px]">
+                  {currentUser.name} ({currentUser.role})
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  logoutUser();
+                  setIsOpen(false);
+                }}
+                className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-forest text-white shadow-sm hover:bg-clay transition-all cursor-pointer"
+                title="Log out from current session"
+                aria-label="Log out"
+              >
+                <Power className="h-3 w-3 text-white" />
+              </button>
+            </div>
+          )}
 
           <div className="border-t border-foreground/10 pt-2">
             <Link

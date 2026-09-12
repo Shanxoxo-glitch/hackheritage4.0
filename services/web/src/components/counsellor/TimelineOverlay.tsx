@@ -19,10 +19,11 @@ interface TimelineOverlayProps {
 }
 
 export function TimelineOverlay({ data }: TimelineOverlayProps) {
+  const safeData = Array.isArray(data) ? data : [];
   return (
     <div className="w-full h-52 pt-2">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 10, right: 16, left: -20, bottom: 0 }}>
+        <LineChart data={safeData} margin={{ top: 10, right: 16, left: -20, bottom: 0 }}>
           <XAxis
             dataKey="date"
             stroke="currentColor"
@@ -67,8 +68,8 @@ export function TimelineOverlay({ data }: TimelineOverlayProps) {
             dot={{ r: 4, fill: "var(--color-clay)", strokeWidth: 2, stroke: "#fff" }}
             activeDot={{ r: 6, fill: "var(--color-forest)" }}
           />
-          {data
-            .filter((d) => !!d.event)
+          {safeData
+            .filter((d) => !!d && !!d.event)
             .map((pt, i) => (
               <ReferenceDot
                 key={i}

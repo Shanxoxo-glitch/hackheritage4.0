@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { generateCodeword, saveHelpRequest } from "@/lib/store";
-import { ArrowLeft, ArrowRight, ShieldCheck, Check, Sparkles, Stamp, Copy } from "lucide-react";
+import { generateCodeword, saveHelpRequest, setVictimSharePreference } from "@/lib/store";
+import { ArrowLeft, ArrowRight, ShieldCheck, Check, Sparkles, Stamp, Copy, Shield, User, Mail, Phone } from "lucide-react";
 
 export const Route = createFileRoute("/request")({
   head: () => ({
@@ -57,6 +57,9 @@ export default function HelpRequestPage() {
     smsCheckin: false,
   });
   const [copied, setCopied] = useState(false);
+  const [sharePersonalInfo, setSharePersonalInfo] = useState(false);
+  const [victimName, setVictimName] = useState("");
+  const [victimContact, setVictimContact] = useState("");
 
   useEffect(() => {
     setCodeword(generateCodeword());
@@ -74,6 +77,13 @@ export default function HelpRequestPage() {
 
   const handleSubmit = () => {
     const selectedSupport = SUPPORT_TYPES.find((s) => s.id === supportType);
+    setVictimSharePreference({
+      share: sharePersonalInfo,
+      name: sharePersonalInfo ? victimName : undefined,
+      email: sharePersonalInfo ? victimContact : undefined,
+      phone: sharePersonalInfo ? victimContact : undefined,
+    });
+
     saveHelpRequest({
       codeword,
       supportType,
@@ -229,6 +239,77 @@ export default function HelpRequestPage() {
                   placeholder="Share anything you want the counsellor to know beforehand..."
                   className="w-full rounded-xl border border-foreground/15 bg-background p-3 text-sm focus:border-clay focus:outline-none"
                 />
+              </div>
+
+              {/* Circular Switch Toggle: Personal Info Sharing Choice */}
+              <div className="rounded-2xl border border-foreground/15 bg-card p-5 space-y-4 shadow-sm">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="space-y-0.5">
+                    <span className="text-sm font-semibold text-foreground block">
+                      Share Personal Info with Counsellor
+                    </span>
+                    <span className="text-xs text-foreground/60 block leading-relaxed">
+                      {sharePersonalInfo
+                        ? "Counsellor receives your direct contact info for coordinated clinical support."
+                        : "Strict pseudonymity active. The counsellor only interacts using your secret codeword."}
+                    </span>
+                  </div>
+
+                  {/* Circular switch toggle */}
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={sharePersonalInfo}
+                    onClick={() => setSharePersonalInfo(!sharePersonalInfo)}
+                    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                      sharePersonalInfo ? "bg-forest" : "bg-foreground/20"
+                    }`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                        sharePersonalInfo ? "translate-x-5" : "translate-x-0"
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                {sharePersonalInfo && (
+                  <div className="space-y-3 pt-3 border-t border-foreground/10 animate-in fade-in duration-300">
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs text-foreground/70 block mb-1 font-medium">
+                          Your Name / Preferred Name
+                        </label>
+                        <input
+                          type="text"
+                          value={victimName}
+                          onChange={(e) => setVictimName(e.target.value)}
+                          placeholder="e.g. Maya or Full Name"
+                          className="w-full rounded-xl border border-foreground/15 bg-background p-2.5 text-xs focus:border-clay focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-foreground/70 block mb-1 font-medium">
+                          Direct Contact (Phone or Email)
+                        </label>
+                        <input
+                          type="text"
+                          value={victimContact}
+                          onChange={(e) => setVictimContact(e.target.value)}
+                          placeholder="+91 98765 43210 or email"
+                          className="w-full rounded-xl border border-foreground/15 bg-background p-2.5 text-xs focus:border-clay focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="text-[11px] text-foreground/45 italic font-mono pt-1">
+                  {sharePersonalInfo
+                    ? "Status: Identity Disclosed (Confidential Care)"
+                    : "Status: 100% Shielded (Codeword Only)"}
+                </div>
               </div>
             </div>
 

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CasewriterRouteImport } from './routes/casewriter'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as HelpRouteImport } from './routes/help'
@@ -25,6 +26,11 @@ import { Route as CounsellorTraceThreadIdRouteImport } from './routes/counsellor
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CasewriterRoute = CasewriterRouteImport.update({
+  id: '/casewriter',
+  path: '/casewriter',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChatRoute = ChatRouteImport.update({
@@ -85,6 +91,7 @@ const CounsellorTraceThreadIdRoute = CounsellorTraceThreadIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/casewriter': typeof CasewriterRoute
   '/chat': typeof ChatRoute
   '/checkin': typeof CheckinRoute
   '/help': typeof HelpRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/casewriter': typeof CasewriterRoute
   '/chat': typeof ChatRoute
   '/checkin': typeof CheckinRoute
   '/help': typeof HelpRoute
@@ -114,6 +122,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/casewriter': typeof CasewriterRoute
   '/chat': typeof ChatRoute
   '/checkin': typeof CheckinRoute
   '/help': typeof HelpRoute
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/casewriter'
     | '/chat'
     | '/checkin'
     | '/help'
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/casewriter'
     | '/chat'
     | '/checkin'
     | '/help'
@@ -158,6 +169,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/casewriter'
     | '/chat'
     | '/checkin'
     | '/help'
@@ -173,6 +185,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CasewriterRoute: typeof CasewriterRoute
   ChatRoute: typeof ChatRoute
   CheckinRoute: typeof CheckinRoute
   HelpRoute: typeof HelpRoute
@@ -193,6 +206,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/casewriter': {
+      id: '/casewriter'
+      path: '/casewriter'
+      fullPath: '/casewriter'
+      preLoaderRoute: typeof CasewriterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chat': {
@@ -277,6 +297,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CasewriterRoute: CasewriterRoute,
   ChatRoute: ChatRoute,
   CheckinRoute: CheckinRoute,
   HelpRoute: HelpRoute,

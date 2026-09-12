@@ -30,6 +30,15 @@ export interface HelpRequest {
   assignedCounsellor?: string;
 }
 
+export interface VictimHistoryItem {
+  id: string;
+  timestamp: string;
+  text: string;
+  source: "chat" | "questionnaire" | "intake";
+  risk_level?: "CRITICAL" | "HIGH" | "MODERATE" | "LOW";
+  details?: string;
+}
+
 export interface TriageAlert {
   alert_id: string;
   case_id: string;
@@ -43,6 +52,17 @@ export interface TriageAlert {
   counsellor_note?: string;
   reasons: string[];
   channel: string;
+  victim_text?: string;
+  victim_info?: {
+    codeword: string;
+    share_personal_info: boolean;
+    name?: string;
+    email?: string;
+    latest_mood?: string;
+    latest_sleep?: string;
+    history_count: number;
+  };
+  history?: VictimHistoryItem[];
 }
 
 export interface CaseNote {
@@ -64,13 +84,23 @@ export interface CounsellorCase {
   summary: string;
   last_interaction: string;
   created_at: string;
+  latest_checkin?: CheckInEntry;
+  latest_source?: "chat" | "questionnaire" | "intake";
+  share_personal_info?: boolean;
+  victim_profile?: {
+    name?: string;
+    email?: string;
+    phone?: string;
+  };
+  interaction_history?: VictimHistoryItem[];
   ml_scores?: {
     sentiment_label: "LOW" | "MODERATE" | "HIGH";
     sentiment_score: number;
     threat_flag: boolean;
     threat_prob: number;
-    voice_stress_score: number;
-    voice_label: "STRESSED" | "NOT_STRESSED";
+    voice_stress_score?: number;
+    voice_label?: "STRESSED" | "NOT_STRESSED";
+    has_voice_recording?: boolean;
     composite_score: number;
     confidence: number;
     trend_flag: "ESCALATING" | "STABLE";
@@ -90,6 +120,7 @@ export interface DecisionTrace {
     top_signals: string[];
   };
   errors: string[];
+  victim_text?: string;
 }
 
 const STORAGE_KEYS = {
@@ -201,6 +232,145 @@ export function setActiveCodeword(code: string): void {
   localStorage.setItem(STORAGE_KEYS.ACTIVE_CODEWORD, code);
 }
 
+export interface VictimSharePreference {
+  share: boolean;
+  name?: string;
+  email?: string;
+  phone?: string;
+}
+
+export function getVictimSharePreference(): VictimSharePreference {
+  if (typeof window === "undefined") return { share: false };
+  try {
+    const raw = localStorage.getItem("sahayak_victim_share_preference");
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return { share: false };
+}
+
+export function setVictimSharePreference(pref: VictimSharePreference): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem("sahayak_victim_share_preference", JSON.stringify(pref));
+  notifyStoreChange();
+}
+
+export interface AuthUser {
+  user_id: string;
+  email: string;
+  name: string;
+  role: "victim" | "counsellor" | "admin";
+  phone?: string;
+  codeword?: string;
+  share_personal_info?: boolean;
+}
+
+export function getCurrentUser(): AuthUser | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem("sahayak_auth_user");
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return null;
+}
+
+export function logoutUser(): void {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem("sahayak_access_token");
+  localStorage.removeItem("sahayak_auth_role");
+  localStorage.removeItem("sahayak_auth_user");
+  localStorage.removeItem(STORAGE_KEYS.ACTIVE_CODEWORD);
+  notifyStoreChange();
+}
+
+export function syncVictimAccountAndCase(info: {
+  email: string;
+  name: string;
+  phone?: string;
+  sharePersonalInfo: boolean;
+  referralId?: string;
+  user_id: string;
+}): string {
+  if (typeof window === "undefined") return "";
+
+  const normEmail = info.email.trim().toLowerCase();
+  // Maintain persistent codeword per victim account
+  let cw = localStorage.getItem(`sahayak_user_codeword_${normEmail}`);
+  if (!cw) {
+    cw = info.referralId ? info.referralId.toLowerCase() : generateCodeword();
+    localStorage.setItem(`sahayak_user_codeword_${normEmail}`, cw);
+  }
+
+  // Update active codeword & share preference
+  setActiveCodeword(cw);
+  setVictimSharePreference({
+    share: info.sharePersonalInfo,
+    name: info.sharePersonalInfo ? info.name : undefined,
+    email: info.sharePersonalInfo ? info.email : undefined,
+    phone: info.sharePersonalInfo ? info.phone : undefined,
+  });
+
+  // Save auth user object with codeword and explicit share preference
+  const authUser: AuthUser = {
+    user_id: info.user_id,
+    email: info.email,
+    name: info.name,
+    role: "victim",
+    phone: info.phone,
+    codeword: cw,
+    share_personal_info: info.sharePersonalInfo,
+  };
+  localStorage.setItem("sahayak_auth_user", JSON.stringify(authUser));
+
+  // Sync with CounsellorCase immediately so counsellor views live status
+  const cases = getCases();
+  let targetCase = cases.find((c) => c.codeword === cw || c.case_id === cw);
+  let updatedCases: CounsellorCase[];
+
+  if (targetCase) {
+    updatedCases = cases.map((c) => {
+      if (c.id === targetCase!.id) {
+        return {
+          ...c,
+          share_personal_info: info.sharePersonalInfo,
+          victim_profile: info.sharePersonalInfo
+            ? { name: info.name, email: info.email, phone: info.phone }
+            : undefined,
+          signals: Array.from(new Set([
+            ...c.signals.filter((s) => s !== "Strict Anonymous Shield" && s !== "Personal Info Disclosed"),
+            info.sharePersonalInfo ? "Personal Info Disclosed" : "Strict Anonymous Shield",
+          ])),
+        };
+      }
+      return c;
+    });
+  } else {
+    const newCaseId = `case-${Math.floor(1000 + Math.random() * 9000)}`;
+    const createdCase: CounsellorCase = {
+      id: newCaseId,
+      case_id: newCaseId,
+      codeword: cw,
+      triage_priority: "P3 - Routine",
+      status: "new",
+      share_personal_info: info.sharePersonalInfo,
+      victim_profile: info.sharePersonalInfo
+        ? { name: info.name, email: info.email, phone: info.phone }
+        : undefined,
+      distress_trajectory: [{ date: "Intake", score: 0.35 }],
+      fieldNotes: [],
+      interaction_history: [],
+      signals: [info.sharePersonalInfo ? "Personal Info Disclosed" : "Strict Anonymous Shield", "PWA Secure"],
+      summary: "",
+      last_interaction: "Just now",
+      created_at: new Date().toLocaleDateString("en-IN", { month: "short", day: "numeric" }),
+    };
+    updatedCases = [createdCase, ...cases];
+  }
+
+  localStorage.setItem(STORAGE_KEYS.CASES, JSON.stringify(updatedCases));
+  notifyStoreChange();
+  return cw;
+}
+
 // Triage Alerts
 export function getAlerts(): TriageAlert[] {
   if (typeof window === "undefined") return [];
@@ -235,7 +405,12 @@ export function getCases(): CounsellorCase[] {
   const raw = localStorage.getItem(STORAGE_KEYS.CASES);
   if (!raw) return seedInitialCases();
   try {
-    return JSON.parse(raw);
+    const parsed: CounsellorCase[] = JSON.parse(raw);
+    // Sanitize: strictly retain clinician notes in fieldNotes (strip out any victim chat/questionnaire strings)
+    return parsed.map((c) => ({
+      ...c,
+      fieldNotes: (c.fieldNotes || []).filter((n) => !n.author.toLowerCase().includes("victim")),
+    }));
   } catch {
     return [];
   }
@@ -334,6 +509,7 @@ export function getDecisionTrace(threadId: string): DecisionTrace {
         top_signals: ["lexical_urgency (0.96)", "missed_checkin_weight (0.88)", "sleep_deficit (0.82)"],
       },
       errors: [],
+      victim_text: "I don't think I can make it through tonight. Please help me before I do something to myself.",
     },
     "thread-6218": {
       thread_id: "thread-6218",
@@ -352,6 +528,7 @@ export function getDecisionTrace(threadId: string): DecisionTrace {
         top_signals: ["callback_urgency (0.89)", "sentiment_dampening (0.84)"],
       },
       errors: ["Voice signal telemetry unavailable (opted out by user)"],
+      victim_text: "Feeling so isolated and scared to step out of the house. Need a quiet callback.",
     },
   };
 
@@ -369,6 +546,7 @@ export function getDecisionTrace(threadId: string): DecisionTrace {
         top_signals: ["baseline_stability (0.80)"],
       },
       errors: [],
+      victim_text: "Today was quiet. Walking by the river helped a lot.",
     }
   );
 }
@@ -424,7 +602,8 @@ export function recordVictimInteraction(
   scores: VictimInteractionScores
 ): { caseId: string; threadId: string; alertId?: string } {
   const cases = getCases();
-  let codeword = getActiveCodeword();
+  const currentUser = getCurrentUser();
+  let codeword = currentUser?.codeword || getActiveCodeword();
   if (!codeword) {
     codeword = generateCodeword();
     setActiveCodeword(codeword);
@@ -452,6 +631,17 @@ export function recordVictimInteraction(
     scores.fusion?.confidence ??
     Number(((scores.sentiment.confidence + scores.threat.confidence) / 2).toFixed(2));
 
+  const sharePref = getVictimSharePreference();
+
+  const historyItem: VictimHistoryItem = {
+    id: `vhist_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+    timestamp: `${new Date().toLocaleDateString("en-IN", { month: "short", day: "numeric" })} ${nowTime}`,
+    text: userText,
+    source: "chat",
+    risk_level: isCritical ? "CRITICAL" : isHighRisk ? "HIGH" : "MODERATE",
+    details: `MuRIL: ${scores.sentiment.label} (${(scores.sentiment.sentiment_score * 100).toFixed(0)}%) · Threat: ${scores.threat.threat_flag ? "FLAGGED" : "CLEAR"}`,
+  };
+
   // Find existing case or create a new one
   let targetCase = cases.find((c) => c.codeword === codeword || c.case_id === codeword);
   let updatedCases: CounsellorCase[];
@@ -459,7 +649,7 @@ export function recordVictimInteraction(
   const newNote: CaseNote = {
     id: `fn_msg_${Date.now()}`,
     timestamp: nowTime,
-    author: isCritical ? "🚨 VICTIM (CRITICAL FUSION ALERT)" : "Victim (Live Chat)",
+    author: isCritical ? "VICTIM (CRITICAL FUSION ALERT)" : "Victim (Live Chat)",
     text: userText,
   };
 
@@ -480,6 +670,9 @@ export function recordVictimInteraction(
       },
     ];
 
+    const currentHistory = targetCase.interaction_history || [];
+    const updatedHistory = [...currentHistory, historyItem];
+
     updatedCases = cases.map((c) => {
       if (c.id === targetCase!.id) {
         return {
@@ -488,7 +681,12 @@ export function recordVictimInteraction(
           last_interaction: "Just now",
           triage_priority: priorityStr,
           distress_trajectory: newTraj,
-          fieldNotes: [newNote, ...c.fieldNotes],
+          fieldNotes: c.fieldNotes,
+          interaction_history: updatedHistory,
+          share_personal_info: sharePref.share,
+          victim_profile: sharePref.share
+            ? (c.victim_profile || (sharePref.name ? { name: sharePref.name, email: sharePref.email, phone: sharePref.phone } : undefined))
+            : undefined,
           status: c.status === "resolved" ? "in_support" : c.status, // Reopen case if closed
           signals: Array.from(new Set([
             ...c.signals,
@@ -502,8 +700,9 @@ export function recordVictimInteraction(
             sentiment_score: Number(scores.sentiment.sentiment_score.toFixed(2)),
             threat_flag: scores.threat.threat_flag,
             threat_prob: Number(scores.threat.prob.toFixed(2)),
-            voice_stress_score: c.ml_scores?.voice_stress_score || 0.35,
-            voice_label: c.ml_scores?.voice_label || "NOT_STRESSED",
+            voice_stress_score: c.ml_scores?.has_voice_recording ? c.ml_scores.voice_stress_score : undefined,
+            voice_label: c.ml_scores?.has_voice_recording ? c.ml_scores.voice_label : undefined,
+            has_voice_recording: c.ml_scores?.has_voice_recording || false,
             composite_score: Number(compositeScore.toFixed(2)),
             confidence: confidenceScore,
             trend_flag: trendFlag,
@@ -523,12 +722,15 @@ export function recordVictimInteraction(
       distress_trajectory: [
         { date: "Intake", score: 0.35 },
         {
-          date: "Now",
+          date: "Today " + nowTime,
           score: Number(compositeScore.toFixed(2)),
-          event: isCritical ? "Urgent Crisis Flagged" : "First Interaction",
+          event: isCritical ? "Urgent Crisis Flagged" : "Live Chat Interaction",
         },
       ],
-      fieldNotes: [newNote],
+      fieldNotes: [],
+      interaction_history: [historyItem],
+      share_personal_info: sharePref.share,
+      victim_profile: sharePref.share ? { name: sharePref.name, email: sharePref.email, phone: sharePref.phone } : undefined,
       signals: [
         `Fusion: ${scores.fusion?.label || (isCritical ? "CRITICAL" : "ELEVATED")}`,
         `Distress: ${scores.sentiment.label}`,
@@ -543,8 +745,7 @@ export function recordVictimInteraction(
         sentiment_score: Number(scores.sentiment.sentiment_score.toFixed(2)),
         threat_flag: scores.threat.threat_flag,
         threat_prob: Number(scores.threat.prob.toFixed(2)),
-        voice_stress_score: 0.35,
-        voice_label: "NOT_STRESSED",
+        has_voice_recording: false,
         composite_score: Number(compositeScore.toFixed(2)),
         confidence: confidenceScore,
         trend_flag: trendFlag,
@@ -588,6 +789,17 @@ export function recordVictimInteraction(
       decision_status: "pending",
       reasons,
       channel: "pwa_chat",
+      victim_text: userText,
+      victim_info: {
+        codeword: targetCase.codeword,
+        share_personal_info: !!(targetCase.share_personal_info ?? sharePref.share),
+        name: (targetCase.victim_profile?.name || sharePref.name),
+        email: (targetCase.victim_profile?.email || sharePref.email),
+        latest_mood: targetCase.latest_checkin?.moodLabel,
+        latest_sleep: targetCase.latest_checkin ? `${targetCase.latest_checkin.sleepHours}h (${targetCase.latest_checkin.sleepQuality})` : undefined,
+        history_count: ((targetCase.interaction_history || []).length) + 1,
+      },
+      history: [...(targetCase.interaction_history || []), historyItem],
     };
 
     const existingAlerts = getAlerts();
@@ -620,12 +832,216 @@ export function recordVictimInteraction(
         top_signals: traceSignals,
       },
       errors: [],
+      victim_text: userText,
     };
     saveDecisionTrace(trace);
   }
 
   notifyStoreChange();
   return { caseId: targetCase.case_id, threadId, alertId };
+}
+
+export function recordVictimQuestionnaire(entry: CheckInEntry): void {
+  const cases = getCases();
+  let codeword = getActiveCodeword();
+  if (!codeword) {
+    codeword = generateCodeword();
+    setActiveCodeword(codeword);
+  }
+
+  const nowTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  // Map mood (1..5) and sleep metrics to latent distress index
+  // Mood 1 (Fragile) -> 0.88, Mood 2 (Heavy) -> 0.70, Mood 3 (Steady) -> 0.48, Mood 4 (Grounded) -> 0.28, Mood 5 (Light) -> 0.12
+  const baseDistress = entry.mood === 1 ? 0.88 : entry.mood === 2 ? 0.70 : entry.mood === 3 ? 0.48 : entry.mood === 4 ? 0.28 : 0.12;
+  const sleepPenalty = entry.sleepHours <= 4 ? 0.08 : entry.sleepHours <= 5.5 ? 0.04 : 0;
+  const computedDistress = Math.min(0.98, Math.max(0.08, baseDistress + sleepPenalty));
+
+  const isCritical = entry.mood === 1 && (entry.sleepHours <= 4 || (entry.reflection && /kill|die|suicide|hurt|threat|follow|harm/i.test(entry.reflection)));
+  const isElevated = isCritical || entry.mood <= 2 || entry.sleepHours <= 4;
+
+  const noteText = `[Daily Questionnaire Completed] Mood: ${entry.moodLabel} (${entry.mood}/5) · Sleep: ${entry.sleepHours}h (${entry.sleepQuality}) · Feelings: [${entry.feelings.join(", ")}]${entry.reflection ? ` · Written Reflection: "${entry.reflection}"` : ""}`;
+
+  const newNote: CaseNote = {
+    id: `fn_chk_${Date.now()}`,
+    timestamp: nowTime,
+    author: isCritical ? "VICTIM (CRITICAL QUESTIONNAIRE)" : "Victim (Check-in Questionnaire)",
+    text: noteText,
+  };
+
+  const priorityStr = isCritical ? "P1 - Immediate" : isElevated ? "P2 - Within 2h" : "P3 - Routine";
+
+  let targetCase = cases.find((c) => c.codeword === codeword || c.case_id === codeword);
+  let updatedCases: CounsellorCase[];
+
+  const summaryText = `[Questionnaire] Felt ${entry.moodLabel} (${entry.sleepHours}h rest)${entry.reflection ? `: "${entry.reflection}"` : ` with feelings: ${entry.feelings.slice(0, 3).join(", ")}`}`;
+
+  const sharePref = getVictimSharePreference();
+
+  const qHistoryItem: VictimHistoryItem = {
+    id: `vhist_q_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+    timestamp: `${new Date().toLocaleDateString("en-IN", { month: "short", day: "numeric" })} ${nowTime}`,
+    text: `Felt ${entry.moodLabel} (${entry.mood}/5) · Rest: ${entry.sleepHours}h (${entry.sleepQuality})${entry.reflection ? ` · "${entry.reflection}"` : ""}`,
+    source: "questionnaire",
+    risk_level: isCritical ? "CRITICAL" : isElevated ? "HIGH" : "LOW",
+    details: `Feelings: ${entry.feelings.join(", ")}`,
+  };
+
+  if (targetCase) {
+    const newTraj = [
+      ...targetCase.distress_trajectory,
+      {
+        date: "Today " + nowTime,
+        score: Number(computedDistress.toFixed(2)),
+        event: `Questionnaire (${entry.moodLabel})`,
+      },
+    ];
+
+    const currentHistory = targetCase.interaction_history || [];
+    const updatedHistory = [...currentHistory, qHistoryItem];
+
+    updatedCases = cases.map((c) => {
+      if (c.id === targetCase!.id) {
+        return {
+          ...c,
+          summary: summaryText.length > 120 ? summaryText.slice(0, 117) + "..." : summaryText,
+          last_interaction: "Just now",
+          triage_priority: isCritical ? "P1 - Immediate" : isElevated && !c.triage_priority.startsWith("P1") ? "P2 - Within 2h" : c.triage_priority,
+          distress_trajectory: newTraj,
+          fieldNotes: c.fieldNotes,
+          interaction_history: updatedHistory,
+          share_personal_info: sharePref.share,
+          victim_profile: sharePref.share
+            ? (c.victim_profile || (sharePref.name ? { name: sharePref.name, email: sharePref.email, phone: sharePref.phone } : undefined))
+            : undefined,
+          latest_checkin: entry,
+          latest_source: "questionnaire" as const,
+          status: c.status === "resolved" ? "in_support" : c.status,
+          signals: Array.from(new Set([
+            ...c.signals,
+            `Mood: ${entry.moodLabel}`,
+            `Sleep: ${entry.sleepHours}h (${entry.sleepQuality})`,
+            ...entry.feelings.slice(0, 2),
+            "Questionnaire Active",
+          ])),
+          ml_scores: {
+            sentiment_label: computedDistress >= 0.7 ? "HIGH" : computedDistress >= 0.4 ? "MODERATE" : "LOW",
+            sentiment_score: Number(computedDistress.toFixed(2)),
+            threat_flag: c.ml_scores?.threat_flag || Boolean(entry.reflection && /follow|threat|kill|hurt/i.test(entry.reflection)),
+            threat_prob: c.ml_scores?.threat_prob || 0.12,
+            voice_stress_score: c.ml_scores?.has_voice_recording ? c.ml_scores.voice_stress_score : undefined,
+            voice_label: c.ml_scores?.has_voice_recording ? c.ml_scores.voice_label : undefined,
+            has_voice_recording: c.ml_scores?.has_voice_recording || false,
+            composite_score: Number(((computedDistress * 0.5) + ((c.ml_scores?.threat_prob || 0.12) * 0.5)).toFixed(2)),
+            confidence: 0.88,
+            trend_flag: isElevated ? "ESCALATING" : "STABLE",
+          },
+        };
+      }
+      return c;
+    });
+  } else {
+    const newCaseId = `case-${Math.floor(1000 + Math.random() * 9000)}`;
+    const createdCase: CounsellorCase = {
+      id: newCaseId,
+      case_id: newCaseId,
+      codeword,
+      triage_priority: priorityStr,
+      status: "new",
+      distress_trajectory: [
+        { date: "Intake", score: 0.35 },
+        { date: "Today " + nowTime, score: Number(computedDistress.toFixed(2)), event: `Questionnaire (${entry.moodLabel})` },
+      ],
+      fieldNotes: [],
+      interaction_history: [qHistoryItem],
+      share_personal_info: sharePref.share,
+      victim_profile: sharePref.share ? { name: sharePref.name, email: sharePref.email, phone: sharePref.phone } : undefined,
+      signals: [
+        `Mood: ${entry.moodLabel}`,
+        `Sleep: ${entry.sleepHours}h (${entry.sleepQuality})`,
+        ...entry.feelings.slice(0, 2),
+        "Daily Check-in",
+      ],
+      summary: summaryText.length > 120 ? summaryText.slice(0, 117) + "..." : summaryText,
+      last_interaction: "Just now",
+      created_at: new Date().toLocaleDateString("en-IN", { month: "short", day: "numeric" }),
+      latest_checkin: entry,
+      latest_source: "questionnaire",
+      ml_scores: {
+        sentiment_label: computedDistress >= 0.7 ? "HIGH" : computedDistress >= 0.4 ? "MODERATE" : "LOW",
+        sentiment_score: Number(computedDistress.toFixed(2)),
+        threat_flag: Boolean(entry.reflection && /follow|threat|kill|hurt/i.test(entry.reflection)),
+        threat_prob: 0.12,
+        has_voice_recording: false,
+        composite_score: Number(computedDistress.toFixed(2)),
+        confidence: 0.88,
+        trend_flag: isElevated ? "ESCALATING" : "STABLE",
+      },
+    };
+    targetCase = createdCase;
+    updatedCases = [createdCase, ...cases];
+  }
+
+  localStorage.setItem(STORAGE_KEYS.CASES, JSON.stringify(updatedCases));
+
+  if (isElevated) {
+    const alertId = `alt-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newAlert: TriageAlert = {
+      alert_id: alertId,
+      case_id: targetCase.case_id,
+      thread_id: `thread-${Math.floor(1000 + Math.random() * 9000)}`,
+      risk_level: isCritical ? "CRITICAL" : "HIGH",
+      composite_score: Number(computedDistress.toFixed(2)),
+      confidence: 0.88,
+      triage_priority_score: Math.round(computedDistress * 100),
+      raised_at: "Just now",
+      decision_status: "pending",
+      reasons: [
+        `📋 Questionnaire Indicator: Victim reported state '${entry.moodLabel}' (Level ${entry.mood}/5)`,
+        `Rest telemetry: ${entry.sleepHours}h (${entry.sleepQuality})${entry.sleepHours <= 4 ? " — severe rest deprivation" : ""}`,
+        `Feelings flagged: ${entry.feelings.join(", ")}`,
+        ...(entry.reflection ? [`Victim reflection: "${entry.reflection.slice(0, 80)}..."`] : []),
+      ],
+      channel: "questionnaire_checkin",
+      victim_text: entry.reflection || `Daily check-in: Mood ${entry.moodLabel} (${entry.mood}/5), Rest: ${entry.sleepHours}h, Feelings: ${entry.feelings.join(", ")}`,
+      victim_info: {
+        codeword: targetCase.codeword,
+        share_personal_info: !!(targetCase.share_personal_info ?? sharePref.share),
+        name: (targetCase.victim_profile?.name || sharePref.name),
+        email: (targetCase.victim_profile?.email || sharePref.email),
+        latest_mood: entry.moodLabel,
+        latest_sleep: `${entry.sleepHours}h (${entry.sleepQuality})`,
+        history_count: ((targetCase.interaction_history || []).length) + 1,
+      },
+      history: [...(targetCase.interaction_history || []), qHistoryItem],
+    };
+    const existingAlerts = getAlerts();
+    localStorage.setItem(STORAGE_KEYS.ALERTS, JSON.stringify([newAlert, ...existingAlerts]));
+
+    // Generate explainable decision trace for questionnaire alert
+    const qTrace: DecisionTrace = {
+      thread_id: newAlert.thread_id,
+      case_id: targetCase.case_id,
+      decision: {
+        route: isCritical ? "crisis" : "escalate",
+        policy_version: "v2.4.1-safety",
+        reasons: newAlert.reasons,
+      },
+      fusion: {
+        confidence: 0.88,
+        top_signals: [
+          `questionnaire_distress (${(computedDistress * 100).toFixed(0)}%)`,
+          `rest_deprivation (${entry.sleepHours}h)`,
+          `mood_rating (${entry.mood}/5)`,
+        ],
+      },
+      errors: [],
+      victim_text: newAlert.victim_text,
+    };
+    saveDecisionTrace(qTrace);
+  }
+
+  notifyStoreChange();
 }
 
 // Sync helper
@@ -776,6 +1192,41 @@ function seedInitialAlerts(): TriageAlert[] {
       decision_status: "pending",
       reasons: ["Critical distress spike", "Explicit suicidal ideation phrasing detected"],
       channel: "pwa_chat",
+      victim_text: "I don't think I can make it through tonight. Please help me before I do something to myself.",
+      victim_info: {
+        codeword: "quiet-river-17",
+        share_personal_info: true,
+        name: "Maya S.",
+        email: "maya.s@proton.me",
+        latest_mood: "Fragile (1/5)",
+        latest_sleep: "3.5h (Restless)",
+        history_count: 3,
+      },
+      history: [
+        {
+          id: "vh_9041_1",
+          timestamp: "Sep 7 19:40",
+          text: "I am feeling so trapped, the shouting started again.",
+          source: "chat",
+          risk_level: "HIGH",
+          details: "MuRIL: HIGH (88%)",
+        },
+        {
+          id: "vh_9041_2",
+          timestamp: "Sep 7 21:10",
+          text: "Felt Fragile (1/5) · Rest: 3.5h (Restless) · Feelings: overwhelmed, terrified",
+          source: "questionnaire",
+          risk_level: "HIGH",
+        },
+        {
+          id: "vh_9041_3",
+          timestamp: "Sep 7 21:14",
+          text: "I don't think I can make it through tonight. Please help me before I do something to myself.",
+          source: "chat",
+          risk_level: "CRITICAL",
+          details: "Explicit crisis phrasing detected",
+        },
+      ],
     },
     {
       alert_id: "alt-8812",
@@ -789,6 +1240,31 @@ function seedInitialAlerts(): TriageAlert[] {
       decision_status: "pending",
       reasons: ["Multiple missed check-in windows", "Escalation ladder step 2 reached"],
       channel: "checkin_ladder",
+      victim_text: "Feeling so isolated and scared to step out of the house. Need a quiet callback.",
+      victim_info: {
+        codeword: "amber-meadow-42",
+        share_personal_info: false,
+        latest_mood: "Heavy (2/5)",
+        latest_sleep: "4.5h (Broken)",
+        history_count: 2,
+      },
+      history: [
+        {
+          id: "vh_8812_1",
+          timestamp: "Sep 8 09:20",
+          text: "Felt Heavy (2/5) · Rest: 4.5h · Missed morning safety ping",
+          source: "questionnaire",
+          risk_level: "HIGH",
+        },
+        {
+          id: "vh_8812_2",
+          timestamp: "Sep 8 10:12",
+          text: "Feeling so isolated and scared to step out of the house. Need a quiet callback.",
+          source: "chat",
+          risk_level: "HIGH",
+          details: "Safe window requested 7 PM",
+        },
+      ],
     },
     {
       alert_id: "alt-7193",
@@ -803,6 +1279,23 @@ function seedInitialAlerts(): TriageAlert[] {
       counsellor_note: "Assigned to peer listener follow-up",
       reasons: ["Sleep deficit 4 consecutive days", "Gentle check-in recommended"],
       channel: "daily_checkin",
+      victim_text: "Unable to sleep more than 3 hours every night. Head hurts constantly.",
+      victim_info: {
+        codeword: "misty-cedar-88",
+        share_personal_info: false,
+        latest_mood: "Steady (3/5)",
+        latest_sleep: "3.0h (Broken)",
+        history_count: 1,
+      },
+      history: [
+        {
+          id: "vh_7193_1",
+          timestamp: "Sep 7 12:05",
+          text: "Unable to sleep more than 3 hours every night. Head hurts constantly.",
+          source: "chat",
+          risk_level: "MODERATE",
+        },
+      ],
     },
   ];
   if (typeof window !== "undefined") {
@@ -819,6 +1312,44 @@ function seedInitialCases(): CounsellorCase[] {
       codeword: "quiet-river-17",
       triage_priority: "P1 - Immediate",
       status: "in_support",
+      share_personal_info: true,
+      victim_profile: {
+        name: "Maya S.",
+        email: "maya.s@proton.me",
+        phone: "+91 98765 43210",
+      },
+      interaction_history: [
+        {
+          id: "ih-1",
+          timestamp: "Sep 6, 14:20",
+          text: "Felt Fragile (1/5) · Rest: 4h · Feelings: exhausted, isolated, scared",
+          source: "questionnaire",
+          risk_level: "HIGH",
+        },
+        {
+          id: "ih-2",
+          timestamp: "Sep 7, 19:40",
+          text: "I am feeling so trapped, the shouting started again and they took the room keys.",
+          source: "chat",
+          risk_level: "HIGH",
+          details: "MuRIL: HIGH (88%)",
+        },
+        {
+          id: "ih-3",
+          timestamp: "Sep 7, 21:14",
+          text: "I don't think I can make it through tonight. Please help me before I do something to myself.",
+          source: "chat",
+          risk_level: "CRITICAL",
+          details: "Crisis trigger overrides engaged",
+        },
+        {
+          id: "ih-4",
+          timestamp: "Sep 8, 18:35",
+          text: "The breathing anchor helped steady my chest. Still frightened but grounded.",
+          source: "chat",
+          risk_level: "MODERATE",
+        },
+      ],
       distress_trajectory: [
         { date: "Sep 4", score: 0.35 },
         { date: "Sep 5", score: 0.42 },

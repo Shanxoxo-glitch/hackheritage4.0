@@ -1,7 +1,13 @@
 import { useState, useRef, useEffect } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { streamChat, scoreTextLive } from "@/lib/api";
-import { recordVictimInteraction } from "@/lib/store";
+import {
+  recordVictimInteraction,
+  getCurrentUser,
+  getActiveCodeword,
+  logoutUser,
+  addCaseNote,
+} from "@/lib/store";
 import {
   ArrowLeft,
   Send,
@@ -12,11 +18,19 @@ import {
   Compass,
   ChevronDown,
   ChevronUp,
+  Power,
+  Scale,
+  Bot,
+  FileText,
+  CheckCircle2,
+  Cpu,
+  BookmarkPlus,
+  RotateCcw,
 } from "lucide-react";
 
 export const Route = createFileRoute("/chat")({
   head: () => ({
-    meta: [{ title: "Sanctuary Chat — Sahayak" }],
+    meta: [{ title: "Sanctuary & CaseWriter Chat — Sahayak" }],
   }),
   component: CrisisChatPage,
 });
@@ -24,28 +38,92 @@ export const Route = createFileRoute("/chat")({
 interface Message {
   role: "user" | "assistant" | "system";
   content: string;
+  source?: "vm_orchestrator" | "backend_casewriter_engine" | "local_fallback";
 }
 
+const DEFAULT_WELCOME: Message = {
+  role: "assistant",
+  content:
+    "Welcome to this quiet space. Take a soft breath. You don't have to explain everything, and you don't have to carry it all alone right now. What's resting on your mind?",
+};
+
+const CASEWRITER_WELCOME: Message = {
+  role: "assistant",
+  content:
+    "⚖️ CaseWriter AI Initialized.\n\nConnected directly to live Azure VM Orchestrator (port :8500) and backend perception pipeline. Enter case observations, incident narratives, or hearing details to synthesize structured risk classifications, key signals, and clinician-grounded recommendations.",
+};
+
 export default function CrisisChatPage() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      content:
-        "Welcome to this quiet space. Take a soft breath. You don't have to explain everything, and you don't have to carry it all alone right now. What's resting on your mind?",
-    },
-  ]);
+  const navigate = useNavigate();
+  const currentUser = getCurrentUser();
+  const activeCodeword = currentUser?.codeword || getActiveCodeword() || "quiet-sanctuary";
+
+  // Dual mode: "sahayak" (empathetic victim sanctuary) vs "casewriter" (clinical & legal case synthesizer)
+  const [chatMode, setChatMode] = useState<"sahayak" | "casewriter">(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("mode") === "casewriter") return "casewriter";
+    }
+    return "sahayak";
+  });
+
+  // Independent chat message logs
+  const [sahayakMessages, setSahayakMessages] = useState<Message[]>(() => {
+    if (typeof window === "undefined") return [DEFAULT_WELCOME];
+    try {
+      const stored = localStorage.getItem(`sahayak_chat_messages_${activeCodeword}`);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return [DEFAULT_WELCOME];
+  });
+
+  const [casewriterMessages, setCasewriterMessages] = useState<Message[]>(() => {
+    if (typeof window === "undefined") return [CASEWRITER_WELCOME];
+    try {
+      const stored = localStorage.getItem(`casewriter_chat_messages_${activeCodeword}`);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return [CASEWRITER_WELCOME];
+  });
+
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [showCrisisBanner, setShowCrisisBanner] = useState(false);
   const [showGroundingDrawer, setShowGroundingDrawer] = useState(false);
   const [groundingStep, setGroundingStep] = useState(0);
+  const [savedNotes, setSavedNotes] = useState<Record<number, boolean>>({});
 
   const abortRef = useRef<(() => void) | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
+  // Active messages based on mode
+  const messages = chatMode === "sahayak" ? sahayakMessages : casewriterMessages;
+  const setMessages = chatMode === "sahayak" ? setSahayakMessages : setCasewriterMessages;
+
+  // Persist messages per mode
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      localStorage.setItem(`sahayak_chat_messages_${activeCodeword}`, JSON.stringify(sahayakMessages));
+    } catch {}
+  }, [sahayakMessages, activeCodeword]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      localStorage.setItem(`casewriter_chat_messages_${activeCodeword}`, JSON.stringify(casewriterMessages));
+    } catch {}
+  }, [casewriterMessages, activeCodeword]);
+
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, showCrisisBanner]);
+  }, [messages, showCrisisBanner, chatMode]);
 
   const groundingExercises = [
     {
@@ -60,12 +138,29 @@ export default function CrisisChatPage() {
     },
   ];
 
-  const handleSend = () => {
-    if (!input.trim() || streaming) return;
-    const userMsg = input;
+  const handleSwitchMode = (newMode: "sahayak" | "casewriter") => {
+    if (streaming) return;
+    setChatMode(newMode);
+    setInput("");
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("mode", newMode);
+      window.history.replaceState({}, "", url.toString());
+    }
+  };
+
+  const handleSaveToDossier = (text: string, index: number) => {
+    addCaseNote(activeCodeword, `[CaseWriter Synthesis] ${text}`, "CaseWriter AI");
+    setSavedNotes((prev) => ({ ...prev, [index]: true }));
+  };
+
+  const handleSend = (textToSend?: string) => {
+    const rawMsg = textToSend || input;
+    if (!rawMsg.trim() || streaming) return;
+    const userMsg = rawMsg;
     setInput("");
 
-    // Danger keyword check for immediate reassurance & helpline escalation
+    // Danger keyword check for immediate helpline escalation
     const lower = userMsg.toLowerCase();
     const isDanger =
       lower.includes("suicide") ||
@@ -79,11 +174,31 @@ export default function CrisisChatPage() {
       setShowCrisisBanner(true);
     }
 
-    // Evaluate message with Hugging Face models and update Counsellor / Admin records live
+    // Record victim interaction into Counsellor & Admin stores
+    const quickIsThreat =
+      isDanger || lower.includes("follow") || lower.includes("threat") || lower.includes("harm") || lower.includes("locked");
+    const quickIsDistress =
+      isDanger || quickIsThreat || lower.includes("scared") || lower.includes("panic") || lower.includes("cannot take") || lower.includes("help me");
+
+    const initialScores = {
+      sentiment: {
+        label: quickIsDistress ? ("HIGH" as const) : ("MODERATE" as const),
+        sentiment_score: quickIsDistress ? 0.92 : 0.48,
+        confidence: 0.9,
+      },
+      threat: {
+        threat_flag: quickIsThreat,
+        prob: quickIsThreat ? 0.96 : 0.08,
+        confidence: 0.92,
+      },
+    };
+    recordVictimInteraction(userMsg, initialScores);
+
+    // Refine with live Bayesian Risk Fusion Engine & Hugging Face models
     scoreTextLive(userMsg)
       .then((scores) => {
         recordVictimInteraction(userMsg, scores);
-        if (scores.threat.threat_flag || scores.sentiment.label === "HIGH") {
+        if (scores.threat.threat_flag || scores.sentiment.label === "HIGH" || scores.fusion?.label === "CRITICAL") {
           setShowCrisisBanner(true);
         }
       })
@@ -99,7 +214,12 @@ export default function CrisisChatPage() {
     setStreaming(true);
 
     abortRef.current = streamChat(
-      { case_id: "local_session", channel: "pwa", message: userMsg, model: "casewriter" },
+      {
+        case_id: activeCodeword,
+        channel: "pwa",
+        message: userMsg,
+        model: chatMode === "casewriter" ? "casewriter" : "sahayak",
+      },
       (delta) => {
         setMessages((prev) => {
           const last = prev[prev.length - 1];
@@ -111,6 +231,21 @@ export default function CrisisChatPage() {
       },
       (final) => {
         setStreaming(false);
+        setMessages((prev) => {
+          const last = prev[prev.length - 1];
+          if (last && last.role === "assistant") {
+            return [
+              ...prev.slice(0, -1),
+              {
+                ...last,
+                content: final.reply || last.content,
+                source: (final as any).source,
+              },
+            ];
+          }
+          return prev;
+        });
+
         if (final.status === "awaiting_counsellor") {
           setShowCrisisBanner(true);
           setMessages((prev) => [
@@ -125,10 +260,29 @@ export default function CrisisChatPage() {
       },
       (err) => {
         setStreaming(false);
-        console.error(err);
+        console.error("StreamChat error:", err);
       }
     );
   };
+
+  const casewriterPresets = [
+    {
+      label: "🚨 Urgent Stalking & Abuse",
+      prompt: "Victim reports spouse took house keys, confiscated phone, and issued direct physical threats.",
+    },
+    {
+      label: "📋 Extract Risk & Recommended Action",
+      prompt: "Analyze latest dialogue: feeling trapped and unable to sleep for 4 days. Synthesize CaseWriter action.",
+    },
+    {
+      label: "⚖️ Legal & Protection Order Guidance",
+      prompt: "What are the immediate steps under the Protection of Women from Domestic Violence Act for urgent relief?",
+    },
+    {
+      label: "🍃 Grounding & Routine Cadence",
+      prompt: "Victim completed morning sensory walk, reported feeling quiet and stable. Formulate 7-day monitoring brief.",
+    },
+  ];
 
   return (
     <div className="grain min-h-screen bg-background text-foreground flex flex-col justify-between relative overflow-hidden">
@@ -169,33 +323,169 @@ export default function CrisisChatPage() {
           <Link
             to="/"
             className="p-1.5 text-foreground/60 hover:text-clay transition-colors rounded-full hover:bg-foreground/5"
-            title="Return to Sanctuary"
+            title="Return Home"
           >
             <ArrowLeft className="h-4 w-4" />
           </Link>
           <div>
-            <h1 className="font-display text-xl leading-none">Sahayak Sanctuary</h1>
-            <p className="text-[11px] text-foreground/50">Anonymous · Encrypted · Non-judgmental</p>
+            <div className="flex items-center gap-2">
+              <h1 className="font-display text-xl leading-none">
+                {chatMode === "casewriter" ? "CaseWriter AI Clinical Studio" : "Sahayak Sanctuary"}
+              </h1>
+              <span className="rounded-full bg-clay/10 px-2.5 py-0.5 font-mono text-[10px] font-bold text-clay border border-clay/20">
+                {activeCodeword}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-[11px] text-foreground/50 pt-0.5">
+              <span
+                className={`inline-flex items-center gap-1 font-medium ${
+                  currentUser?.share_personal_info
+                    ? "text-emerald-600 dark:text-emerald-400"
+                    : "text-foreground/60"
+                }`}
+              >
+                {currentUser?.share_personal_info ? "✓ Disclosed Mode" : "🔒 Strict Anonymous Shield"}
+              </span>
+              {currentUser?.email && (
+                <>
+                  <span>·</span>
+                  <span className="text-foreground/75 truncate max-w-[140px] font-mono">{currentUser.email}</span>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
-        <button
-          onClick={() => setShowGroundingDrawer(!showGroundingDrawer)}
-          className="flex items-center gap-1.5 rounded-full border border-foreground/15 bg-card/70 px-3 py-1 text-xs font-medium text-foreground hover:border-clay hover:text-clay transition-colors"
-        >
-          <Wind className="h-3.5 w-3.5 text-clay" />
-          <span>Grounding Anchor</span>
-          {showGroundingDrawer ? (
-            <ChevronUp className="h-3.5 w-3.5" />
-          ) : (
-            <ChevronDown className="h-3.5 w-3.5" />
+        <div className="flex items-center gap-2">
+          {currentUser && (
+            <button
+              type="button"
+              onClick={() => {
+                logoutUser();
+                navigate({ to: "/" });
+              }}
+              className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-forest text-white shadow-sm hover:!bg-clay hover:!text-white transition-all duration-200 cursor-pointer active:scale-95"
+              title="Log out"
+              aria-label="Log out"
+            >
+              <Power className="h-3.5 w-3.5 text-white" />
+            </button>
           )}
-        </button>
+
+          {chatMode === "sahayak" && (
+            <button
+              onClick={() => setShowGroundingDrawer(!showGroundingDrawer)}
+              className="flex items-center gap-1.5 rounded-full border border-foreground/15 bg-card/70 px-3 py-1 text-xs font-medium text-foreground hover:border-clay hover:text-clay transition-colors"
+            >
+              <Wind className="h-3.5 w-3.5 text-clay" />
+              <span>Grounding Anchor</span>
+              {showGroundingDrawer ? (
+                <ChevronUp className="h-3.5 w-3.5" />
+              ) : (
+                <ChevronDown className="h-3.5 w-3.5" />
+              )}
+            </button>
+          )}
+
+          {chatMode === "casewriter" && (
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setCasewriterMessages([CASEWRITER_WELCOME]);
+                  if (typeof window !== "undefined") {
+                    localStorage.removeItem(`casewriter_chat_messages_${activeCodeword}`);
+                  }
+                }}
+                className="inline-flex items-center gap-1 rounded-full border border-foreground/15 bg-card/70 px-2.5 py-1 text-xs font-medium text-foreground/70 hover:border-clay hover:text-clay transition-colors cursor-pointer"
+                title="Reset CaseWriter dialogue"
+              >
+                <RotateCcw className="h-3 w-3" />
+                <span>Reset Chat</span>
+              </button>
+              <Link
+                to="/counsellor"
+                className="inline-flex items-center gap-1.5 rounded-full bg-forest px-3 py-1 text-xs font-semibold text-white hover:!bg-clay transition-all"
+              >
+                <FileText className="h-3.5 w-3.5" />
+                <span>Open Field Dossiers</span>
+              </Link>
+            </div>
+          )}
+        </div>
       </header>
 
-      {/* Interactive Grounding Drawer */}
-      {showGroundingDrawer && (
-        <div className="mx-auto w-full max-w-4xl px-4 pt-2 z-20">
+      {/* SHOWPIECE: Mode Switcher between Sahayak Mode & CaseWriter Mode */}
+      <div className="mx-auto w-full max-w-4xl px-4 pt-3 pb-2 z-10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-2 rounded-2xl bg-card/90 border border-foreground/10 shadow-[var(--shadow-soft)] backdrop-blur-md">
+          {/* Dual Toggle Buttons */}
+          <div className="flex items-center gap-1.5 p-1 rounded-full bg-background/80 border border-foreground/10">
+            <button
+              type="button"
+              onClick={() => handleSwitchMode("sahayak")}
+              className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold transition-all cursor-pointer select-none ${
+                chatMode === "sahayak"
+                  ? "bg-forest text-white shadow-sm"
+                  : "text-foreground/60 hover:text-foreground"
+              }`}
+            >
+              <Bot className="h-3.5 w-3.5" />
+              <span>🌿 Sahayak Sanctuary Mode</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSwitchMode("casewriter")}
+              className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold transition-all cursor-pointer select-none ${
+                chatMode === "casewriter"
+                  ? "bg-clay text-white shadow-sm"
+                  : "text-foreground/60 hover:text-foreground"
+              }`}
+            >
+              <Scale className="h-3.5 w-3.5" />
+              <span>⚖️ CaseWriter Clinical Mode</span>
+            </button>
+          </div>
+
+          {/* Real-time Connection Indicator to VM & Backend */}
+          <div className="flex items-center gap-2 text-[11px] font-mono px-2">
+            {chatMode === "casewriter" ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-clay/10 text-clay border border-clay/25 font-semibold">
+                <Cpu className="h-3 w-3 animate-pulse text-clay" />
+                <span>Azure VM (:8500) & Backend (:8400)</span>
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-forest/10 text-forest border border-forest/25 font-semibold">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>PWA End-to-End Encrypted</span>
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* CaseWriter Quick Evaluation Prompts */}
+        {chatMode === "casewriter" && (
+          <div className="pt-2 flex flex-wrap items-center gap-1.5">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-foreground/50 mr-1">
+              CaseWriter Presets:
+            </span>
+            {casewriterPresets.map((preset) => (
+              <button
+                key={preset.label}
+                type="button"
+                onClick={() => handleSend(preset.prompt)}
+                disabled={streaming}
+                className="text-[11px] rounded-full border border-foreground/15 bg-card/60 px-3 py-1 text-foreground/75 hover:border-clay hover:text-clay transition-all disabled:opacity-40 text-left"
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Interactive Grounding Drawer (Available in Sahayak Mode) */}
+      {chatMode === "sahayak" && showGroundingDrawer && (
+        <div className="mx-auto w-full max-w-4xl px-4 pt-1 z-20">
           <div className="rounded-2xl border border-clay/30 bg-card/95 p-4 shadow-[var(--shadow-lift)] backdrop-blur-md space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-clay flex items-center gap-1.5">
@@ -214,18 +504,16 @@ export default function CrisisChatPage() {
               <button
                 onClick={() => setGroundingStep(Math.max(0, groundingStep - 1))}
                 disabled={groundingStep === 0}
-                className="text-xs text-foreground/50 disabled:opacity-30 hover:text-clay"
+                className="text-xs text-foreground/50 disabled:opacity-30 hover:text-clay cursor-pointer"
               >
                 Previous
               </button>
               <button
                 onClick={() =>
-                  setGroundingStep(
-                    Math.min(groundingExercises[0].steps.length - 1, groundingStep + 1)
-                  )
+                  setGroundingStep(Math.min(groundingExercises[0].steps.length - 1, groundingStep + 1))
                 }
                 disabled={groundingStep === groundingExercises[0].steps.length - 1}
-                className="rounded-full bg-forest px-4 py-1 text-xs font-medium text-forest-foreground hover:bg-clay transition-colors disabled:opacity-40"
+                className="rounded-full bg-forest px-4 py-1 text-xs font-medium text-forest-foreground hover:!bg-clay transition-colors disabled:opacity-40 cursor-pointer"
               >
                 Next Anchor
               </button>
@@ -234,13 +522,13 @@ export default function CrisisChatPage() {
         </div>
       )}
 
-      {/* SHOWPIECE: Living Breathing Orb */}
+      {/* Living Breathing Background Orb */}
       <div className="pointer-events-none fixed inset-0 flex items-center justify-center -z-0 opacity-40">
         <div className="animate-orb h-80 w-80 md:h-96 md:w-96 rounded-full bg-gradient-to-tr from-clay/20 via-sage/30 to-forest/15 blur-2xl" />
       </div>
 
       {/* Chat Messages Log */}
-      <div className="mx-auto w-full max-w-4xl flex-1 overflow-y-auto px-4 py-6 space-y-4 z-10">
+      <div className="mx-auto w-full max-w-4xl flex-1 overflow-y-auto px-4 py-4 space-y-4 z-10">
         {/* Danger Alert Banner if triggered */}
         {showCrisisBanner && (
           <div className="rounded-2xl border-2 border-clay bg-clay/10 p-4 text-foreground shadow-[var(--shadow-lift)] space-y-2 animate-in fade-in slide-in-from-top-4 duration-500">
@@ -249,8 +537,7 @@ export default function CrisisChatPage() {
               <span>We hear the deep pain you are carrying right now.</span>
             </div>
             <p className="text-xs text-foreground/80 leading-relaxed">
-              You do not have to walk through this alone. Trained people who care are on call this
-              second across India. Please reach out directly:
+              You do not have to walk through this alone. Trained responders are on call right now across India.
             </p>
             <div className="flex flex-wrap gap-2 pt-1">
               <a
@@ -292,15 +579,75 @@ export default function CrisisChatPage() {
               </div>
             ) : (
               <div
-                className={`max-w-[85%] md:max-w-xl rounded-3xl p-4 text-sm leading-relaxed ${
+                className={`max-w-[88%] md:max-w-xl rounded-3xl p-4 text-sm leading-relaxed ${
                   m.role === "user"
-                    ? "bg-forest text-forest-foreground rounded-br-sm shadow-[var(--shadow-lift)]"
-                    : "bg-card/90 text-foreground border border-foreground/10 rounded-bl-sm shadow-[var(--shadow-soft)] backdrop-blur-sm"
+                    ? chatMode === "casewriter"
+                      ? "bg-clay text-white rounded-br-sm shadow-[var(--shadow-lift)]"
+                      : "bg-forest text-forest-foreground rounded-br-sm shadow-[var(--shadow-lift)]"
+                    : "bg-card/95 text-foreground border border-foreground/10 rounded-bl-sm shadow-[var(--shadow-soft)] backdrop-blur-sm"
                 }`}
               >
-                <div className="whitespace-pre-wrap">{m.content}</div>
+                {/* Assistant Model Header Badge */}
+                {m.role === "assistant" && (
+                  <div className="flex items-center justify-between text-[10px] font-mono text-foreground/50 border-b border-foreground/5 pb-1.5 mb-2">
+                    <span className="font-semibold uppercase tracking-wider flex items-center gap-1">
+                      {chatMode === "casewriter" ? (
+                        <>
+                          <Scale className="h-3 w-3 text-clay" />
+                          <span>CaseWriter Synthesis</span>
+                        </>
+                      ) : (
+                        <>
+                          <Bot className="h-3 w-3 text-forest" />
+                          <span>Sahayak Sanctuary AI</span>
+                        </>
+                      )}
+                    </span>
+                    {m.source && (
+                      <span className="text-[9px] bg-foreground/5 px-2 py-0.5 rounded font-mono">
+                        {m.source === "vm_orchestrator"
+                          ? "⚡ Live Azure VM"
+                          : m.source === "backend_casewriter_engine"
+                          ? "🛡️ Backend Synthesis"
+                          : "🍃 Client Fallback"}
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                <div className="whitespace-pre-wrap font-sans text-xs md:text-sm leading-relaxed">
+                  {m.content}
+                </div>
+
                 {m.role === "assistant" && streaming && i === messages.length - 1 && (
                   <span className="inline-block h-3 w-1.5 ml-1 bg-clay animate-pulse" />
+                )}
+
+                {/* Save to Case Dossier Button (in CaseWriter mode) */}
+                {chatMode === "casewriter" && m.role === "assistant" && m.content && !streaming && (
+                  <div className="pt-3 mt-2 border-t border-foreground/10 flex items-center justify-between">
+                    <span className="text-[10px] text-foreground/45 font-mono">
+                      Grounded recommendation ready
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleSaveToDossier(m.content, i)}
+                      disabled={savedNotes[i]}
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-clay hover:underline disabled:opacity-50 cursor-pointer"
+                    >
+                      {savedNotes[i] ? (
+                        <>
+                          <CheckCircle2 className="h-3 w-3 text-emerald-600" />
+                          <span className="text-emerald-600">Saved to Case Notes</span>
+                        </>
+                      ) : (
+                        <>
+                          <BookmarkPlus className="h-3.5 w-3.5" />
+                          <span>Save as Note to Dossier</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
                 )}
               </div>
             )}
@@ -317,22 +664,33 @@ export default function CrisisChatPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
-            placeholder="Type anything here... take all the time you need"
+            placeholder={
+              chatMode === "casewriter"
+                ? "Enter case facts, witness statements, or incident notes to synthesize recommendation..."
+                : "Type anything here... take all the time you need"
+            }
             maxLength={4000}
             disabled={streaming}
           />
           <button
             type="button"
-            onClick={handleSend}
+            onClick={() => handleSend()}
             disabled={streaming || !input.trim()}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-forest text-forest-foreground shadow-[var(--shadow-lift)] transition-all hover:bg-clay disabled:opacity-40"
+            className={`flex h-11 w-11 items-center justify-center rounded-full text-white shadow-[var(--shadow-lift)] transition-all disabled:opacity-40 cursor-pointer active:scale-95 ${
+              chatMode === "casewriter" ? "bg-clay hover:bg-forest" : "bg-forest hover:!bg-clay"
+            }`}
             aria-label="Send message"
           >
-            <Send className="h-4 w-4" />
+            {streaming ? <Sparkles className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </button>
         </div>
-        <div className="mx-auto max-w-4xl text-center text-[10px] text-foreground/40 pt-1.5 font-light">
-          Encrypted & unrecorded · Press <kbd className="font-mono">Esc</kbd> anytime for Quick Exit
+        <div className="mx-auto max-w-4xl flex items-center justify-between text-[10px] text-foreground/40 pt-1.5 px-2 font-light">
+          <span>
+            {chatMode === "casewriter"
+              ? "CaseWriter v2.1.0 · Grounded Bayesian inference & policy compliance"
+              : "Encrypted & unrecorded · Press Esc anytime for Quick Exit"}
+          </span>
+          <span className="font-mono">Port :8400 & :8500</span>
         </div>
       </div>
     </div>

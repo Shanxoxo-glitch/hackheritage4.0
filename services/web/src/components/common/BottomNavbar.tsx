@@ -1,8 +1,11 @@
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import {
   MessageCircle,
   User,
+  Power,
 } from "lucide-react";
+import { getCurrentUser, logoutUser, subscribeToStore, AuthUser } from "@/lib/store";
 
 interface BottomNavbarProps {
   onOpenAuth: () => void;
@@ -11,6 +14,14 @@ interface BottomNavbarProps {
 export function BottomNavbar({ onOpenAuth }: BottomNavbarProps) {
   const location = useLocation();
   const currentPath = location.pathname;
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+
+  useEffect(() => {
+    const refresh = () => setCurrentUser(getCurrentUser());
+    refresh();
+    const unsub = subscribeToStore(refresh);
+    return () => unsub();
+  }, []);
 
   return (
       <nav
@@ -63,16 +74,39 @@ export function BottomNavbar({ onOpenAuth }: BottomNavbarProps) {
           <span className="text-white font-medium tracking-wide">Enter Chat</span>
         </Link>
 
-        {/* Sign in / Login modal button */}
-        <button
-          type="button"
-          onClick={onOpenAuth}
-          className="flex items-center gap-1 rounded-full p-2 text-foreground/70 hover:text-clay hover:bg-foreground/5 transition-colors"
-          title="Sign in or register role"
-          aria-label="Account login and registration"
-        >
-          <User className="h-4 w-4" />
-        </button>
+        {/* Auth status & Log out or Log in button */}
+        {currentUser ? (
+          <div className="flex items-center gap-1.5 pl-1.5 border-l border-foreground/15">
+            <span
+              className="hidden sm:inline text-[11px] font-mono text-foreground/70 max-w-[85px] truncate font-medium"
+              title={`${currentUser.name} (${currentUser.role})`}
+            >
+              {currentUser.name.split(" ")[0]}
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                logoutUser();
+                setCurrentUser(null);
+              }}
+              className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-forest text-white shadow-sm hover:bg-clay transition-all cursor-pointer"
+              title="Log Out"
+              aria-label="Log out"
+            >
+              <Power className="h-3 w-3 text-white" />
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={onOpenAuth}
+            className="flex items-center gap-1 rounded-full p-2 text-foreground/70 hover:text-clay hover:bg-foreground/5 transition-colors"
+            title="Sign in or register role"
+            aria-label="Account login and registration"
+          >
+            <User className="h-4 w-4" />
+          </button>
+        )}
       </nav>
   );
 }

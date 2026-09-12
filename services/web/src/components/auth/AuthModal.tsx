@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { BASE } from "../../lib/api";
+import { setVictimSharePreference, syncVictimAccountAndCase } from "../../lib/store";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -52,6 +53,7 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
   const [copiedRef, setCopiedRef] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [sharePersonalInfo, setSharePersonalInfo] = useState(false);
 
   // Load Spline runtime on left side canvas with dimension guard
   useEffect(() => {
@@ -158,6 +160,18 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
         })
       );
 
+      // Save victim personal info sharing preference & sync account codeword & case
+      if (role === "victim") {
+        syncVictimAccountAndCase({
+          email: email.trim() || `victim_${Date.now()}@sahayak.gov.in`,
+          name: name.trim() || "Anonymous Traveler",
+          phone: phone.trim(),
+          sharePersonalInfo,
+          referralId: referralId || generatedVictimRef,
+          user_id: data.user_id,
+        });
+      }
+
       setTimeout(() => {
         onClose();
         setIsSubmitted(false);
@@ -168,13 +182,13 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
         } else if (role === "admin") {
           navigate({ to: "/admin" });
         } else {
-          navigate({ to: "/checkin" });
+          navigate({ to: "/chat" });
         }
       }, 800);
     } catch (err: any) {
       console.warn("Backend auth unavailable, granting local session:", err);
       // Graceful offline fallback: allow immediate entry into counsellor / admin station
-      const mockUserId = `counsellor_local_${Date.now()}`;
+      const mockUserId = `${role}_local_${Date.now()}`;
       localStorage.setItem("sahayak_access_token", `mock_token_${Date.now()}`);
       localStorage.setItem("sahayak_auth_role", role);
       localStorage.setItem(
@@ -186,6 +200,17 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
           user_id: mockUserId,
         })
       );
+
+      if (role === "victim") {
+        syncVictimAccountAndCase({
+          email: email.trim() || `victim_${Date.now()}@sahayak.gov.in`,
+          name: name.trim() || "Anonymous Traveler",
+          phone: phone.trim(),
+          sharePersonalInfo,
+          referralId: referralId || generatedVictimRef,
+          user_id: mockUserId,
+        });
+      }
 
       setIsSubmitted(true);
       setTimeout(() => {
@@ -476,6 +501,46 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
                           placeholder="name@example.com (strictly encrypted)"
                           className="w-full rounded-full border border-foreground/15 bg-background pl-10 pr-4 py-2.5 text-xs text-foreground focus:border-clay focus:outline-none"
                         />
+                      </div>
+                    </div>
+
+                    {/* Circular Switch Toggle: Share Personal Info with Counsellor */}
+                    <div className="rounded-2xl border border-foreground/15 bg-background/60 p-4 space-y-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="space-y-0.5">
+                          <span className="text-xs font-semibold text-foreground block">
+                            Share Personal Info with Counsellor
+                          </span>
+                          <span className="text-[11px] text-foreground/60 block">
+                            {sharePersonalInfo
+                              ? "Counsellor receives your name and contact for direct outreach."
+                              : "Strict anonymity active. Counsellor only receives your secret codeword."}
+                          </span>
+                        </div>
+
+                        {/* Circular toggle switch button */}
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={sharePersonalInfo}
+                          onClick={() => setSharePersonalInfo(!sharePersonalInfo)}
+                          className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                            sharePersonalInfo ? "bg-forest" : "bg-foreground/20"
+                          }`}
+                        >
+                          <span
+                            aria-hidden="true"
+                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                              sharePersonalInfo ? "translate-x-5" : "translate-x-0"
+                            }`}
+                          />
+                        </button>
+                      </div>
+
+                      <div className="text-[10px] text-foreground/45 italic border-t border-foreground/5 pt-2 font-mono">
+                        {sharePersonalInfo
+                          ? "Status: Identity Disclosed (Confidential Care)"
+                          : "Status: 100% Shielded (Codeword Only)"}
                       </div>
                     </div>
                   </div>
