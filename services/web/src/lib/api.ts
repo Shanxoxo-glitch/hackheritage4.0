@@ -79,7 +79,7 @@ const SCRIPTED_RESPONSES: Record<string, string[]> = {
 
 // SSE streaming for chat with graceful mock simulation fallback
 export function streamChat(
-  body: { case_id: string; channel: string; message: string; language?: string },
+  body: { case_id: string; channel: string; message: string; language?: string; model?: string },
   onDelta: (text: string) => void,
   onFinal: (data: { thread_id: string; status: string; audit_ref: string; reply: string }) => void,
   onError: (err: string) => void
