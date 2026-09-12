@@ -1,0 +1,37 @@
+{
+  "method": "temperature_scaling",
+  "temperature": 0.1399880013036234,
+  "fitted_on": "data/processed/threat_v7_val.csv",
+  "n_val": 78,
+  "n_test": 78,
+  "before": {
+    "val": {
+      "nll": 0.43917563557624817,
+      "ece": 0.33762570145802623,
+      "mean_confidence": 0.6495537757873535,
+      "accuracy": 0.9871794871794872
+    },
+    "test": {
+      "nll": 0.45311668515205383,
+      "ece": 0.31830474505057704,
+      "mean_confidence": 0.6480430960655212,
+      "accuracy": 0.9615384615384616
+    }
+  },
+  "after": {
+    "val": {
+      "nll": 0.0671280175447464,
+      "ece": 6.535725715828278e-05,
+      "mean_confidence": 0.9872448444366455,
+      "accuracy": 0.9871794871794872
+    },
+    "test": {
+      "nll": 0.15065762400627136,
+      "ece": 0.02476307978996861,
+      "mean_confidence": 0.9863015413284302,
+      "accuracy": 0.9615384615384616
+    }
+  },
+  "fitted_at_utc": "2026-09-06T11:43:21+00:00",
+  "note": "Applied as softmax(logits / T). Fitted on a small validation set; treat as a first-order correction."
+}

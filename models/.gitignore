@@ -1,5 +1,18 @@
 # Model weights are NOT versioned in git. They live on HF Hub (Shota2811/ps26094-signals, private)
 # or are bind-mounted into the scoring container as /models (see docker-compose.yml).
+# Heavy weight files (.safetensors, .joblib, .pkl) are blocked by root .gitignore.
+# Tiny metadata files (config.json, calibration.json, tokenizer configs) ARE versioned here
+# so label maps and calibration temperatures stay in sync with the codebase.
 *
 !.gitignore
 !REGISTRY.md
+# allow model metadata (not weights — those are caught by root .gitignore)
+!*/
+!*/config.json
+!*/calibration.json
+!*/tokenizer_config.json
+!*/tokenizer.json
+!*/special_tokens_map.json
+!*/metrics.json
+!*/metrics_ravdess.json
+!*/README.md
