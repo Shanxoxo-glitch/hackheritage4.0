@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { getCheckIns, deleteCheckIn, subscribeToStore, CheckInEntry } from "@/lib/store";
-import { ArrowLeft, Trash2, Calendar, Sparkles, Moon, Sun, Flower2, Plus } from "lucide-react";
+import { ArrowLeft, Trash2, Calendar, Sparkles, Moon, Sun, Flower2, Plus, Mic, FileText, Activity, Shield, Camera } from "lucide-react";
 
 export const Route = createFileRoute("/history")({
   head: () => ({
@@ -187,15 +187,54 @@ export default function HistoryGardenPage() {
                         }`}
                       />
                       <div>
-                        <div className="text-sm font-medium text-foreground">
-                          {new Date(entry.date).toLocaleDateString("en-IN", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          })}
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-foreground">
+                            {new Date(entry.date).toLocaleDateString("en-IN", {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            })}
+                          </span>
+                          {/* Modality Tag: camera used vs voice used vs text used */}
+                          <span
+                            className={`text-[9px] uppercase font-mono px-2 py-0.5 rounded-full font-bold inline-flex items-center gap-1 ${
+                              entry.modality === "camera used"
+                                ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/20"
+                                : entry.modality === "voice used"
+                                ? "bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/20"
+                                : "bg-forest/15 text-forest border border-forest/20"
+                            }`}
+                          >
+                            {entry.modality === "camera used" ? (
+                              <>
+                                <Camera className="h-2.5 w-2.5" />
+                                <span>Camera Used</span>
+                              </>
+                            ) : entry.modality === "voice used" ? (
+                              <>
+                                <Mic className="h-2.5 w-2.5" />
+                                <span>Voice Used</span>
+                              </>
+                            ) : (
+                              <>
+                                <FileText className="h-2.5 w-2.5" />
+                                <span>Text Used</span>
+                              </>
+                            )}
+                          </span>
                         </div>
-                        <div className="text-xs text-foreground/55">
+                        <div className="text-xs text-foreground/55 mt-0.5">
                           Felt {entry.moodLabel} · {entry.sleepHours}h rest
+                          {entry.modality === "camera used" && entry.camera_distress_score !== undefined && (
+                            <span className="ml-1.5 text-amber-600 font-mono">
+                              · OpenCV {Math.round(entry.camera_distress_score * 100)}% ({entry.primary_emotion || "NEUTRAL"})
+                            </span>
+                          )}
+                          {entry.modality === "voice used" && entry.voice_stress_score !== undefined && (
+                            <span className="ml-1.5 text-purple-600 font-mono">
+                              · Acoustic {Math.round(entry.voice_stress_score * 100)}%
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -248,6 +287,129 @@ export default function HistoryGardenPage() {
                     <span className="font-display text-2xl text-foreground">
                       {selectedEntry.sleepHours} hrs ({selectedEntry.sleepQuality})
                     </span>
+                  </div>
+                </div>
+
+                {/* Modality & Perception Signal Card */}
+                <div className={`p-4 rounded-2xl border ${
+                  selectedEntry.modality === "camera used"
+                    ? "border-amber-500/30 bg-amber-500/5"
+                    : selectedEntry.modality === "voice used"
+                    ? "border-purple-500/30 bg-purple-500/5"
+                    : "border-forest/25 bg-forest/5"
+                } space-y-2`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {selectedEntry.modality === "camera used" ? (
+                        <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-600">
+                          <Camera className="h-4 w-4" />
+                        </div>
+                      ) : selectedEntry.modality === "voice used" ? (
+                        <div className="p-1.5 rounded-lg bg-purple-500/20 text-purple-600">
+                          <Mic className="h-4 w-4" />
+                        </div>
+                      ) : (
+                        <div className="p-1.5 rounded-lg bg-forest/20 text-forest">
+                          <FileText className="h-4 w-4" />
+                        </div>
+                      )}
+                      <div>
+                        <span className="text-xs font-semibold uppercase tracking-wider block font-mono">
+                          {selectedEntry.modality === "camera used"
+                            ? "Camera Used · OpenCV FER+ Averaging"
+                            : selectedEntry.modality === "voice used"
+                            ? "Voice Used · Acoustic Scoring"
+                            : "Text Used · MuRIL Perception"}
+                        </span>
+                        <span className="text-[10px] text-foreground/50">
+                          {selectedEntry.modality === "camera used"
+                            ? "Assessed via OpenCV ONNX Net (:8400/api/v1/perception/camera-average)"
+                            : selectedEntry.modality === "voice used"
+                            ? "Assessed via Sohon's Voice Model (:8100/v1/signals/voice)"
+                            : "Assessed via Sohon's MuRIL Text Model (:8100/v1/signals/text)"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <span className={`text-[10px] uppercase font-mono px-2.5 py-1 rounded-full font-bold ${
+                      selectedEntry.modality === "camera used"
+                        ? "bg-amber-500/20 text-amber-700 dark:text-amber-300"
+                        : selectedEntry.modality === "voice used"
+                        ? "bg-purple-500/20 text-purple-700 dark:text-purple-300"
+                        : "bg-forest/20 text-forest"
+                    }`}>
+                      {selectedEntry.modality === "camera used"
+                        ? "Camera Used"
+                        : selectedEntry.modality === "voice used"
+                        ? "Voice Used"
+                        : "Text Used"}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 pt-1 border-t border-foreground/5 text-xs">
+                    {selectedEntry.modality === "camera used" ? (
+                      <>
+                        <div className="p-2 rounded-xl bg-background/60">
+                          <span className="text-[10px] text-foreground/50 block">Averaged Visual Distress</span>
+                          <span className="font-mono font-bold text-amber-600 text-sm">
+                            {Math.round((selectedEntry.camera_distress_score ?? 0.35) * 100)}%
+                          </span>
+                        </div>
+                        <div className="p-2 rounded-xl bg-background/60">
+                          <span className="text-[10px] text-foreground/50 block">Primary Facial Emotion</span>
+                          <span className="font-medium text-foreground text-xs leading-snug capitalize">
+                            {selectedEntry.primary_emotion || "Neutral"}
+                          </span>
+                        </div>
+                        {selectedEntry.emotion_scores && (
+                          <div className="col-span-2 p-2 rounded-xl bg-background/40 space-y-1.5 mt-1">
+                            <span className="text-[9px] font-mono uppercase text-foreground/50 block">
+                              OpenCV Session Emotion Breakdown
+                            </span>
+                            <div className="grid grid-cols-4 gap-1.5 text-[9px] font-mono">
+                              {Object.entries(selectedEntry.emotion_scores).slice(0, 4).map(([emo, score]) => (
+                                <div key={emo} className="bg-background/80 p-1 rounded border border-foreground/5 text-center">
+                                  <span className="block text-foreground/50 capitalize truncate">{emo.toLowerCase()}</span>
+                                  <span className="font-bold text-amber-600">{Math.round(score * 100)}%</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    ) : selectedEntry.modality === "voice used" ? (
+                      <>
+                        <div className="p-2 rounded-xl bg-background/60">
+                          <span className="text-[10px] text-foreground/50 block">Acoustic Stress</span>
+                          <span className="font-mono font-bold text-clay text-sm">
+                            {Math.round((selectedEntry.voice_stress_score ?? 0.28) * 100)}%
+                          </span>
+                        </div>
+                        <div className="p-2 rounded-xl bg-background/60">
+                          <span className="text-[10px] text-foreground/50 block">Voice Perception</span>
+                          <span className="font-medium text-foreground text-xs leading-snug">
+                            {selectedEntry.voice_label || "Acoustic Tone Logged"}
+                          </span>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="p-2 rounded-xl bg-background/60">
+                          <span className="text-[10px] text-foreground/50 block">Text Distress / Sentiment</span>
+                          <span className="font-medium text-foreground text-xs leading-snug">
+                            {selectedEntry.sentiment_label || "MuRIL Tone Analyzed"}
+                          </span>
+                        </div>
+                        <div className="p-2 rounded-xl bg-background/60">
+                          <span className="text-[10px] text-foreground/50 block">Threat Classification</span>
+                          <span className={`font-mono font-bold text-xs ${
+                            selectedEntry.threat_flag ? "text-red-500" : "text-green-600"
+                          }`}>
+                            {selectedEntry.threat_flag ? "Elevated Alert" : "Shielded (Safe)"}
+                          </span>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
 

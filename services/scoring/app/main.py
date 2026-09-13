@@ -142,10 +142,21 @@ def decode_audio_bytes(raw: bytes):
         raise HTTPException(400, "empty audio body")
     if len(raw) > MAX_AUDIO_BYTES:
         raise HTTPException(413, f"audio larger than {MAX_AUDIO_BYTES // (1024 * 1024)} MB")
+    data = None
+    sr = None
     try:
         data, sr = sf.read(io.BytesIO(raw), dtype="float32", always_2d=True)
-    except Exception as e:
-        raise HTTPException(400, f"could not decode audio (send WAV/FLAC/OGG): {type(e).__name__}: {str(e)[:120]}")
+    except Exception as e_sf:
+        try:
+            import subprocess
+            cmd = ["ffmpeg", "-y", "-i", "pipe:0", "-f", "wav", "-ar", str(C.AUDIO_SR), "-ac", "1", "pipe:1"]
+            proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out, err = proc.communicate(input=raw)
+            if proc.returncode != 0:
+                raise RuntimeError(err.decode("utf-8", errors="ignore")[:200])
+            data, sr = sf.read(io.BytesIO(out), dtype="float32", always_2d=True)
+        except Exception as e_ff:
+            raise HTTPException(400, f"could not decode audio: soundfile({str(e_sf)[:80]}); ffmpeg({str(e_ff)[:80]})")
     y = data.mean(axis=1)
     if y.size < C.MIN_AUDIO_SECONDS * sr:
         raise HTTPException(400, f"audio too short (< {C.MIN_AUDIO_SECONDS} s)")

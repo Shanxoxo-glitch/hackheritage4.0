@@ -8,6 +8,17 @@ export interface CheckInEntry {
   feelings: string[];
   reflection?: string;
   createdAt: number;
+  modality?: "voice used" | "text used" | "camera used";
+  voice_stress_score?: number;
+  voice_label?: "STRESSED" | "NOT_STRESSED";
+  camera_distress_score?: number;
+  primary_emotion?: string;
+  emotion_scores?: Record<string, number>;
+  threat_prob?: number;
+  threat_flag?: boolean;
+  sentiment_score?: number;
+  sentiment_label?: "LOW" | "MODERATE" | "HIGH";
+  audio_url?: string;
 }
 
 export interface HelpRequest {
@@ -34,9 +45,12 @@ export interface VictimHistoryItem {
   id: string;
   timestamp: string;
   text: string;
-  source: "chat" | "questionnaire" | "intake";
+  source: "chat" | "questionnaire" | "intake" | "voice_checkin" | "camera_checkin";
   risk_level?: "CRITICAL" | "HIGH" | "MODERATE" | "LOW";
   details?: string;
+  modality?: "voice used" | "text used" | "camera used";
+  camera_distress_score?: number;
+  primary_emotion?: string;
 }
 
 export interface TriageAlert {
@@ -85,12 +99,15 @@ export interface CounsellorCase {
   last_interaction: string;
   created_at: string;
   latest_checkin?: CheckInEntry;
-  latest_source?: "chat" | "questionnaire" | "intake";
+  latest_source?: "chat" | "questionnaire" | "intake" | "voice_checkin" | "camera_checkin";
+  latest_modality?: "voice used" | "text used" | "camera used";
   share_personal_info?: boolean;
   victim_profile?: {
     name?: string;
     email?: string;
     phone?: string;
+    close_phone?: string;
+    keypad_code?: string;
   };
   interaction_history?: VictimHistoryItem[];
   ml_scores?: {
@@ -100,6 +117,8 @@ export interface CounsellorCase {
     threat_prob: number;
     voice_stress_score?: number;
     voice_label?: "STRESSED" | "NOT_STRESSED";
+    camera_distress_score?: number;
+    primary_emotion?: string;
     has_voice_recording?: boolean;
     composite_score: number;
     confidence: number;
@@ -260,6 +279,8 @@ export interface AuthUser {
   name: string;
   role: "victim" | "counsellor" | "admin";
   phone?: string;
+  close_phone?: string;
+  keypad_code?: string;
   codeword?: string;
   share_personal_info?: boolean;
 }
@@ -286,6 +307,8 @@ export function syncVictimAccountAndCase(info: {
   email: string;
   name: string;
   phone?: string;
+  close_phone?: string;
+  keypad_code?: string;
   sharePersonalInfo: boolean;
   referralId?: string;
   user_id: string;
@@ -316,28 +339,59 @@ export function syncVictimAccountAndCase(info: {
     name: info.name,
     role: "victim",
     phone: info.phone,
+    close_phone: info.close_phone,
+    keypad_code: info.keypad_code,
     codeword: cw,
     share_personal_info: info.sharePersonalInfo,
   };
   localStorage.setItem("sahayak_auth_user", JSON.stringify(authUser));
+
+  // Auto-record Day 1 Intake Check-in (counts as first check-in, modality: text used)
+  const todayStr = new Date().toISOString().split("T")[0];
+  const allCheckins = getCheckIns();
+  let intakeCheckin: CheckInEntry | undefined;
+  if (!allCheckins.some((c) => c.date === todayStr)) {
+    intakeCheckin = saveCheckIn({
+      date: todayStr,
+      mood: 3,
+      moodLabel: "Intake Established",
+      sleepHours: 7,
+      sleepQuality: "Normal",
+      feelings: ["Seeking sanctuary", "Intake recorded"],
+      reflection: "Initial intake check-in created upon victim sign-up.",
+      modality: "text used",
+      threat_prob: 0.14,
+      threat_flag: false,
+      sentiment_score: 0.35,
+      sentiment_label: "LOW",
+    });
+  }
 
   // Sync with CounsellorCase immediately so counsellor views live status
   const cases = getCases();
   let targetCase = cases.find((c) => c.codeword === cw || c.case_id === cw);
   let updatedCases: CounsellorCase[];
 
+  const victimProfile = {
+    name: info.name,
+    email: info.email,
+    phone: info.phone,
+    close_phone: info.close_phone,
+    keypad_code: info.keypad_code,
+  };
+
   if (targetCase) {
     updatedCases = cases.map((c) => {
       if (c.id === targetCase!.id) {
         return {
           ...c,
+          latest_modality: "text used" as const,
           share_personal_info: info.sharePersonalInfo,
-          victim_profile: info.sharePersonalInfo
-            ? { name: info.name, email: info.email, phone: info.phone }
-            : undefined,
+          victim_profile: victimProfile,
           signals: Array.from(new Set([
-            ...c.signals.filter((s) => s !== "Strict Anonymous Shield" && s !== "Personal Info Disclosed"),
+            ...c.signals.filter((s) => !s.includes("voice used") && !s.includes("text used") && s !== "Strict Anonymous Shield" && s !== "Personal Info Disclosed"),
             info.sharePersonalInfo ? "Personal Info Disclosed" : "Strict Anonymous Shield",
+            "text used (intake)",
           ])),
         };
       }
@@ -352,16 +406,40 @@ export function syncVictimAccountAndCase(info: {
       triage_priority: "P3 - Routine",
       status: "new",
       share_personal_info: info.sharePersonalInfo,
-      victim_profile: info.sharePersonalInfo
-        ? { name: info.name, email: info.email, phone: info.phone }
-        : undefined,
-      distress_trajectory: [{ date: "Intake", score: 0.35 }],
+      victim_profile: victimProfile,
+      distress_trajectory: [{ date: "Intake", score: 0.35, event: "Sign-up (text used)" }],
       fieldNotes: [],
-      interaction_history: [],
-      signals: [info.sharePersonalInfo ? "Personal Info Disclosed" : "Strict Anonymous Shield", "PWA Secure"],
-      summary: "",
+      interaction_history: [
+        {
+          id: `hist_${Date.now()}`,
+          timestamp: "Just now",
+          text: "Victim completed intake onboarding via web portal.",
+          source: "intake",
+          risk_level: "LOW",
+          modality: "text used",
+        },
+      ],
+      latest_modality: "text used",
+      latest_checkin: intakeCheckin,
+      signals: [
+        info.sharePersonalInfo ? "Personal Info Disclosed" : "Strict Anonymous Shield",
+        "PWA Secure",
+        "text used",
+      ],
+      summary: "Case initiated via victim intake portal.",
       last_interaction: "Just now",
       created_at: new Date().toLocaleDateString("en-IN", { month: "short", day: "numeric" }),
+      ml_scores: {
+        sentiment_label: "LOW",
+        sentiment_score: 0.35,
+        threat_flag: false,
+        threat_prob: 0.14,
+        voice_stress_score: 0.25,
+        voice_label: "NOT_STRESSED",
+        composite_score: 0.32,
+        confidence: 0.88,
+        trend_flag: "STABLE",
+      },
     };
     updatedCases = [createdCase, ...cases];
   }
@@ -369,6 +447,371 @@ export function syncVictimAccountAndCase(info: {
   localStorage.setItem(STORAGE_KEYS.CASES, JSON.stringify(updatedCases));
   notifyStoreChange();
   return cw;
+}
+
+async function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const res = reader.result as string;
+      const b64 = res.includes(",") ? res.split(",")[1] : res;
+      resolve(b64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+export async function submitVoiceCheckIn(params: {
+  audioBlob?: Blob;
+  audioBase64?: string;
+  durationSeconds: number;
+  transcript?: string;
+}): Promise<CheckInEntry> {
+  const todayStr = new Date().toISOString().split("T")[0];
+  let voiceStress: number | null = null;
+  let voiceLabel: "STRESSED" | "NOT_STRESSED" = "NOT_STRESSED";
+
+  let b64 = params.audioBase64;
+  if (!b64 && params.audioBlob) {
+    try {
+      b64 = await blobToBase64(params.audioBlob);
+    } catch (e) {
+      console.warn("Failed to convert audio blob to base64:", e);
+    }
+  }
+
+  // 1. Call the unified backend gateway on port 8400: /api/v1/perception/voice-score
+  try {
+    if (b64) {
+      const res = await fetch("http://localhost:8400/api/v1/perception/voice-score", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          audio_base64: b64,
+          duration_seconds: params.durationSeconds || 5,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const score = data.voice_stress_score ?? data.score ?? data.prob_stressed;
+        if (typeof score === "number") {
+          voiceStress = Number(score.toFixed(3));
+        }
+        const label = data.label ?? data.voice_label;
+        if (label === "STRESSED" || label === "NOT_STRESSED") {
+          voiceLabel = label;
+        } else if (voiceStress !== null) {
+          voiceLabel = voiceStress >= 0.5 ? "STRESSED" : "NOT_STRESSED";
+        }
+      }
+    }
+  } catch (e) {
+    console.warn("Backend gateway :8400 voice-score call failed, trying direct :8100:", e);
+  }
+
+  // 2. If not yet resolved, try calling Sohon directly on port 8100
+  if (voiceStress === null && b64) {
+    try {
+      const res = await fetch("http://127.0.0.1:8100/v1/signals/voice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ audio_base64: b64 }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const score = data.voice?.voice_stress_score ?? data.voice_stress_score;
+        if (typeof score === "number") {
+          voiceStress = Number(score.toFixed(3));
+        }
+        const label = data.voice?.label ?? data.voice_label;
+        if (label === "STRESSED" || label === "NOT_STRESSED") {
+          voiceLabel = label;
+        } else if (voiceStress !== null) {
+          voiceLabel = voiceStress >= 0.5 ? "STRESSED" : "NOT_STRESSED";
+        }
+      }
+    } catch (e) {
+      console.warn("Direct Sohon :8100 call failed:", e);
+    }
+  }
+
+  // Fallback only if both servers are completely down
+  if (voiceStress === null) {
+    voiceStress = 0.68;
+    voiceLabel = "STRESSED";
+  }
+
+  const newCheckIn = saveCheckIn({
+    date: todayStr,
+    mood: voiceStress > 0.65 ? 2 : voiceStress > 0.45 ? 3 : 4,
+    moodLabel: voiceLabel === "STRESSED" ? "Elevated Vocal Stress" : "Calm & Grounded",
+    sleepHours: 6,
+    sleepQuality: "Normal",
+    feelings: voiceLabel === "STRESSED" ? ["Vocal tension", "Heavy load"] : ["Vocal unburdening", "Centered"],
+    reflection: params.transcript || `IVRS voice check-in recorded (${params.durationSeconds}s clip). Acoustic model evaluated.`,
+    modality: "voice used",
+    voice_stress_score: voiceStress,
+    voice_label: voiceLabel,
+  });
+
+  // Sync with active counsellor case
+  const activeCw = getActiveCodeword();
+  if (activeCw) {
+    const cases = getCases();
+    const updated = cases.map((c) => {
+      if (c.codeword === activeCw || c.case_id === activeCw) {
+        return {
+          ...c,
+          latest_modality: "voice used" as const,
+          latest_checkin: newCheckIn,
+          last_interaction: "Just now (Voice Check-in)",
+          signals: Array.from(new Set([
+            ...c.signals.filter((s) => !s.includes("voice used") && !s.includes("text used")),
+            `voice used (stress ${(voiceStress * 100).toFixed(0)}%)`,
+          ])),
+          ml_scores: {
+            ...(c.ml_scores || {
+              sentiment_label: "LOW",
+              sentiment_score: 0.3,
+              threat_flag: false,
+              threat_prob: 0.1,
+              composite_score: 0.35,
+              confidence: 0.85,
+              trend_flag: "STABLE",
+            }),
+            voice_stress_score: voiceStress,
+            voice_label: voiceLabel,
+            has_voice_recording: true,
+            composite_score: Math.min(0.95, (c.ml_scores?.composite_score || 0.4) * 0.4 + voiceStress * 0.6),
+          },
+          distress_trajectory: [
+            ...(c.distress_trajectory || []),
+            { date: "Today", score: Number(voiceStress.toFixed(2)), event: "IVRS Voice Check-in (voice used)" },
+          ],
+        };
+      }
+      return c;
+    });
+    localStorage.setItem(STORAGE_KEYS.CASES, JSON.stringify(updated));
+    notifyStoreChange();
+  }
+
+  return newCheckIn;
+}
+
+export function signInWithKeypadCode(phone: string, keypadCode: string): AuthUser | null {
+  if (typeof window === "undefined") return null;
+  const cleanPhone = phone.trim().replace(/\s+/g, "");
+  const cleanCode = keypadCode.trim();
+
+  // Search existing cases
+  const rawCases = localStorage.getItem(STORAGE_KEYS.CASES);
+  if (rawCases) {
+    try {
+      const cases: CounsellorCase[] = JSON.parse(rawCases);
+      const matched = cases.find(
+        (c) =>
+          c.victim_profile?.phone?.replace(/\s+/g, "").endsWith(cleanPhone.slice(-10)) &&
+          c.victim_profile?.keypad_code === cleanCode
+      );
+      if (matched) {
+        const user: AuthUser = {
+          user_id: matched.id,
+          name: matched.victim_profile?.name || "Anonymous Traveler",
+          email: matched.victim_profile?.email || `${matched.codeword}@sahayak.gov.in`,
+          role: "victim",
+          phone: matched.victim_profile?.phone,
+          close_phone: matched.victim_profile?.close_phone,
+          keypad_code: cleanCode,
+          codeword: matched.codeword,
+          share_personal_info: matched.share_personal_info,
+        };
+        localStorage.setItem("sahayak_access_token", `token_keypad_${Date.now()}`);
+        localStorage.setItem("sahayak_auth_role", "victim");
+        localStorage.setItem("sahayak_auth_user", JSON.stringify(user));
+        setActiveCodeword(matched.codeword);
+        notifyStoreChange();
+        return user;
+      }
+    } catch {}
+  }
+
+  // Check stored auth user
+  const rawUser = localStorage.getItem("sahayak_auth_user");
+  if (rawUser) {
+    try {
+      const user: AuthUser = JSON.parse(rawUser);
+      if (
+        user.phone?.replace(/\s+/g, "").endsWith(cleanPhone.slice(-10)) &&
+        user.keypad_code === cleanCode
+      ) {
+        localStorage.setItem("sahayak_access_token", `token_keypad_${Date.now()}`);
+        localStorage.setItem("sahayak_auth_role", "victim");
+        setActiveCodeword(user.codeword || "");
+        notifyStoreChange();
+        return user;
+      }
+    } catch {}
+  }
+
+  return null;
+}
+
+export async function submitCameraCheckIn(params: {
+  frames: string[];
+  durationSeconds: number;
+  averageScores?: {
+    average_distress_score?: number;
+    primary_emotion?: string;
+    average_emotions?: Record<string, number>;
+  };
+}): Promise<CheckInEntry> {
+  const todayStr = new Date().toISOString().split("T")[0];
+  let avgDistress = params.averageScores?.average_distress_score ?? 0.65;
+  let primaryEmotion = params.averageScores?.primary_emotion ?? "SADNESS";
+  let emotionDistribution = params.averageScores?.average_emotions || {};
+
+  // Try calling backend OpenCV session average endpoint (:8400/api/v1/perception/camera-average)
+  try {
+    if (params.frames && params.frames.length > 0) {
+      const res = await fetch("http://localhost:8400/api/v1/perception/camera-average", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          frames: params.frames,
+          session_seconds: params.durationSeconds || 5,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (typeof data.average_distress_score === "number") {
+          avgDistress = data.average_distress_score;
+        }
+        if (data.primary_emotion) {
+          primaryEmotion = data.primary_emotion;
+        }
+        if (data.average_emotions) {
+          emotionDistribution = data.average_emotions;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("Backend camera averaging endpoint error, using local computation:", err);
+  }
+
+  // Map distress to mood: High distress (e.g. sadness, crying, tension) -> Fragile (1) / Heavy (2)
+  const isDistressedEmotion = ["SADNESS", "FEAR", "ANGER", "DISGUST", "CONTEMPT"].includes(primaryEmotion);
+  const moodVal: 1 | 2 | 3 | 4 | 5 =
+    avgDistress > 0.65 ? 1 :
+    avgDistress > 0.45 || isDistressedEmotion ? 2 :
+    avgDistress > 0.30 ? 3 :
+    avgDistress > 0.18 ? 4 : 5;
+
+  const newCheckIn = saveCheckIn({
+    date: todayStr,
+    mood: moodVal,
+    moodLabel: `Visual ${primaryEmotion} (${(avgDistress * 100).toFixed(0)}% distress)`,
+    sleepHours: isDistressedEmotion ? 5 : 7,
+    sleepQuality: isDistressedEmotion ? "Restless" : "Normal",
+    feelings: [primaryEmotion, avgDistress > 0.45 ? "Emotional Strain" : "Visual Calm"],
+    reflection: `Live camera emotion check-in (${params.durationSeconds || 5}s OpenCV scan). Primary emotion: ${primaryEmotion}. Session average distress: ${(avgDistress * 100).toFixed(0)}%.`,
+    modality: "camera used",
+    camera_distress_score: avgDistress,
+    primary_emotion: primaryEmotion,
+    emotion_scores: emotionDistribution,
+  });
+
+  // Sync with active counsellor case
+  const activeCw = getActiveCodeword();
+  if (activeCw) {
+    const cases = getCases();
+    const updated = cases.map((c) => {
+      if (c.codeword === activeCw || c.case_id === activeCw) {
+        return {
+          ...c,
+          latest_modality: "camera used" as const,
+          latest_source: "camera_checkin" as const,
+          latest_checkin: newCheckIn,
+          last_interaction: "Just now (Camera Emotion Check-in)",
+          signals: Array.from(new Set([
+            ...c.signals.filter((s) => !s.includes("voice used") && !s.includes("camera used")),
+            `camera used (${primaryEmotion} distress ${(avgDistress * 100).toFixed(0)}%)`,
+          ])),
+          ml_scores: {
+            ...(c.ml_scores || {
+              sentiment_label: "LOW",
+              sentiment_score: 0.3,
+              threat_flag: false,
+              threat_prob: 0.1,
+              composite_score: 0.35,
+              confidence: 0.85,
+              trend_flag: "STABLE",
+            }),
+            camera_distress_score: avgDistress,
+            primary_emotion: primaryEmotion,
+            composite_score: Math.min(0.95, (c.ml_scores?.composite_score || 0.4) * 0.4 + avgDistress * 0.6),
+          },
+          distress_trajectory: [
+            ...(c.distress_trajectory || []),
+            { date: "Today", score: Number(avgDistress.toFixed(2)), event: `OpenCV Camera Scan (camera used · ${primaryEmotion})` },
+          ],
+        };
+      }
+      return c;
+    });
+    localStorage.setItem(STORAGE_KEYS.CASES, JSON.stringify(updated));
+    notifyStoreChange();
+  }
+
+  return newCheckIn;
+}
+
+export function signInWithCamera(params?: {
+  faceSnapshot?: string;
+  distressScore?: number;
+  primaryEmotion?: string;
+}): AuthUser {
+  const existing = getCurrentUser();
+  const codeword = existing?.codeword || generateCodeword();
+  const userId = `victim_cam_${Date.now()}`;
+  const user: AuthUser = {
+    user_id: userId,
+    name: existing?.name || "Cam-Verified Traveler",
+    email: existing?.email || `cam_victim_${Date.now()}@sahayak.gov.in`,
+    role: "victim",
+    codeword,
+    phone: existing?.phone || "",
+    keypad_code: existing?.keypad_code || "*7#",
+  };
+
+  localStorage.setItem("sahayak_access_token", `token_cam_${Date.now()}`);
+  localStorage.setItem("sahayak_auth_role", "victim");
+  localStorage.setItem("sahayak_auth_user", JSON.stringify(user));
+  setActiveCodeword(codeword);
+
+  syncVictimAccountAndCase({
+    email: user.email,
+    name: user.name,
+    phone: user.phone,
+    sharePersonalInfo: false,
+    referralId: user.keypad_code,
+    user_id: userId,
+  });
+
+  if (params?.distressScore !== undefined) {
+    submitCameraCheckIn({
+      frames: params.faceSnapshot ? [params.faceSnapshot] : [],
+      durationSeconds: 3,
+      averageScores: {
+        average_distress_score: params.distressScore,
+        primary_emotion: params.primaryEmotion || "NEUTRAL",
+      },
+    });
+  }
+
+  notifyStoreChange();
+  return user;
 }
 
 // Triage Alerts

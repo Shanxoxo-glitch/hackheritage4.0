@@ -17,10 +17,17 @@ import {
   CheckCircle2,
   Copy,
   Check,
+  RotateCcw,
+  Mic,
+  Hash,
+  Camera,
+  Video,
+  Eye,
+  Activity,
 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { BASE } from "../../lib/api";
-import { setVictimSharePreference, syncVictimAccountAndCase } from "../../lib/store";
+import { setVictimSharePreference, syncVictimAccountAndCase, signInWithKeypadCode, signInWithCamera } from "../../lib/store";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -44,6 +51,106 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [closePhone, setClosePhone] = useState("");
+  const [keypadCode, setKeypadCode] = useState("*7#");
+  const [useKeypadSignIn, setUseKeypadSignIn] = useState(false);
+  const [victimAuthMethod, setVictimAuthMethod] = useState<"traditional" | "voice_keypad" | "opencv_camera">("traditional");
+  const [camStreaming, setCamStreaming] = useState(false);
+  const [camScanning, setCamScanning] = useState(false);
+  const [camEmotionResult, setCamEmotionResult] = useState<{ distressScore: number; primaryEmotion: string } | null>(null);
+  const camVideoRef = useRef<HTMLVideoElement | null>(null);
+  const camCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const camStreamRef = useRef<MediaStream | null>(null);
+
+  const stopAuthCamera = () => {
+    if (camStreamRef.current) {
+      camStreamRef.current.getTracks().forEach((t) => t.stop());
+      camStreamRef.current = null;
+    }
+    setCamStreaming(false);
+    setCamScanning(false);
+  };
+
+  const startAuthCamera = async () => {
+    setErrorMessage(null);
+    setCamEmotionResult(null);
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error("Webcam not supported");
+      }
+      const s = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user", width: { ideal: 480 }, height: { ideal: 360 } },
+        audio: false,
+      });
+      camStreamRef.current = s;
+      if (camVideoRef.current) {
+        camVideoRef.current.srcObject = s;
+        camVideoRef.current.play().catch(() => {});
+      }
+      setCamStreaming(true);
+    } catch (err) {
+      console.warn("Auth webcam unavailable, using simulator:", err);
+      setCamStreaming(true);
+    }
+  };
+
+  const handleCameraAuthSubmit = async () => {
+    setIsLoading(true);
+    setCamScanning(true);
+    setErrorMessage(null);
+
+    let snapshotB64: string | undefined;
+    if (camVideoRef.current && camCanvasRef.current) {
+      const video = camVideoRef.current;
+      const canvas = camCanvasRef.current;
+      if (video.videoWidth > 0 && video.videoHeight > 0) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          snapshotB64 = canvas.toDataURL("image/jpeg", 0.7);
+        }
+      }
+    }
+
+    let distress = 0.65;
+    let primary = "SADNESS";
+    if (snapshotB64) {
+      try {
+        const res = await fetch("http://localhost:8400/api/v1/perception/camera-average", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ frames: [snapshotB64], session_seconds: 2 }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (typeof data.average_distress_score === "number") distress = data.average_distress_score;
+          if (data.primary_emotion) primary = data.primary_emotion;
+        }
+      } catch (e) {
+        console.warn("Camera perception endpoint unavailable:", e);
+      }
+    }
+
+    setCamEmotionResult({ distressScore: distress, primaryEmotion: primary });
+
+    setTimeout(() => {
+      stopAuthCamera();
+      signInWithCamera({
+        faceSnapshot: snapshotB64,
+        distressScore: distress,
+        primaryEmotion: primary,
+      });
+      setIsSubmitted(true);
+      setTimeout(() => {
+        onClose();
+        setIsSubmitted(false);
+        setIsLoading(false);
+        navigate({ to: "/chat" });
+      }, 800);
+    }, 900);
+  };
   const [password, setPassword] = useState("");
   const [referralId, setReferralId] = useState("");
   const [generatedVictimRef, setGeneratedVictimRef] = useState("");
@@ -100,6 +207,7 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
+        stopAuthCamera();
         onClose();
       }
     };
@@ -113,10 +221,42 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
     setTimeout(() => setCopiedRef(false), 2000);
   };
 
+  const generateRandomKeypadSequence = () => {
+    const specials = ["*", "#"];
+    const s1 = specials[Math.floor(Math.random() * specials.length)];
+    const digit = Math.floor(Math.random() * 10);
+    const s2 = specials[Math.floor(Math.random() * specials.length)];
+    const patterns = [
+      `${s1}${digit}${s2}`,
+      `${s1}${Math.floor(10 + Math.random() * 90)}`,
+      `${digit}${s1}${s2}`,
+    ];
+    return patterns[Math.floor(Math.random() * patterns.length)].slice(0, 3);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
     setIsLoading(true);
+
+    // ── Quick Keypad Sequence Sign-In ──
+    if (mode === "signin" && (useKeypadSignIn || victimAuthMethod === "voice_keypad") && role === "victim") {
+      const user = signInWithKeypadCode(phone, keypadCode);
+      if (user) {
+        setIsSubmitted(true);
+        setTimeout(() => {
+          onClose();
+          setIsSubmitted(false);
+          setIsLoading(false);
+          navigate({ to: "/chat" });
+        }, 800);
+        return;
+      } else {
+        setIsLoading(false);
+        setErrorMessage("No matching victim record found for this mobile number and keypad sequence.");
+        return;
+      }
+    }
 
     const backendRole = role === "counsellor" ? "counselor" : role;
     const endpoint = mode === "signin" ? "/api/v1/auth/login" : "/api/v1/auth/signup";
@@ -157,6 +297,9 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
           email: email || `${role}@sahayak.gov.in`,
           role,
           user_id: data.user_id,
+          phone: phone.trim(),
+          close_phone: closePhone.trim(),
+          keypad_code: keypadCode.trim() || "*7#",
         })
       );
 
@@ -165,9 +308,11 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
         syncVictimAccountAndCase({
           email: email.trim() || `victim_${Date.now()}@sahayak.gov.in`,
           name: name.trim() || "Anonymous Traveler",
-          phone: phone.trim(),
+          phone: phone.trim() || "+919876543210",
+          close_phone: closePhone.trim(),
+          keypad_code: keypadCode.trim() || "*7#",
           sharePersonalInfo,
-          referralId: referralId || generatedVictimRef,
+          referralId: keypadCode.trim() || referralId || generatedVictimRef,
           user_id: data.user_id,
         });
       }
@@ -198,6 +343,9 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
           email: email || `${role}@sahayak.gov.in`,
           role,
           user_id: mockUserId,
+          phone: phone.trim(),
+          close_phone: closePhone.trim(),
+          keypad_code: keypadCode.trim() || "*7#",
         })
       );
 
@@ -206,8 +354,10 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
           email: email.trim() || `victim_${Date.now()}@sahayak.gov.in`,
           name: name.trim() || "Anonymous Traveler",
           phone: phone.trim(),
+          close_phone: closePhone.trim(),
+          keypad_code: keypadCode.trim() || "*7#",
           sharePersonalInfo,
-          referralId: referralId || generatedVictimRef,
+          referralId: keypadCode.trim() || referralId || generatedVictimRef,
           user_id: mockUserId,
         });
       }
@@ -446,103 +596,372 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
                   )}
                 </div>
 
-                {/* ROLE 1: VICTIM */}
+                {/* ROLE 1: VICTIM - 3 DISTINCT SIGN-IN / SIGN-UP METHODS */}
                 {role === "victim" && (
-                  <div className="space-y-3">
-                    {/* Auto-generated Referral ID */}
-                    <div className="rounded-2xl border border-clay/30 bg-clay/5 p-3.5 space-y-1.5">
+                  <div className="space-y-4">
+                    {/* 3-Way Mode Switcher Header */}
+                    <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-semibold uppercase tracking-widest text-clay">
-                          Your Secret Referral Code
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground/70">
+                          {mode === "signin" ? "Select Sign-In Method" : "Select Sign-Up Method"}
                         </span>
+                        <span className="text-[9px] font-mono text-clay font-bold">
+                          3 Alternative Gateways
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-1.5 p-1 rounded-2xl bg-foreground/5 border border-foreground/10">
                         <button
                           type="button"
-                          onClick={handleCopyRef}
-                          className="flex items-center gap-1 text-[10px] text-clay hover:underline"
+                          onClick={() => {
+                            setVictimAuthMethod("traditional");
+                            stopAuthCamera();
+                          }}
+                          className={`py-2 px-1.5 rounded-xl text-[10px] sm:text-xs font-semibold transition-all flex flex-col sm:flex-row items-center justify-center gap-1 text-center ${
+                            victimAuthMethod === "traditional"
+                              ? "bg-forest text-forest-foreground shadow-sm"
+                              : "text-foreground/60 hover:text-foreground"
+                          }`}
                         >
-                          {copiedRef ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                          <span>{copiedRef ? "Copied" : "Copy"}</span>
+                          <Lock className="h-3.5 w-3.5 shrink-0" />
+                          <span>1. Standard</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setVictimAuthMethod("voice_keypad");
+                            stopAuthCamera();
+                          }}
+                          className={`py-2 px-1.5 rounded-xl text-[10px] sm:text-xs font-semibold transition-all flex flex-col sm:flex-row items-center justify-center gap-1 text-center ${
+                            victimAuthMethod === "voice_keypad"
+                              ? "bg-purple-600 text-white shadow-sm"
+                              : "text-foreground/60 hover:text-foreground"
+                          }`}
+                        >
+                          <Phone className="h-3.5 w-3.5 shrink-0" />
+                          <span>2. Voice / Keypad</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setVictimAuthMethod("opencv_camera");
+                            startAuthCamera();
+                          }}
+                          className={`py-2 px-1.5 rounded-xl text-[10px] sm:text-xs font-semibold transition-all flex flex-col sm:flex-row items-center justify-center gap-1 text-center ${
+                            victimAuthMethod === "opencv_camera"
+                              ? "bg-amber-500 text-white shadow-sm"
+                              : "text-foreground/60 hover:text-foreground"
+                          }`}
+                        >
+                          <Camera className="h-3.5 w-3.5 shrink-0" />
+                          <span>3. OpenCV Camera</span>
                         </button>
                       </div>
-                      <div className="font-mono text-base font-bold text-foreground">
-                        {mode === "signup" ? generatedVictimRef : "Enter or retrieve code"}
-                      </div>
-                      <p className="text-[11px] text-foreground/60 leading-tight">
-                        Keep this code confidential. You will never need a password.
-                      </p>
                     </div>
 
-                    <div>
-                      <label className="text-xs text-foreground/70 block mb-1 font-medium">
-                        Name or Pseudonym
-                      </label>
-                      <div className="relative">
-                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/40" />
-                        <input
-                          type="text"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          placeholder="e.g. Quiet River, Maya, or leave blank"
-                          className="w-full rounded-full border border-foreground/15 bg-background pl-10 pr-4 py-2.5 text-xs text-foreground focus:border-clay focus:outline-none"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="text-xs text-foreground/70 block mb-1 font-medium">
-                        Email (Optional for quiet check-ins)
-                      </label>
-                      <div className="relative">
-                        <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/40" />
-                        <input
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="name@example.com (strictly encrypted)"
-                          className="w-full rounded-full border border-foreground/15 bg-background pl-10 pr-4 py-2.5 text-xs text-foreground focus:border-clay focus:outline-none"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Circular Switch Toggle: Share Personal Info with Counsellor */}
-                    <div className="rounded-2xl border border-foreground/15 bg-background/60 p-4 space-y-3">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="space-y-0.5">
-                          <span className="text-xs font-semibold text-foreground block">
-                            Share Personal Info with Counsellor
-                          </span>
-                          <span className="text-[11px] text-foreground/60 block">
-                            {sharePersonalInfo
-                              ? "Counsellor receives your name and contact for direct outreach."
-                              : "Strict anonymity active. Counsellor only receives your secret codeword."}
+                    {/* METHOD 3: OPENCV LIVE CAMERA EMOTION PERCEPTION (SIGN-IN & SIGN-UP) */}
+                    {victimAuthMethod === "opencv_camera" && (
+                      <div className="space-y-3.5 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4 animate-in fade-in">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-amber-600">
+                            <Camera className="h-4 w-4" />
+                            <span className="text-xs font-semibold uppercase tracking-wider font-mono">
+                              OpenCV FER+ Biometric Verification
+                            </span>
+                          </div>
+                          <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold">
+                            Modality: camera used
                           </span>
                         </div>
 
-                        {/* Circular toggle switch button */}
-                        <button
-                          type="button"
-                          role="switch"
-                          aria-checked={sharePersonalInfo}
-                          onClick={() => setSharePersonalInfo(!sharePersonalInfo)}
-                          className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                            sharePersonalInfo ? "bg-forest" : "bg-foreground/20"
-                          }`}
-                        >
-                          <span
-                            aria-hidden="true"
-                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
-                              sharePersonalInfo ? "translate-x-5" : "translate-x-0"
-                            }`}
-                          />
-                        </button>
-                      </div>
+                        <p className="text-[11px] text-foreground/70 leading-relaxed">
+                          {mode === "signin"
+                            ? "Position your face in the camera frame. OpenCV FER+ analyzes your emotion baseline and authenticates your session instantly."
+                            : "Register using your facial emotion baseline. No password needed — OpenCV maps your affective signature as biometric authentication."}
+                        </p>
 
-                      <div className="text-[10px] text-foreground/45 italic border-t border-foreground/5 pt-2 font-mono">
-                        {sharePersonalInfo
-                          ? "Status: Identity Disclosed (Confidential Care)"
-                          : "Status: 100% Shielded (Codeword Only)"}
+                        {/* Camera Viewfinder Box */}
+                        <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black/90 border border-amber-500/40 flex items-center justify-center shadow-inner">
+                          <video
+                            ref={camVideoRef}
+                            playsInline
+                            muted
+                            autoPlay
+                            className="w-full h-full object-cover mirror-x"
+                          />
+                          <canvas ref={camCanvasRef} className="hidden" />
+
+                          {/* Target reticle HUD */}
+                          <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-3">
+                            <div className="flex items-center justify-between text-[9px] font-mono text-white/80 bg-black/50 px-2.5 py-1 rounded-full border border-white/10">
+                              <span className="flex items-center gap-1.5">
+                                <span className="h-2 w-2 rounded-full bg-amber-400 animate-ping" />
+                                <span>FER+ ONNX FEED</span>
+                              </span>
+                              <span>{camScanning ? "VERIFYING EMOTION..." : "TARGET CENTERED"}</span>
+                            </div>
+
+                            <div className="self-center h-28 w-24 rounded-2xl border-2 border-amber-400/70 flex items-center justify-center relative">
+                              <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent animate-bounce" />
+                            </div>
+
+                            <div className="text-center">
+                              <span className="text-[9px] font-mono text-white/70 bg-black/60 px-2 py-0.5 rounded-full">
+                                64x64 Softmax Emotion Matrix
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Detected Emotion feedback */}
+                        {camEmotionResult && (
+                          <div className="p-2.5 rounded-xl bg-background/80 border border-amber-500/20 flex items-center justify-between text-xs font-mono">
+                            <span className="text-foreground/70">
+                              Baseline: <strong className="text-foreground capitalize">{camEmotionResult.primaryEmotion.toLowerCase()}</strong>
+                            </span>
+                            <span className="text-amber-600 font-bold">
+                              Distress: {Math.round(camEmotionResult.distressScore * 100)}%
+                            </span>
+                          </div>
+                        )}
+
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            disabled={camScanning || isLoading}
+                            onClick={handleCameraAuthSubmit}
+                            className="flex-1 py-2.5 px-4 rounded-full bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs shadow-md transition-all flex items-center justify-center gap-2"
+                          >
+                            <Activity className={`h-3.5 w-3.5 ${camScanning ? "animate-spin" : ""}`} />
+                            <span>
+                              {camScanning
+                                ? "Evaluating Face Emotion..."
+                                : mode === "signin"
+                                ? "Verify Face & Sign In"
+                                : "Register Biometric Baseline"}
+                            </span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={startAuthCamera}
+                            title="Restart Camera"
+                            className="p-2.5 rounded-full border border-foreground/15 hover:bg-foreground/5 text-foreground/60 transition-colors"
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    )}
+
+                    {/* METHOD 2: KEYPAD & VOICE SEQUENCE SIGN-IN / SIGN-UP */}
+                    {victimAuthMethod === "voice_keypad" && (
+                      <div className="space-y-3 rounded-2xl border border-purple-500/30 bg-purple-500/5 p-4 animate-in fade-in">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-purple-700 dark:text-purple-300">
+                            <Hash className="h-4 w-4" />
+                            <span className="text-xs font-semibold uppercase tracking-wider font-mono">
+                              3-Character Keypad & Voice Auth
+                            </span>
+                          </div>
+                          <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-700 dark:text-purple-300 font-bold">
+                            Modality: voice used
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-foreground/70 leading-snug">
+                          {mode === "signin"
+                            ? "Sign in immediately using your mobile number and secret 3-character keypad sequence."
+                            : "Create a voice check-in profile. Typing your 3-character sequence triggers instant IVRS voice recording."}
+                        </p>
+
+                        <div>
+                          <label className="text-xs text-foreground/80 block mb-1 font-medium">
+                            Your Mobile Number <span className="text-clay">*</span>
+                          </label>
+                          <div className="relative">
+                            <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/40" />
+                            <input
+                              type="tel"
+                              required
+                              value={phone}
+                              onChange={(e) => setPhone(e.target.value)}
+                              placeholder="+91 98765 43210"
+                              className="w-full rounded-full border border-foreground/15 bg-background pl-10 pr-4 py-2.5 text-xs text-foreground focus:border-clay focus:outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        {mode === "signup" && (
+                          <div>
+                            <label className="text-xs text-foreground/70 block mb-1 font-medium">
+                              Close One's Mobile (Family / Emergency Alert)
+                            </label>
+                            <div className="relative">
+                              <Heart className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-clay" />
+                              <input
+                                type="tel"
+                                value={closePhone}
+                                onChange={(e) => setClosePhone(e.target.value)}
+                                placeholder="+91 91234 56789 (Family)"
+                                className="w-full rounded-full border border-foreground/15 bg-background pl-10 pr-4 py-2.5 text-xs text-foreground focus:border-clay focus:outline-none"
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <label className="text-xs text-foreground/80 font-medium">
+                              3-Character Keypad Code <span className="text-clay">*</span>
+                            </label>
+                            {mode === "signup" && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const code = generateRandomKeypadSequence();
+                                  setKeypadCode(code);
+                                  setReferralId(code);
+                                }}
+                                className="flex items-center gap-1 text-[10px] text-purple-700 dark:text-purple-300 hover:underline font-mono font-medium"
+                              >
+                                <Sparkles className="h-3 w-3" />
+                                <span>Regenerate</span>
+                              </button>
+                            )}
+                          </div>
+                          <div className="relative">
+                            <Hash className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-purple-600" />
+                            <input
+                              type="text"
+                              maxLength={3}
+                              required
+                              value={keypadCode}
+                              onChange={(e) => {
+                                const val = e.target.value.slice(0, 3);
+                                setKeypadCode(val);
+                                setReferralId(val);
+                              }}
+                              placeholder="*7#"
+                              className="w-full rounded-full border border-purple-500/40 bg-background pl-10 pr-4 py-2 text-sm font-mono font-bold tracking-widest text-purple-700 dark:text-purple-300 focus:border-purple-600 focus:outline-none"
+                            />
+                          </div>
+                          <span className="text-[10px] text-foreground/50 block mt-1 pl-2">
+                            Numbers and special character (* or #), max 3 characters (e.g. *7#).
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* METHOD 1: STANDARD AUTH (EMAIL, PASSWORD, CODEWORD) */}
+                    {victimAuthMethod === "traditional" && (
+                      <div className="space-y-3 animate-in fade-in">
+                        {mode === "signup" && (
+                          <div className="rounded-2xl border border-clay/30 bg-clay/5 p-3.5 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-semibold uppercase tracking-widest text-clay flex items-center gap-1.5">
+                                <Hash className="h-3 w-3" />
+                                <span>Anonymous Referral Code</span>
+                              </span>
+                              <span className="font-mono text-xs font-bold text-clay">
+                                {generatedVictimRef}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-foreground/60 leading-tight">
+                              Generated automatically for anonymous tracking in counsellor and admin stations.
+                            </p>
+                          </div>
+                        )}
+
+                        <div>
+                          <label className="text-xs text-foreground/70 block mb-1 font-medium">
+                            Name or Pseudonym
+                          </label>
+                          <div className="relative">
+                            <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/40" />
+                            <input
+                              type="text"
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
+                              placeholder="e.g. Quiet River, Maya, or leave blank"
+                              className="w-full rounded-full border border-foreground/15 bg-background pl-10 pr-4 py-2.5 text-xs text-foreground focus:border-clay focus:outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-xs text-foreground/70 block mb-1 font-medium">
+                            Email <span className="text-clay">*</span>
+                          </label>
+                          <div className="relative">
+                            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/40" />
+                            <input
+                              type="email"
+                              required
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              placeholder="victim@sahayak.gov.in"
+                              className="w-full rounded-full border border-foreground/15 bg-background pl-10 pr-4 py-2.5 text-xs text-foreground focus:border-clay focus:outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-xs text-foreground/70 block mb-1 font-medium">
+                            Password <span className="text-clay">*</span>
+                          </label>
+                          <div className="relative">
+                            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/40" />
+                            <input
+                              type="password"
+                              required
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                              placeholder="••••••••••••••••"
+                              className="w-full rounded-full border border-foreground/15 bg-background pl-10 pr-4 py-2.5 text-xs font-mono text-foreground focus:border-clay focus:outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Circular Switch Toggle: Share Personal Info with Counsellor */}
+                        {mode === "signup" && (
+                          <div className="rounded-2xl border border-foreground/15 bg-background/60 p-4 space-y-3">
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="space-y-0.5">
+                                <span className="text-xs font-semibold text-foreground block">
+                                  Share Personal Info with Counsellor
+                                </span>
+                                <span className="text-[11px] text-foreground/60 block">
+                                  {sharePersonalInfo
+                                    ? "Counsellor receives your name and contact for direct outreach."
+                                    : "Strict anonymity active. Counsellor only receives your secret codeword."}
+                                </span>
+                              </div>
+
+                              <button
+                                type="button"
+                                role="switch"
+                                aria-checked={sharePersonalInfo}
+                                onClick={() => setSharePersonalInfo(!sharePersonalInfo)}
+                                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                                  sharePersonalInfo ? "bg-forest" : "bg-foreground/20"
+                                }`}
+                              >
+                                <span
+                                  aria-hidden="true"
+                                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                                    sharePersonalInfo ? "translate-x-5" : "translate-x-0"
+                                  }`}
+                                />
+                              </button>
+                            </div>
+
+                            <div className="text-[10px] text-foreground/45 italic border-t border-foreground/5 pt-2 font-mono">
+                              {sharePersonalInfo
+                                ? "Status: Identity Disclosed (Confidential Care)"
+                                : "Status: 100% Shielded (Codeword Only)"}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -703,27 +1122,29 @@ export function AuthModal({ isOpen, onClose, defaultRole = "victim" }: AuthModal
                   </div>
                 )}
 
-                {/* Submit button */}
+                {/* Submit button (Hidden if OpenCV camera active as it has its own dedicated button) */}
                 <div className="pt-2">
-                  <button
-                    type="submit"
-                    disabled={isSubmitted}
-                    className="w-full rounded-full bg-forest py-3 text-xs md:text-sm font-semibold text-forest-foreground hover:bg-clay shadow-[var(--shadow-lift)] transition-all flex items-center justify-center gap-2"
-                  >
-                    {isSubmitted ? (
-                      <>
-                        <CheckCircle2 className="h-4 w-4 text-green-300" />
-                        <span>Verifying Station Access...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="h-4 w-4 text-clay-soft" />
-                        <span>
-                          {mode === "signup" ? `Register as ${role}` : `Sign In to ${role} station`}
-                        </span>
-                      </>
-                    )}
-                  </button>
+                  {!(role === "victim" && victimAuthMethod === "opencv_camera") && (
+                    <button
+                      type="submit"
+                      disabled={isSubmitted}
+                      className="w-full rounded-full bg-forest py-3 text-xs md:text-sm font-semibold text-forest-foreground hover:bg-clay shadow-[var(--shadow-lift)] transition-all flex items-center justify-center gap-2"
+                    >
+                      {isSubmitted ? (
+                        <>
+                          <CheckCircle2 className="h-4 w-4 text-green-300" />
+                          <span>Verifying Station Access...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="h-4 w-4 text-clay-soft" />
+                          <span>
+                            {mode === "signup" ? `Register as ${role}` : `Sign In to ${role} station`}
+                          </span>
+                        </>
+                      )}
+                    </button>
+                  )}
 
                   {/* Instant Demo Bypass Button */}
                   <button

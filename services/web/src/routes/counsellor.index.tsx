@@ -33,6 +33,11 @@ import {
   ChevronLeft,
   ChevronRight,
   Cpu,
+  Mic,
+  Phone,
+  Hash,
+  Heart,
+  Camera,
 } from "lucide-react";
 
 export const Route = createFileRoute("/counsellor/")({
@@ -372,6 +377,41 @@ export default function CounsellorDashboardPage() {
                       </span>
                     </div>
 
+                    {/* Modality Tag & Keypad Sequence */}
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <span
+                        className={`text-[9px] uppercase font-mono px-2 py-0.5 rounded-full font-bold inline-flex items-center gap-1 ${
+                          c.latest_modality === "camera used"
+                            ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/20"
+                            : c.latest_modality === "voice used"
+                            ? "bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/20"
+                            : "bg-forest/15 text-forest border border-forest/20"
+                        }`}
+                      >
+                        {c.latest_modality === "camera used" ? (
+                          <>
+                            <Camera className="h-2.5 w-2.5" />
+                            <span>Camera Used</span>
+                          </>
+                        ) : c.latest_modality === "voice used" ? (
+                          <>
+                            <Mic className="h-2.5 w-2.5" />
+                            <span>Voice Used</span>
+                          </>
+                        ) : (
+                          <>
+                            <FileText className="h-2.5 w-2.5" />
+                            <span>Text Used</span>
+                          </>
+                        )}
+                      </span>
+                      {c.keypad_code && (
+                        <span className="text-[9px] font-mono text-clay bg-clay/10 px-1.5 py-0.5 rounded-md border border-clay/20 font-semibold">
+                          #{c.keypad_code}
+                        </span>
+                      )}
+                    </div>
+
                     <p className="text-xs text-foreground/70 line-clamp-2 leading-relaxed mb-3 min-h-[2.2rem]">
                       {c.share_personal_info === false ? (
                         <span className="italic text-foreground/45 flex items-center gap-1.5 font-mono text-[11px]">
@@ -424,18 +464,58 @@ export default function CounsellorDashboardPage() {
                           <span>Strict Anonymous Shield</span>
                         </span>
                       )}
+
+                      {/* Active Modality Badge */}
+                      <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold font-mono ${
+                        selectedCase.latest_modality === "camera used"
+                          ? "bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300"
+                          : selectedCase.latest_modality === "voice used"
+                          ? "bg-purple-500/15 border border-purple-500/30 text-purple-700 dark:text-purple-300"
+                          : "bg-forest/15 border border-forest/30 text-forest"
+                      }`}>
+                        {selectedCase.latest_modality === "camera used" ? (
+                          <>
+                            <Camera className="h-3 w-3" />
+                            <span>Camera Used · OpenCV {Math.round((selectedCase.ml_scores?.camera_distress_score ?? selectedCase.latest_checkin?.camera_distress_score ?? 0.35) * 100)}% ({selectedCase.ml_scores?.primary_emotion || selectedCase.latest_checkin?.primary_emotion || "Neutral"})</span>
+                          </>
+                        ) : selectedCase.latest_modality === "voice used" ? (
+                          <>
+                            <Mic className="h-3 w-3" />
+                            <span>Voice Used · Acoustic {Math.round((selectedCase.ml_scores?.voice_stress_score ?? 0.28) * 100)}%</span>
+                          </>
+                        ) : (
+                          <>
+                            <FileText className="h-3 w-3" />
+                            <span>Text Used · MuRIL {Math.round((selectedCase.ml_scores?.sentiment_score ?? 0.45) * 100)}%</span>
+                          </>
+                        )}
+                      </span>
                     </div>
+
                     <div className="text-xs text-foreground/50 mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
                       <span>Case ID: {selectedCase.case_id}</span>
                       <span>·</span>
                       <span>Began: {selectedCase.created_at}</span>
+                      <span>·</span>
+                      <span className="font-mono text-clay font-bold flex items-center gap-1">
+                        <Hash className="h-3 w-3" />
+                        Keypad Code: {selectedCase.keypad_code || "*7#"}
+                      </span>
                       {selectedCase.share_personal_info && selectedCase.victim_profile && (
                         <>
                           <span>·</span>
-                          <span className="text-foreground/80 font-medium">
-                            Victim: {selectedCase.victim_profile.name || "Identified"}
-                            {selectedCase.victim_profile.email && ` (${selectedCase.victim_profile.email})`}
-                            {selectedCase.victim_profile.phone && ` · Tel: ${selectedCase.victim_profile.phone}`}
+                          <span className="text-foreground/80 font-medium flex items-center gap-2">
+                            <span>Victim: {selectedCase.victim_profile.name || "Identified"}</span>
+                            {selectedCase.victim_profile.phone && (
+                              <span className="text-forest font-mono flex items-center gap-1">
+                                <Phone className="h-3 w-3" /> {selectedCase.victim_profile.phone}
+                              </span>
+                            )}
+                            {(selectedCase.close_phone || selectedCase.victim_profile.close_phone) && (
+                              <span className="text-clay font-mono flex items-center gap-1">
+                                <Heart className="h-3 w-3" /> Close: {selectedCase.close_phone || selectedCase.victim_profile.close_phone}
+                              </span>
+                            )}
                           </span>
                         </>
                       )}
@@ -533,7 +613,31 @@ export default function CounsellorDashboardPage() {
                     <div className="rounded-xl border border-foreground/10 bg-background/50 p-4 space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="text-[11px] font-bold uppercase tracking-wider text-sage-deep flex items-center gap-1.5">
-                          <span>Daily Questionnaire Intake</span>
+                          <span>Intake Assessment</span>
+                          <span className={`text-[9px] font-mono uppercase px-2 py-0.5 rounded-full font-bold inline-flex items-center gap-1 ${
+                            selectedCase.latest_checkin?.modality === "camera used"
+                              ? "bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/20"
+                              : selectedCase.latest_checkin?.modality === "voice used"
+                              ? "bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/20"
+                              : "bg-forest/20 text-forest border border-forest/20"
+                          }`}>
+                            {selectedCase.latest_checkin?.modality === "camera used" ? (
+                              <>
+                                <Camera className="h-2.5 w-2.5" />
+                                <span>Camera Used</span>
+                              </>
+                            ) : selectedCase.latest_checkin?.modality === "voice used" ? (
+                              <>
+                                <Mic className="h-2.5 w-2.5" />
+                                <span>Voice Used</span>
+                              </>
+                            ) : (
+                              <>
+                                <FileText className="h-2.5 w-2.5" />
+                                <span>Text Used</span>
+                              </>
+                            )}
+                          </span>
                         </span>
                         <span className="text-[10px] font-mono text-foreground/40">
                           {selectedCase.latest_checkin ? selectedCase.latest_checkin.date : selectedCase.created_at}
@@ -542,6 +646,54 @@ export default function CounsellorDashboardPage() {
 
                       {selectedCase.latest_checkin ? (
                         <div className="space-y-2 text-xs">
+                          {/* Modality Specific Assessment Row */}
+                          {selectedCase.latest_checkin.modality === "camera used" ? (
+                            <div className="p-2.5 rounded-lg border border-amber-500/20 bg-amber-500/5 space-y-1">
+                              <div className="flex items-center justify-between text-[11px]">
+                                <span className="font-semibold text-amber-700 dark:text-amber-300 flex items-center gap-1">
+                                  <Camera className="h-3 w-3" />
+                                  <span>OpenCV FER+ Emotion (Session Average)</span>
+                                </span>
+                                <span className="font-mono font-bold text-amber-600">
+                                  {Math.round((selectedCase.latest_checkin.camera_distress_score ?? selectedCase.ml_scores?.camera_distress_score ?? 0.35) * 100)}% Distress
+                                </span>
+                              </div>
+                              <p className="text-[10px] text-foreground/60 italic">
+                                Primary Emotion: <strong className="text-foreground capitalize">{selectedCase.latest_checkin.primary_emotion?.toLowerCase() || "neutral"}</strong> · Session arithmetic mean across OpenCV ONNX video frames
+                              </p>
+                            </div>
+                          ) : selectedCase.latest_checkin.modality === "voice used" ? (
+                            <div className="p-2.5 rounded-lg border border-purple-500/20 bg-purple-500/5 space-y-1">
+                              <div className="flex items-center justify-between text-[11px]">
+                                <span className="font-semibold text-purple-700 dark:text-purple-300 flex items-center gap-1">
+                                  <Mic className="h-3 w-3" />
+                                  <span>Voice Model Perception (Sohon :8100)</span>
+                                </span>
+                                <span className="font-mono font-bold text-clay">
+                                  {Math.round((selectedCase.latest_checkin.voice_stress_score ?? 0.28) * 100)}% Stress
+                                </span>
+                              </div>
+                              <p className="text-[10px] text-foreground/60 italic">
+                                {selectedCase.latest_checkin.voice_label || "Acoustic strain & prosody analyzed"}
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="p-2.5 rounded-lg border border-forest/20 bg-forest/5 space-y-1">
+                              <div className="flex items-center justify-between text-[11px]">
+                                <span className="font-semibold text-forest flex items-center gap-1">
+                                  <FileText className="h-3 w-3" />
+                                  <span>MuRIL Distress & Threat Perception</span>
+                                </span>
+                                <span className="font-mono font-bold text-forest">
+                                  {Math.round((selectedCase.ml_scores?.sentiment_score ?? 0.45) * 100)}% Distress
+                                </span>
+                              </div>
+                              <p className="text-[10px] text-foreground/60 italic">
+                                {selectedCase.latest_checkin.sentiment_label || "Text intake processed via MuRIL language model"}
+                              </p>
+                            </div>
+                          )}
+
                           <div className="flex items-center justify-between bg-card p-2.5 rounded-lg border border-foreground/5">
                             <span className="text-foreground/60">State of Mind:</span>
                             <span className="font-display text-sm font-bold text-clay flex items-center gap-1">

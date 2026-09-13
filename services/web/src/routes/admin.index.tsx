@@ -40,6 +40,10 @@ import {
   ShieldCheck,
   RotateCcw,
   Power,
+  Mic,
+  FileText,
+  Phone,
+  Camera,
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
@@ -208,6 +212,24 @@ export default function AdminObservatoryPage() {
   const resolvedCasesCount = cases.filter((c) => c.status === "resolved").length;
   const pendingAlertsCount = alerts.filter((a) => a.decision_status === "pending").length;
 
+  const voiceUsedCount = useMemo(() => {
+    const caseVoice = cases.filter((c) => c.latest_modality === "voice used").length;
+    const checkinVoice = checkins.filter((c) => c.modality === "voice used").length;
+    return caseVoice + checkinVoice;
+  }, [cases, checkins]);
+
+  const cameraUsedCount = useMemo(() => {
+    const caseCam = cases.filter((c) => c.latest_modality === "camera used").length;
+    const checkinCam = checkins.filter((c) => c.modality === "camera used").length;
+    return caseCam + checkinCam;
+  }, [cases, checkins]);
+
+  const textUsedCount = useMemo(() => {
+    const caseText = cases.filter((c) => !c.latest_modality || c.latest_modality === "text used").length;
+    const checkinText = checkins.filter((c) => !c.modality || c.modality === "text used").length;
+    return caseText + checkinText;
+  }, [cases, checkins]);
+
   const handleToggleResolve = (caseItem: CounsellorCase) => {
     const nextStatus = caseItem.status === "resolved" ? "in_support" : "resolved";
     updateCaseStatus(caseItem.id, nextStatus);
@@ -268,31 +290,43 @@ export default function AdminObservatoryPage() {
           </div>
         </div>
 
-        {/* Dynamic Aggregate Stat Tiles */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* Dynamic Aggregate Stat Tiles (3 Modalities + Intake & Case Resolution) */}
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
           <StatTile
-            label="Total Intake Volume"
+            label="Total Volume"
             value={1840 + cases.length + checkins.length}
-            sub="Across all channels & check-ins"
+            sub="Across all channels"
+            color="text-forest"
+          />
+          <StatTile
+            label="Voice Used (IVRS)"
+            value={voiceUsedCount}
+            sub="Sohon acoustic :8100"
+            color="text-purple-600 dark:text-purple-400"
+          />
+          <StatTile
+            label="Camera Used (OpenCV)"
+            value={cameraUsedCount}
+            sub="FER+ ONNX session mean"
+            color="text-amber-600 dark:text-amber-400"
+          />
+          <StatTile
+            label="Text Used (MuRIL)"
+            value={textUsedCount}
+            sub="MuRIL perception :8100"
             color="text-forest"
           />
           <StatTile
             label="Active Cases"
             value={activeCasesCount}
-            sub={`${pendingAlertsCount} pending counsellor triage`}
+            sub={`${pendingAlertsCount} pending triage`}
             color="text-clay"
           />
           <StatTile
             label="Cases Resolved"
             value={resolvedCasesCount}
-            sub="Safely stabilized by counsellors"
+            sub={`${Math.round((resolvedCasesCount / Math.max(1, cases.length)) * 100)}% resolved`}
             color="text-sage-deep"
-          />
-          <StatTile
-            label="Avg Resolution Rate"
-            value={`${Math.round((resolvedCasesCount / Math.max(1, cases.length)) * 100)}%`}
-            sub="Active vs completed lifecycle"
-            color="text-foreground"
           />
         </div>
 
@@ -468,16 +502,40 @@ export default function AdminObservatoryPage() {
 
                       <td className="py-3.5 px-4 max-w-xs">
                         <div className="space-y-1">
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-1.5 flex-wrap">
                             <span
-                              className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
-                                c.latest_source === "questionnaire" || c.latest_checkin
-                                  ? "bg-sage/40 text-sage-deep border border-sage/50"
-                                  : "bg-clay/20 text-clay border border-clay/30"
+                              className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider inline-flex items-center gap-1 ${
+                                c.latest_modality === "camera used"
+                                  ? "bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30"
+                                  : c.latest_modality === "voice used"
+                                  ? "bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/30"
+                                  : "bg-forest/20 text-forest border border-forest/30"
                               }`}
                             >
-                              {c.latest_source === "questionnaire" || c.latest_checkin ? "📋 Check-in" : "💬 Chat"}
+                              {c.latest_modality === "camera used" ? (
+                                <>
+                                  <Camera className="h-2.5 w-2.5" />
+                                  <span>Camera Used</span>
+                                </>
+                              ) : c.latest_modality === "voice used" ? (
+                                <>
+                                  <Mic className="h-2.5 w-2.5" />
+                                  <span>Voice Used</span>
+                                </>
+                              ) : (
+                                <>
+                                  <FileText className="h-2.5 w-2.5" />
+                                  <span>Text Used</span>
+                                </>
+                              )}
                             </span>
+
+                            {c.keypad_code && (
+                              <span className="text-[9px] font-mono text-clay bg-clay/10 px-1.5 py-0.5 rounded-md border border-clay/20 font-bold">
+                                #{c.keypad_code}
+                              </span>
+                            )}
+
                             {c.latest_checkin && (
                               <span className="text-[10px] text-foreground/50 font-mono">
                                 Mood: {c.latest_checkin.moodLabel} ({c.latest_checkin.sleepHours}h rest)
@@ -492,16 +550,38 @@ export default function AdminObservatoryPage() {
 
                       <td className="py-3.5 px-4 font-mono">
                         <div className="space-y-0.5">
-                          <div className="flex items-center gap-1.5">
-                            <span className={`text-[11px] font-bold ${
-                              distressLevel === "HIGH" ? "text-red-600" : distressLevel === "MODERATE" ? "text-clay" : "text-forest"
-                            }`}>
-                              {distressLevel} ({( (c.ml_scores?.sentiment_score || 0.5) * 100).toFixed(0)}%)
-                            </span>
-                          </div>
-                          <span className={`text-[10px] block ${threatFlag ? "text-red-600 font-bold" : "text-foreground/45"}`}>
-                            {threatFlag ? "🚨 Threat Flagged" : "🛡️ Threat Clear"}
-                          </span>
+                          {c.latest_modality === "camera used" ? (
+                            <div>
+                              <span className="text-[11px] font-bold text-amber-600 block">
+                                OpenCV Distress: {Math.round((c.ml_scores?.camera_distress_score ?? c.latest_checkin?.camera_distress_score ?? 0.35) * 100)}%
+                              </span>
+                              <span className="text-[10px] text-foreground/50 block capitalize">
+                                Emotion: {c.ml_scores?.primary_emotion || c.latest_checkin?.primary_emotion || "Neutral"} (Averaged)
+                              </span>
+                            </div>
+                          ) : c.latest_modality === "voice used" ? (
+                            <div>
+                              <span className="text-[11px] font-bold text-purple-700 dark:text-purple-300 block">
+                                Acoustic Stress: {Math.round((c.ml_scores?.voice_stress_score ?? 0.28) * 100)}%
+                              </span>
+                              <span className="text-[10px] text-foreground/50 block italic">
+                                {c.latest_checkin?.voice_label || "Acoustic Tone Model"}
+                              </span>
+                            </div>
+                          ) : (
+                            <div>
+                              <div className="flex items-center gap-1.5">
+                                <span className={`text-[11px] font-bold ${
+                                  distressLevel === "HIGH" ? "text-red-600" : distressLevel === "MODERATE" ? "text-clay" : "text-forest"
+                                }`}>
+                                  MuRIL: {distressLevel} ({((c.ml_scores?.sentiment_score || 0.5) * 100).toFixed(0)}%)
+                                </span>
+                              </div>
+                              <span className={`text-[10px] block ${threatFlag ? "text-red-600 font-bold" : "text-foreground/45"}`}>
+                                {threatFlag ? "🚨 Threat Flagged" : "🛡️ Threat Clear"}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </td>
 
