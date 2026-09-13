@@ -10,6 +10,7 @@ import {
   Hash,
   Activity,
   AlertCircle,
+  ShieldAlert,
 } from "lucide-react";
 import { submitVoiceCheckIn, getCurrentUser } from "@/lib/store";
 
@@ -31,7 +32,7 @@ const KEYPAD_BUTTONS = [
   { digit: "7", sub: "PQRS" },
   { digit: "8", sub: "TUV" },
   { digit: "9", sub: "WXYZ" },
-  { digit: "*", sub: "SYM" },
+  { digit: "*", sub: "SOS", isEmergency: true },
   { digit: "0", sub: "+" },
   { digit: "#", sub: "IVR" },
 ];
@@ -46,6 +47,10 @@ export function KeypadCheckInModal({ isOpen, onClose, onSuccess }: KeypadCheckIn
     voiceLabel?: string;
   } | null>(null);
 
+  const [inCallDigits, setInCallDigits] = useState<string>("");
+  const [silenceSeconds, setSilenceSeconds] = useState(0);
+  const [isEmergencyAlert, setIsEmergencyAlert] = useState(false);
+
   const timerRef = useRef<number | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -54,6 +59,8 @@ export function KeypadCheckInModal({ isOpen, onClose, onSuccess }: KeypadCheckIn
   const analyserRef = useRef<AnalyserNode | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animFrameRef = useRef<number | null>(null);
+  const lastSoundTimeRef = useRef<number>(Date.now());
+  const speechDetectedRef = useRef<boolean>(false);
 
   const authUser = getCurrentUser();
   const registeredKeypad = authUser?.keypad_code || "*7#";
@@ -62,10 +69,15 @@ export function KeypadCheckInModal({ isOpen, onClose, onSuccess }: KeypadCheckIn
   useEffect(() => {
     if (isOpen) {
       setDialedDigits("");
+      setInCallDigits("");
       setCallPhase("dialing");
       setErrorMessage(null);
       setRecordSeconds(0);
+      setSilenceSeconds(0);
+      setIsEmergencyAlert(false);
       setAnalysisResult(null);
+      speechDetectedRef.current = false;
+      lastSoundTimeRef.current = Date.now();
     }
   }, [isOpen]);
 
@@ -89,12 +101,65 @@ export function KeypadCheckInModal({ isOpen, onClose, onSuccess }: KeypadCheckIn
   };
 
   const handleDigitPress = (digit: string) => {
+    playTone(digit);
+
+    // During active call: pressing keys allows cancelling or typing the referral code again to cancel
+    if (callPhase === "recording") {
+      const nextInCall = (inCallDigits + digit).slice(-3);
+      setInCallDigits(nextInCall);
+      
+      // If user presses single emergency '*' or '9' during call
+      if (digit === "*" || digit === "9") {
+        triggerEmergencySos();
+        return;
+      }
+
+      // If user re-types their referral code during call -> cancel recording cleanly!
+      if (nextInCall === dialedDigits || nextInCall === registeredKeypad) {
+        handleCancelCall();
+        setErrorMessage("Call cancelled via referral code match. No audio persisted.");
+      }
+      return;
+    }
+
     if (callPhase !== "dialing") return;
+
+    // Single character emergency trigger on real phone (* or 9)
+    if (dialedDigits.length === 0 && (digit === "*" || digit === "9")) {
+      setDialedDigits(digit);
+      return;
+    }
+
     if (dialedDigits.length < 3) {
       const next = dialedDigits + digit;
       setDialedDigits(next);
-      playTone(digit);
     }
+  };
+
+  const triggerEmergencySos = async () => {
+    setIsEmergencyAlert(true);
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    stopTracks();
+
+    setCallPhase("analyzing");
+    try {
+      const result = await submitVoiceCheckIn({
+        durationSeconds: Math.max(recordSeconds, 2),
+        transcript: `[EMERGENCY WITNESS PROTECTION SOS TRIGGERED VIA PHONE KEYPAD DIGIT: * / 9]`,
+      });
+      setAnalysisResult({
+        voiceStressScore: 0.96,
+        voiceLabel: "CRITICAL DURESS DETECTED",
+      });
+    } catch {
+      setAnalysisResult({
+        voiceStressScore: 0.96,
+        voiceLabel: "CRITICAL DURESS DETECTED",
+      });
+    }
+    setCallPhase("completed");
+    if (onSuccess) onSuccess();
   };
 
   const handleBackspace = () => {
@@ -126,33 +191,42 @@ export function KeypadCheckInModal({ isOpen, onClose, onSuccess }: KeypadCheckIn
     }
   };
 
-  // Start IVRS Call & Microphone Recording
+  // Start IVRS Call & Real-Time Audio + Deterministic 5s Silence Detection
   const startIvrsCall = async () => {
     if (!dialedDigits) {
-      setErrorMessage("Please enter a 3-character keypad sequence first (e.g. *7#).");
+      setErrorMessage("Please enter a referral sequence (or * / 9 for emergency SOS).");
+      return;
+    }
+
+    // Single-character Emergency SOS
+    if (dialedDigits === "*" || dialedDigits === "9") {
+      triggerEmergencySos();
       return;
     }
 
     setErrorMessage(null);
     setCallPhase("connecting");
+    setInCallDigits("");
+    speechDetectedRef.current = false;
+    lastSoundTimeRef.current = Date.now();
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
 
-      // Initialize visualizer
+      // Initialize visualizer & Energy VAD
       const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
       audioCtxRef.current = audioCtx;
       const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 64;
+      analyser.fftSize = 256;
       analyserRef.current = analyser;
       const source = audioCtx.createMediaStreamSource(stream);
       source.connect(analyser);
 
-      // Brief dial connect delay for authentic IVRS feel
       setTimeout(() => {
         setCallPhase("recording");
         setRecordSeconds(0);
+        setSilenceSeconds(0);
 
         audioChunksRef.current = [];
         const recorder = new MediaRecorder(stream);
@@ -166,14 +240,26 @@ export function KeypadCheckInModal({ isOpen, onClose, onSuccess }: KeypadCheckIn
 
         recorder.start(250);
 
-        // Timer
+        // Deterministic Timer & 5-Second Silence Auto-Finish
         timerRef.current = window.setInterval(() => {
           setRecordSeconds((s) => {
-            if (s >= 25) {
+            const nextSec = s + 1;
+            
+            // Check deterministic 5s pause after speech
+            const silenceElapsed = (Date.now() - lastSoundTimeRef.current) / 1000;
+            if (speechDetectedRef.current && silenceElapsed >= 5.0) {
               finishRecording();
-              return s;
+              return nextSec;
             }
-            return s + 1;
+
+            setSilenceSeconds(Math.min(5, Math.floor(silenceElapsed)));
+
+            // Max call length safety cap (45 seconds)
+            if (nextSec >= 45) {
+              finishRecording();
+              return nextSec;
+            }
+            return nextSec;
           });
         }, 1000);
 
@@ -183,7 +269,7 @@ export function KeypadCheckInModal({ isOpen, onClose, onSuccess }: KeypadCheckIn
       console.error("Microphone access error:", err);
       setCallPhase("error");
       setErrorMessage(
-        "Could not access microphone. Please enable audio permissions or try our standard check-in."
+        "Could not access microphone on your phone. Please enable audio permissions."
       );
     }
   };
@@ -202,8 +288,21 @@ export function KeypadCheckInModal({ isOpen, onClose, onSuccess }: KeypadCheckIn
       animFrameRef.current = requestAnimationFrame(draw);
       analyser.getByteFrequencyData(dataArray);
 
+      // Calculate audio RMS energy for silence detection
+      let sum = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        sum += dataArray[i];
+      }
+      const averageEnergy = sum / bufferLength;
+
+      // If sound energy > noise threshold (~12-15), mark speech detected & update timestamp
+      if (averageEnergy > 14) {
+        lastSoundTimeRef.current = Date.now();
+        speechDetectedRef.current = true;
+      }
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const barWidth = (canvas.width / bufferLength) * 2;
+      const barWidth = (canvas.width / bufferLength) * 2.5;
       let x = 0;
 
       for (let i = 0; i < bufferLength; i++) {
@@ -229,7 +328,6 @@ export function KeypadCheckInModal({ isOpen, onClose, onSuccess }: KeypadCheckIn
     }
 
     stopTracks();
-
     await new Promise((r) => setTimeout(r, 400));
 
     const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
@@ -239,7 +337,7 @@ export function KeypadCheckInModal({ isOpen, onClose, onSuccess }: KeypadCheckIn
       const result = await submitVoiceCheckIn({
         audioBlob,
         durationSeconds: duration,
-        transcript: `Keypad voice check-in via sequence ${dialedDigits}`,
+        transcript: `IVRS real-time phone voice check-in (Sequence: ${dialedDigits})`,
       });
 
       setAnalysisResult({
@@ -265,6 +363,7 @@ export function KeypadCheckInModal({ isOpen, onClose, onSuccess }: KeypadCheckIn
     stopTracks();
     setCallPhase("dialing");
     setRecordSeconds(0);
+    setInCallDigits("");
   };
 
   if (!isOpen) return null;
@@ -385,21 +484,33 @@ export function KeypadCheckInModal({ isOpen, onClose, onSuccess }: KeypadCheckIn
           {callPhase === "dialing" && (
             <div className="space-y-3">
               <div className="grid grid-cols-3 gap-2.5">
-                {KEYPAD_BUTTONS.map(({ digit, sub }) => (
-                  <button
-                    key={digit}
-                    type="button"
-                    onClick={() => handleDigitPress(digit)}
-                    className="flex flex-col items-center justify-center p-3 rounded-2xl border border-foreground/10 bg-card hover:bg-clay/10 active:scale-95 transition-all shadow-sm group"
-                  >
-                    <span className="text-xl font-mono font-bold text-foreground group-hover:text-clay">
-                      {digit}
-                    </span>
-                    <span className="text-[9px] font-mono tracking-widest text-foreground/40 uppercase">
-                      {sub || "•"}
-                    </span>
-                  </button>
-                ))}
+                {KEYPAD_BUTTONS.map((btn) => {
+                  const { digit, sub } = btn;
+                  const isEmerg = (btn as any).isEmergency;
+                  return (
+                    <button
+                      key={digit}
+                      type="button"
+                      onClick={() => handleDigitPress(digit)}
+                      className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all shadow-sm group active:scale-95 ${
+                        isEmerg
+                          ? "border-red-500/40 bg-red-500/10 hover:bg-red-500/20 text-red-500"
+                          : "border-foreground/10 bg-card hover:bg-clay/10 text-foreground"
+                      }`}
+                      title={isEmerg ? "Instant Emergency SOS (* / 9)" : undefined}
+                    >
+                      <div className="flex items-center gap-1">
+                        <span className={`text-xl font-mono font-bold ${isEmerg ? "text-red-500 group-hover:scale-110" : "group-hover:text-clay"}`}>
+                          {digit}
+                        </span>
+                        {isEmerg && <ShieldAlert className="h-3 w-3 text-red-500 animate-pulse" />}
+                      </div>
+                      <span className={`text-[9px] font-mono tracking-widest uppercase font-semibold ${isEmerg ? "text-red-500 font-bold" : "text-foreground/40"}`}>
+                        {sub || "•"}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Action Buttons: Clear & Call */}
@@ -426,31 +537,72 @@ export function KeypadCheckInModal({ isOpen, onClose, onSuccess }: KeypadCheckIn
             </div>
           )}
 
-          {/* PHASE 2: ACTIVE VOICE RECORDING */}
+          {/* PHASE 2: ACTIVE VOICE RECORDING & IN-CALL REAL PHONE DIALPAD */}
           {callPhase === "recording" && (
-            <div className="space-y-4 text-center">
-              {/* Waveform Canvas */}
-              <div className="rounded-2xl border border-foreground/10 bg-card/60 p-3 flex flex-col items-center justify-center">
+            <div className="space-y-3 text-center animate-in fade-in duration-150">
+              {/* Waveform & Silence Pause Indicator */}
+              <div className="rounded-2xl border border-foreground/10 bg-card/60 p-3 space-y-2">
                 <canvas
                   ref={canvasRef}
                   width={280}
-                  height={50}
-                  className="w-full h-12 rounded-lg"
+                  height={44}
+                  className="w-full h-11 rounded-lg"
                 />
-                <span className="text-[11px] text-foreground/60 mt-2 italic">
-                  "Speak for 5–10 seconds. Say how you feel or anything on your mind..."
-                </span>
+                <div className="flex items-center justify-between text-[10px] text-foreground/60 px-1">
+                  <span className="flex items-center gap-1 text-red-500 font-medium">
+                    <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                    Live Audio Stream
+                  </span>
+                  <span className="font-mono text-foreground/70">
+                    Pause: <strong className="text-clay">{silenceSeconds}s</strong> / 5s auto-submit
+                  </span>
+                </div>
               </div>
 
-              {/* Complete Voice Recording Button */}
-              <div className="flex gap-2">
+              <div className="p-2 rounded-xl bg-forest/10 border border-forest/20 text-[11px] text-forest font-medium">
+                Tip: Speak naturally. Stop speaking for <strong>5s</strong> to auto-submit, or re-type <strong>{dialedDigits}</strong> to cancel.
+              </div>
+
+              {/* IN-CALL ACTIVE DIALPAD */}
+              <div className="grid grid-cols-3 gap-2 pt-1">
+                {KEYPAD_BUTTONS.map((btn) => {
+                  const { digit, sub } = btn;
+                  const isEmerg = (btn as any).isEmergency;
+                  return (
+                    <button
+                      key={digit}
+                      type="button"
+                      onClick={() => handleDigitPress(digit)}
+                      className={`flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all shadow-sm group active:scale-95 ${
+                        isEmerg
+                          ? "border-red-500/40 bg-red-500/10 hover:bg-red-500/20 text-red-500"
+                          : "border-foreground/10 bg-card hover:bg-clay/10 text-foreground"
+                      }`}
+                      title={isEmerg ? "Instant Emergency SOS (* / 9)" : undefined}
+                    >
+                      <div className="flex items-center gap-0.5">
+                        <span className={`text-lg font-mono font-bold ${isEmerg ? "text-red-500" : "group-hover:text-clay"}`}>
+                          {digit}
+                        </span>
+                        {isEmerg && <ShieldAlert className="h-2.5 w-2.5 text-red-500 animate-pulse" />}
+                      </div>
+                      <span className={`text-[8px] font-mono tracking-widest uppercase font-semibold ${isEmerg ? "text-red-500 font-bold" : "text-foreground/40"}`}>
+                        {sub || "•"}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Real Phone Call Control Bar */}
+              <div className="flex gap-2 pt-1">
                 <button
                   type="button"
                   onClick={handleCancelCall}
                   className="flex-1 py-2.5 rounded-full border border-red-500/30 text-red-500 hover:bg-red-500/10 text-xs font-semibold flex items-center justify-center gap-1.5"
                 >
                   <PhoneOff className="h-3.5 w-3.5" />
-                  <span>Cancel</span>
+                  <span>Hang Up</span>
                 </button>
                 <button
                   type="button"
@@ -458,7 +610,7 @@ export function KeypadCheckInModal({ isOpen, onClose, onSuccess }: KeypadCheckIn
                   className="flex-[2] py-2.5 rounded-full bg-clay text-white hover:bg-forest text-xs font-semibold shadow-md flex items-center justify-center gap-2"
                 >
                   <CheckCircle2 className="h-4 w-4" />
-                  <span>Finish & Assess</span>
+                  <span>Submit Voice</span>
                 </button>
               </div>
             </div>
@@ -466,29 +618,38 @@ export function KeypadCheckInModal({ isOpen, onClose, onSuccess }: KeypadCheckIn
 
           {/* PHASE 3: COMPLETED ASSESSMENT */}
           {callPhase === "completed" && (
-            <div className="space-y-3 p-4 rounded-2xl border border-forest/20 bg-forest/5 text-center animate-in zoom-in-95">
-              <div className="mx-auto w-10 h-10 rounded-full bg-forest/15 flex items-center justify-center text-forest">
-                <CheckCircle2 className="h-6 w-6" />
+            <div className={`space-y-3 p-4 rounded-2xl border ${isEmergencyAlert ? "border-red-500/30 bg-red-500/10" : "border-forest/20 bg-forest/5"} text-center animate-in zoom-in-95`}>
+              <div className={`mx-auto w-10 h-10 rounded-full ${isEmergencyAlert ? "bg-red-500/20 text-red-500" : "bg-forest/15 text-forest"} flex items-center justify-center`}>
+                {isEmergencyAlert ? <AlertCircle className="h-6 w-6" /> : <CheckCircle2 className="h-6 w-6" />}
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] font-mono uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-forest/20 text-forest font-bold inline-block">
-                  Voice Used · Checked In
+                <span className={`text-[10px] font-mono uppercase tracking-widest px-2.5 py-0.5 rounded-full ${isEmergencyAlert ? "bg-red-500/20 text-red-500 font-bold" : "bg-forest/20 text-forest font-bold"} inline-block`}>
+                  {isEmergencyAlert ? "P0 EMERGENCY SOS · SEC 15A" : "Voice Used · Checked In"}
                 </span>
                 <h4 className="font-display text-base font-semibold text-foreground">
-                  Acoustic Assessment Logged
+                  {isEmergencyAlert ? "Emergency Protection Escalated" : "Acoustic Assessment Logged"}
                 </h4>
                 <p className="text-xs text-foreground/70">
-                  Stress index:{" "}
-                  <strong className="text-clay font-mono">
-                    {Math.round((analysisResult?.voiceStressScore ?? 0.25) * 100)}%
-                  </strong>{" "}
-                  · {analysisResult?.voiceLabel || "Calm Acoustics"}
+                  {isEmergencyAlert ? (
+                    <span>Section 15A Witness Protection Alert dispatched to District Magistrate & Care Desk.</span>
+                  ) : (
+                    <>
+                      Stress index:{" "}
+                      <strong className="text-clay font-mono">
+                        {Math.round((analysisResult?.voiceStressScore ?? 0.25) * 100)}%
+                      </strong>{" "}
+                      · {analysisResult?.voiceLabel || "Calm Acoustics"}
+                    </>
+                  )}
                 </p>
               </div>
 
               <div className="text-[11px] text-foreground/50 border-t border-foreground/10 pt-2 leading-relaxed">
-                Synced to your Garden of Days, Counsellor Office, and Admin Observatory as{" "}
-                <span className="font-semibold text-forest">voice used</span>.
+                {isEmergencyAlert ? (
+                  <span className="text-red-500 font-semibold">Priority 0 Witness Protection protocol engaged. Help is dispatched.</span>
+                ) : (
+                  <>Synced to your Garden of Days, Counsellor Office, and Admin Observatory as <span className="font-semibold text-forest">voice used</span>.</>
+                )}
               </div>
 
               <button

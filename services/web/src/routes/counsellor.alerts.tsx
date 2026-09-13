@@ -168,15 +168,38 @@ export default function AlertQueuePage() {
 
                   {/* Text from Victim (Live Input Trigger) */}
                   {a.victim_text && (
-                    <div className="rounded-2xl bg-background/80 p-4 border border-foreground/10 space-y-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-clay flex items-center gap-1.5">
-                        <MessageSquare className="h-3.5 w-3.5" /> Triggering Text Received From Victim
-                      </span>
+                    <div className="rounded-2xl bg-background/80 p-4 border border-foreground/10 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-clay flex items-center gap-1.5">
+                          <MessageSquare className="h-3.5 w-3.5" /> Triggering Text Received From Victim
+                        </span>
+                        <span className="text-[9px] font-mono text-foreground/45 uppercase tracking-wider">
+                          Channel: {a.channel === "questionnaire_checkin" ? "Daily Questionnaire (Q4)" : a.channel === "pwa_chat" ? "Sanctuary Chat" : a.channel}
+                        </span>
+                      </div>
                       <p className="text-xs text-foreground/90 italic font-mono bg-card/70 p-3 rounded-xl border border-foreground/5 leading-relaxed">
                         {a.victim_info?.share_personal_info === false
-                          ? "[Confidential sanctuary chat message shielded by victim choice]"
+                          ? "[Confidential sanctuary message shielded by victim choice]"
                           : `"${a.victim_text}"`}
                       </p>
+
+                      {/* Real-time Extracted Triggering Words Badges */}
+                      {a.trigger_words && a.trigger_words.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                          <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-red-500 mr-1 flex items-center gap-1">
+                            <ShieldAlert className="h-3 w-3" />
+                            Trigger Words:
+                          </span>
+                          {a.trigger_words.map((w, wIdx) => (
+                            <span
+                              key={wIdx}
+                              className="px-2 py-0.5 rounded-full bg-red-500/15 border border-red-500/30 text-red-600 dark:text-red-400 font-mono text-[10px] font-bold animate-in zoom-in-95"
+                            >
+                              "{w}"
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
 

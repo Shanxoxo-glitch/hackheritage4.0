@@ -8,6 +8,7 @@ from app.routes.case import router as case_contract_router
 from app.routes.alerts import router as alerts_contract_router
 from app.routes.consent import router as consent_contract_router
 from app.routes.interactions import router as interactions_contract_router
+from app.routes.fusion import router as fusion_contract_router
 from app.api.v1.checkin import router as checkin_router
 from app.workers.checkin_worker import build_scheduler
 # Import models to ensure registered with Base
@@ -76,6 +77,7 @@ app.include_router(case_contract_router)
 app.include_router(alerts_contract_router)
 app.include_router(consent_contract_router)
 app.include_router(interactions_contract_router)
+app.include_router(fusion_contract_router)
 
 # 2. Mount checkin status at root (/checkin/status/{id})
 app.include_router(checkin_router)

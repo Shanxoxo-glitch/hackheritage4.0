@@ -175,6 +175,12 @@ export default function CrisisChatPage() {
     }
 
     // Record victim interaction into Counsellor & Admin stores
+    const quickTriggers = [
+      "die", "kill", "suicide", "hurt", "harm", "end my life", "no reason to live",
+      "follow", "following", "threat", "threatened", "locked", "weapon", "knife", "gun",
+      "scared", "terrified", "fear", "panic", "cannot take", "help me", "overwhelmed"
+    ].filter((w) => lower.includes(w));
+
     const quickIsThreat =
       isDanger || lower.includes("follow") || lower.includes("threat") || lower.includes("harm") || lower.includes("locked");
     const quickIsDistress =
@@ -191,6 +197,7 @@ export default function CrisisChatPage() {
         prob: quickIsThreat ? 0.96 : 0.08,
         confidence: 0.92,
       },
+      trigger_words: quickTriggers,
     };
     recordVictimInteraction(userMsg, initialScores);
 

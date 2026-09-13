@@ -67,6 +67,7 @@ export interface TriageAlert {
   reasons: string[];
   channel: string;
   victim_text?: string;
+  trigger_words?: string[];
   victim_info?: {
     codeword: string;
     share_personal_info: boolean;
@@ -102,6 +103,8 @@ export interface CounsellorCase {
   latest_source?: "chat" | "questionnaire" | "intake" | "voice_checkin" | "camera_checkin";
   latest_modality?: "voice used" | "text used" | "camera used";
   share_personal_info?: boolean;
+  keypad_code?: string;
+  close_phone?: string;
   victim_profile?: {
     name?: string;
     email?: string;
@@ -1038,6 +1041,7 @@ export interface VictimInteractionScores {
     conflict_chi2?: number;
   };
   composite_score?: number;
+  trigger_words?: string[];
 }
 
 export function recordVictimInteraction(
@@ -1233,6 +1237,7 @@ export function recordVictimInteraction(
       reasons,
       channel: "pwa_chat",
       victim_text: userText,
+      trigger_words: scores.trigger_words || [],
       victim_info: {
         codeword: targetCase.codeword,
         share_personal_info: !!(targetCase.share_personal_info ?? sharePref.share),
@@ -1429,6 +1434,29 @@ export function recordVictimQuestionnaire(entry: CheckInEntry): void {
 
   if (isElevated) {
     const alertId = `alt-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    // Extract actual triggering words from Question 4 reflection
+    const qTriggerLexicon = [
+      "die", "dying", "kill", "killing", "suicide", "hurt", "harm", "end my life", "no reason to live",
+      "follow", "following", "threat", "threatened", "threatening", "locked", "weapon", "knife", "gun",
+      "destroy", "attack", "panicking", "panic", "scared", "terrified", "frightened", "fear", "worry",
+      "cannot take", "can't take", "overwhelmed", "hopeless", "dhamki", "chhod", "bachao", "dar",
+      "court", "bail", "accused", "witness", "police", "jail", "intimidation"
+    ];
+    const reflectionText = (entry.reflection || "").toLowerCase();
+    const qTriggerWords: string[] = [];
+    for (const term of qTriggerLexicon) {
+      if (reflectionText.includes(term)) {
+        qTriggerWords.push(term);
+      }
+    }
+    // Also include negative mood / feelings as trigger tokens if none in text
+    if (qTriggerWords.length === 0 && (entry.mood <= 2 || entry.sleepHours <= 4)) {
+      if (entry.mood <= 2) qTriggerWords.push(`mood_${entry.moodLabel.toLowerCase()}`);
+      if (entry.sleepHours <= 4) qTriggerWords.push("severe_sleep_deprivation");
+      qTriggerWords.push(...entry.feelings.map((f) => f.toLowerCase()).slice(0, 2));
+    }
+
     const newAlert: TriageAlert = {
       alert_id: alertId,
       case_id: targetCase.case_id,
@@ -1447,6 +1475,7 @@ export function recordVictimQuestionnaire(entry: CheckInEntry): void {
       ],
       channel: "questionnaire_checkin",
       victim_text: entry.reflection || `Daily check-in: Mood ${entry.moodLabel} (${entry.mood}/5), Rest: ${entry.sleepHours}h, Feelings: ${entry.feelings.join(", ")}`,
+      trigger_words: qTriggerWords,
       victim_info: {
         codeword: targetCase.codeword,
         share_personal_info: !!(targetCase.share_personal_info ?? sharePref.share),

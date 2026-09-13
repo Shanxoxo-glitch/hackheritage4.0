@@ -84,6 +84,7 @@ export interface LiveScoreResult {
   };
   fusion?: FusionDetails;
   composite_score: number;
+  trigger_words?: string[];
   latency_ms: number;
   source: "live_huggingface_and_fusion_service" | "live_huggingface_service" | "local_heuristic";
 }
@@ -112,11 +113,48 @@ export async function scoreTextLive(text: string): Promise<LiveScoreResult> {
     console.warn("Direct scoring service call failed, using calibrated heuristic:", err);
   }
 
+  // Extract actual triggering words from the message
+  const TRIGGER_LEXICON = [
+    "die", "dying", "kill", "killing", "suicide", "hurt", "harm", "end my life", "no reason to live",
+    "follow", "following", "threat", "threatened", "threatening", "locked", "weapon", "knife", "gun",
+    "destroy", "attack", "panicking", "panic", "scared", "terrified", "frightened", "fear",
+    "cannot take", "can't take", "overwhelmed", "hopeless", "dhamki", "chhod", "bachao", "dar",
+    "court", "bail", "accused", "witness", "police", "jail", "intimidation"
+  ];
+  const detectedTriggers: string[] = [];
+  const lowerText = (text || "").toLowerCase();
+  for (const term of TRIGGER_LEXICON) {
+    if (lowerText.includes(term)) {
+      detectedTriggers.push(term);
+    }
+  }
+
+  // Call backend gateway for secure server-side OpenRouter LLM trigger extraction
+  let serverTriggers: string[] | null = null;
+  try {
+    const tRes = await fetch(`${BASE}/v1/triggers/extract`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+    if (tRes.ok) {
+      const tData = await tRes.json();
+      if (Array.isArray(tData.trigger_words)) {
+        serverTriggers = tData.trigger_words;
+      }
+    }
+  } catch (err) {
+    // Fallback to local lexicon
+  }
+
+  const finalTriggerWords = Array.from(new Set([...(serverTriggers || detectedTriggers)]));
+
   // If scoring service was unavailable, compute calibrated text scores
   if (!sentimentData || !threatData) {
-    const lower = text.toLowerCase();
-    const isThreat = lower.includes("follow") || lower.includes("kill") || lower.includes("hurt") || lower.includes("threat") || lower.includes("harm") || lower.includes("die") || lower.includes("destroy");
-    const isHighDistress = isThreat || lower.includes("cannot take") || lower.includes("panic") || lower.includes("scared") || lower.includes("help me") || lower.includes("overwhelmed");
+    const isThreat = finalTriggerWords.some((w) =>
+      ["follow", "following", "kill", "hurt", "threat", "harm", "die", "weapon", "destroy", "attack", "intimidation"].includes(w)
+    );
+    const isHighDistress = isThreat || finalTriggerWords.length > 0 || lowerText.includes("scared") || lowerText.includes("panic");
 
     sentimentData = {
       label: isHighDistress ? "HIGH" : "MODERATE",
@@ -134,9 +172,9 @@ export async function scoreTextLive(text: string): Promise<LiveScoreResult> {
     };
   }
 
-  // Now call the Bayesian Risk Fusion Engine on port 8200
+  // Now call the Bayesian Risk Fusion Engine on port 8200 (or backend gateway on 8400)
   try {
-    const fusionRes = await fetch(`${fusionUrl}/v1/fusion`, {
+    let fusionRes = await fetch(`${fusionUrl}/v1/fusion`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -146,6 +184,23 @@ export async function scoreTextLive(text: string): Promise<LiveScoreResult> {
       }),
     });
 
+    if (!fusionRes.ok && BASE && fusionUrl !== BASE) {
+      try {
+        const gwRes = await fetch(`${BASE}/v1/fusion`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sentiment: { score: sentimentData.sentiment_score },
+            threat: { prob: threatData.prob },
+            voice_stress: { score: 0.35 },
+          }),
+        });
+        if (gwRes.ok) {
+          fusionRes = gwRes;
+        }
+      } catch (_) {}
+    }
+
     if (fusionRes.ok) {
       const fData: FusionDetails = await fusionRes.json();
       return {
@@ -153,6 +208,7 @@ export async function scoreTextLive(text: string): Promise<LiveScoreResult> {
         threat: threatData,
         fusion: fData,
         composite_score: fData.composite_score,
+        trigger_words: finalTriggerWords,
         latency_ms: textLatency + 15,
         source: "live_huggingface_and_fusion_service",
       };
@@ -192,6 +248,7 @@ export async function scoreTextLive(text: string): Promise<LiveScoreResult> {
       weights: { sentiment: wSent, threat: wThreat, voice_stress: wVoice },
     },
     composite_score: Number(comp.toFixed(2)),
+    trigger_words: finalTriggerWords,
     latency_ms: textLatency,
     source: "live_huggingface_service",
   };

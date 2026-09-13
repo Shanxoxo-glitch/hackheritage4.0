@@ -211,27 +211,54 @@ async def stream_interaction_to_vm(payload: InteractionStreamPayload):
         try:
             ollama_url = getattr(settings, "OLLAMA_URL", "http://127.0.0.1:11434")
             ollama_base = ollama_url.rstrip("/v1").rstrip("/")
+
+            sahayak_system = (
+                "You are Sahayak, a calm, empathetic AI assistant helping people in India dealing with legal problems, "
+                "family disputes, domestic violence, police complaints, court matters, or emotional distress.\n"
+                "Reply in the same language as the user. Use ONLY facts explicitly provided by the user. "
+                "Never invent dates, cities, lawyers, case numbers, legal sections, phone numbers, authorities, or events. "
+                "You are not a lawyer. Provide general legal/process information only. Never guarantee case outcomes. "
+                "For domestic violence or threats, prioritize immediate physical safety. For suicide, self-harm, or immediate danger, "
+                "never provide methods or instructions; ask whether the person is safe right now and provide Tele-MANAS 14416 and emergency 112. "
+                "Be natural and concise."
+            )
+            raw_prompt = f"[INST] <<SYS>>\n{sahayak_system}\n<</SYS>>\n\n{payload.message} [/INST] "
+
             async with httpx.AsyncClient(timeout=60.0) as oclient:
                 async with oclient.stream(
                     "POST",
-                    f"{ollama_base}/api/chat",
+                    f"{ollama_base}/api/generate",
                     json={
                         "model": "sahayak",
-                        "messages": [{"role": "user", "content": payload.message}],
-                        "stream": True
-                    }
+                        "raw": True,
+                        "prompt": raw_prompt,
+                        "stream": True,
+                        "options": {
+                            "temperature": 0,
+                            "top_p": 1.0,
+                            "repeat_penalty": 1.05,
+                            "num_ctx": 1024,
+                            "num_predict": 250,
+                        },
+                    },
                 ) as stream_resp:
                     if stream_resp.status_code == 200:
                         full_reply = ""
+                        has_started = False
                         async for raw_line in stream_resp.aiter_lines():
                             if not raw_line.strip():
                                 continue
                             try:
                                 chunk_data = json.loads(raw_line)
-                                token = chunk_data.get("message", {}).get("content", "")
+                                token = chunk_data.get("response", "")
                                 if token:
-                                    full_reply += token
-                                    yield f"data: {json.dumps({'delta': token})}\n\n"
+                                    if not has_started:
+                                        # Clean initial [/INST] artifacts if emitted
+                                        token = token.lstrip(" [/INST]").lstrip("\n")
+                                        has_started = True
+                                    if token:
+                                        full_reply += token
+                                        yield f"data: {json.dumps({'delta': token})}\n\n"
                                 if chunk_data.get("done"):
                                     break
                             except Exception:
@@ -243,7 +270,7 @@ async def stream_interaction_to_vm(payload: InteractionStreamPayload):
                                 "status": "completed",
                                 "audit_ref": "audit-vm-sahayak-neural",
                                 "reply": full_reply.strip(),
-                                "source": "vm_orchestrator"  # ⚡ Live Azure VM!
+                                "source": "vm_orchestrator",  # ⚡ Live Azure VM!
                             }
                             yield f"data: {json.dumps({'final': final_payload})}\n\n"
                             return
