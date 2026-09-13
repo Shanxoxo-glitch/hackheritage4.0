@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  # ── 1. Nginx Reverse Proxy & Load Balancer ──────────────────────────────────
+  loadbalancer:
+    image: nginx:alpine
+    container_name: sih-loadbalancer
+    ports:
+      - "80:80"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - scoring
+      - risk-engine
+    restart: unless-stopped
+
+  # ── 2. Scalable Backend API Gateway Cluster ────────────────────────────────
+  backend:
+    build:
+      context: ./services/backend
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://sih_user:sih_password@postgres:5432/sih_db
+      - REDIS_URL=redis://redis:6379/0
+      - TWILIO_MOCK_MODE=true
+      - SCORING_URL=http://scoring:8100
+      - RISK_ENGINE_URL=http://risk-engine:8200
+      - ORCHESTRATOR_URL=http://20.198.64.9:8500
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── 3. Scalable Perception Scoring Service Cluster ─────────────────────────
+  scoring:
+    build:
+      context: ./services/scoring
+    environment:
+      - SCORING_MODELS_DIR=/models
+      - SCORING_DEVICE=cpu
+      - SCORING_WARM_ON_START=1
+      - SCORING_HF_REPO=Shota2811/ps26094-signals
+      - SCORING_HF_AUTO_DOWNLOAD=0
+    volumes:
+      - ./models:/models
+    restart: unless-stopped
+
+  # ── 4. Bayesian Risk Engine Service ────────────────────────────────────────
+  risk-engine:
+    build:
+      context: ./services/risk-engine
+    environment:
+      - RISK_CORS_ORIGINS=*
+      - RISK_PRIOR_MU=0.35
+      - RISK_PRIOR_SIGMA=0.45
+    restart: unless-stopped
+
+  # ── 5. Database & Caching Core ─────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: sih-postgres
+    environment:
+      POSTGRES_USER: sih_user
+      POSTGRES_PASSWORD: sih_password
+      POSTGRES_DB: sih_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sih_user -d sih_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: sih-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:

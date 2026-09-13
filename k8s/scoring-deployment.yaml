@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scoring
+  namespace: sih-distress
+  labels:
+    app: scoring
+    tier: ml-perception
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: scoring
+  template:
+    metadata:
+      labels:
+        app: scoring
+        tier: ml-perception
+    spec:
+      containers:
+        - name: scoring
+          image: sih-scoring:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8100
+              name: http
+          env:
+            - name: SCORING_MODELS_DIR
+              value: "/models"
+            - name: SCORING_DEVICE
+              value: "cpu"
+            - name: SCORING_WARM_ON_START
+              value: "1"
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "2500Mi"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8100
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8100
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scoring-service
+  namespace: sih-distress
+spec:
+  type: ClusterIP
+  selector:
+    app: scoring
+  ports:
+    - name: http
+      port: 8100
+      targetPort: 8100
